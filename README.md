@@ -15,6 +15,8 @@ My attempt to create a backtesting framework to test stock trading strategies ba
 
 Initial idea via a blog post [Python For Finance: Algorithmic Trading](https://www.datacamp.com/community/tutorials/finance-python-trading#backtesting) by Karlijn Willems [@willems_karlijn](https://twitter.com/willems_karlijn)
 
+Very good explanation of the internals of a back testing system by Michael Halls-Moore [@mhallsmoore](https://twitter.com/mhallsmoore) in the blog post series [Event-Driven-Backtesting-with-Python](https://www.quantstart.com/articles/Event-Driven-Backtesting-with-Python-Part-I).
+
 ### other backtesting frameworks
 
 [Quantopian](https://www.quantopian.com)

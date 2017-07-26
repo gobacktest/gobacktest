@@ -10,9 +10,11 @@ func main() {
 	// define symbols
 	var symbols []string
 	symbols = append(symbols, "DBK.DE")
+	symbols = append(symbols, "BAS.DE")
+	symbols = append(symbols, "SZU.DE")
 
 	bt := gobacktest.New(symbols)
-	log.Printf("bt: [%T] %v\n", bt, bt)
+	// log.Printf("bt: [%T] %v\n", bt, bt)
 	bt.Run()
 
 	bt2 := gobacktest.Test{}

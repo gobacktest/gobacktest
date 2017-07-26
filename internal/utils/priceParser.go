@@ -4,7 +4,7 @@ import (
 	"math"
 )
 
-const priceMultiplier = 10000000
+const priceMultiplier = 1000000000
 
 /*
 PriceParser is designed to abstract away the underlying number used as a price.
@@ -20,7 +20,7 @@ type PriceParser struct{}
 
 // Parse a float to int
 func (p *PriceParser) Parse(f float64) int64 {
-	return int64(f) * priceMultiplier
+	return int64(f * float64(priceMultiplier))
 }
 
 // Display an int as float with 2 decimal places

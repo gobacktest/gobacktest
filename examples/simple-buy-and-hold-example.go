@@ -1,22 +1,22 @@
 package main
 
 import (
-	"log"
-
-	"github.com/dirkolbrich/gobacktest"
+	gbt "github.com/dirkolbrich/gobacktest"
+	"github.com/dirkolbrich/gobacktest/internal"
 )
 
 func main() {
 	// define symbols
-	var symbols []string
-	symbols = append(symbols, "DBK.DE")
-	symbols = append(symbols, "BAS.DE")
-	symbols = append(symbols, "SZU.DE")
+	var symbols = []string{"BAS.DE", "DBK.DE", "SZU.DE"}
 
-	bt := gobacktest.New(symbols)
-	// log.Printf("bt: [%T] %v\n", bt, bt)
+	// load new backtester
+	bt := gbt.New()
+	bt.SetSymbols(symbols)
+
+	// create data provider and load data into the backtest
+	data := &internal.BarEventFromCSVFileData{FileDir: "../data/"}
+	data.Load(symbols)
+	bt.SetData(data)
+
 	bt.Run()
-
-	bt2 := gobacktest.Test{}
-	log.Printf("[%T] %v\n", bt2, bt2)
 }

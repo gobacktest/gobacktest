@@ -8,14 +8,22 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/dirkolbrich/gobacktest/internal/utils"
 )
 
-// DataHandler is the basic data interface
+// DataHandler is the combined data interface
 type DataHandler interface {
+	DataLoader
+	DataStreamer
+}
+
+// DataLoader is the interface loading the data into the data stream
+type DataLoader interface {
 	Load([]string) error
-	LoadAll() error
+}
+
+// DataStreamer is the interface returning the data streams
+type DataStreamer interface {
+	Stream() []EventHandler
 }
 
 // Data is a basic data struct
@@ -23,26 +31,35 @@ type Data struct {
 	dataStream []EventHandler
 }
 
+// Load loads data endpoints into a stream
+func (d *Data) Load(s []string) error {
+	return nil
+}
+
+// Stream returns the data stream
+func (d *Data) Stream() []EventHandler {
+	return d.dataStream
+}
+
 // BarEventFromCSVFileData is a data struct, which loads the market data from csv files
 type BarEventFromCSVFileData struct {
-	dataStream barStream
-	FilePath   string
+	dataStream []EventHandler
+	FileDir    string
 }
 
 // Load loads single data endpoints into a stream ordered by date (latest first).
 func (d *BarEventFromCSVFileData) Load(symbols []string) error {
-	log.Printf("Loading %d symbols from file: %v\n", len(symbols), symbols)
-
-	startLoad := time.Now()
+	//log.Printf("Loading %d symbols from file: %v\n", len(symbols), symbols)
+	// startLoad := time.Now()
 
 	// load elements for each symbol
 	for _, symbol := range symbols {
 		// set filename and filepath
 		fileName := symbol + ".csv"
 
-		startReadCSV := time.Now()
+		// startReadCSV := time.Now()
 		// open file for corresponding symbol
-		lines, err := readCSVFile(fileName, d.FilePath)
+		lines, err := readCSVFile(fileName, d.FileDir)
 		if err != nil {
 			log.Println(err)
 			return err
@@ -50,31 +67,42 @@ func (d *BarEventFromCSVFileData) Load(symbols []string) error {
 
 		// for each found record create an event
 		for _, l := range lines {
-			event := createBarEventFromLine(l, symbol)
+			event, err := createBarEventFromLine(l, symbol)
+			if err != nil {
+				log.Println(err)
+			}
 			d.dataStream = append(d.dataStream, event)
 		}
-		// log.Printf("d.dataStream: [%T] %+v\n", d.dataStream, d.dataStream)
-		elapsedReadCSV := time.Since(startReadCSV)
-		log.Printf("Loading %s file with %d entrys took %s", fileName, len(lines), elapsedReadCSV)
+
+		// elapsedReadCSV := time.Since(startReadCSV)
+		// log.Printf("Loading %s file with %d entrys took %s", fileName, len(lines), elapsedReadCSV)
 	}
 
-	elapsed := time.Since(startLoad)
-	log.Printf("Loading %d files took %s", len(symbols), elapsed)
+	// elapsed := time.Since(startLoad)
+	// log.Printf("Loading %d files took %s", len(symbols), elapsed)
 
-	// order dataStream by Date
-	sort.Sort(d.dataStream)
+	//log.Printf("[%T] %v\n", d.dataStream, d.dataStream)
+
+	startSortStream := time.Now()
+	d.dataStream = sortStream(d.Stream())
+	elapsedSortStream := time.Since(startSortStream)
+	log.Printf("Sorting %T with %d entrys took %s", d.dataStream, len(d.dataStream), elapsedSortStream)
+
+	//log.Printf("[%T] %+v\n", d.dataStream, d.dataStream)
 
 	return nil
 }
 
-// LoadAll loads the complete data.
-func (d *BarEventFromCSVFileData) LoadAll() error {
-	return nil
+// Stream returns the data stream
+func (d *BarEventFromCSVFileData) Stream() []EventHandler {
+	return d.dataStream
 }
 
-func readCSVFile(fileName, filePath string) ([]map[string]string, error) {
+// readCSVFile opens and reads a csv file line by line
+// and returns a slice with a key/value map for each line
+func readCSVFile(fileName, fileDir string) ([]map[string]string, error) {
 	// open file
-	file, err := os.Open(filePath + fileName)
+	file, err := os.Open(fileDir + fileName)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -105,61 +133,47 @@ func readCSVFile(fileName, filePath string) ([]map[string]string, error) {
 	return lines, nil
 }
 
-func createBarEventFromLine(l map[string]string, symbol string) BarEvent {
-	// create in between struct to hold temporary data
-	type record struct {
-		date          time.Time
-		openPrice     float64
-		highPrice     float64
-		lowPrice      float64
-		closePrice    float64
-		adjClosePrice float64
-		volume        int64
-	}
-	r := record{}
-
+// createBarEventFromLine takes a key/value line and buils a BarEvent struct
+func createBarEventFromLine(line map[string]string, symbol string) (BarEvent, error) {
 	// parse each string in line to corresponding record value
-	r.date, _ = time.Parse("2006-01-02", l["Date"])
-	r.openPrice, _ = strconv.ParseFloat(l["Open"], 64)
-	r.highPrice, _ = strconv.ParseFloat(l["High"], 64)
-	r.lowPrice, _ = strconv.ParseFloat(l["Low"], 64)
-	r.closePrice, _ = strconv.ParseFloat(l["Close"], 64)
-	r.adjClosePrice, _ = strconv.ParseFloat(l["Adj Close"], 64)
-	r.volume, _ = strconv.ParseInt(l["Volume"], 10, 64)
+	date, _ := time.Parse("2006-01-02", line["Date"])
+	openPrice, _ := strconv.ParseFloat(line["Open"], 64)
+	highPrice, _ := strconv.ParseFloat(line["High"], 64)
+	lowPrice, _ := strconv.ParseFloat(line["Low"], 64)
+	closePrice, _ := strconv.ParseFloat(line["Close"], 64)
+	adjClosePrice, _ := strconv.ParseFloat(line["Adj Close"], 64)
+	volume, _ := strconv.ParseInt(line["Volume"], 10, 64)
 
-	// create PRiceParser to convert float64 into int64
-	pp := utils.PriceParser{}
-
+	// create and populate new event
 	be := BarEvent{
-		date:          r.date,
-		symbol:        strings.ToUpper(symbol),
-		openPrice:     pp.Parse(r.openPrice),
-		highPrice:     pp.Parse(r.highPrice),
-		lowPrice:      pp.Parse(r.lowPrice),
-		closePrice:    pp.Parse(r.closePrice),
-		adjClosePrice: pp.Parse(r.adjClosePrice),
-		volume:        r.volume,
+		Date:          date,
+		Symbol:        strings.ToUpper(symbol),
+		OpenPrice:     openPrice,
+		HighPrice:     highPrice,
+		LowPrice:      lowPrice,
+		ClosePrice:    closePrice,
+		AdjClosePrice: adjClosePrice,
+		Volume:        volume,
 	}
 
-	return be
+	return be, nil
 }
 
-// implementing sorting function into stream
-type barStream []BarEvent
+// sortStream sorts the dataStream
+func sortStream(stream []EventHandler) []EventHandler {
+	sort.Slice(stream, func(i, j int) bool {
+		// cast EventHandler interface{} to concrete BarEvent{} implementation
+		bar1 := stream[i].(BarEvent)
+		bar2 := stream[j].(BarEvent)
 
-func (s barStream) Len() int {
-	return len(s)
-}
+		// if date is equal sort by symbol
+		if bar1.Date.Equal(bar2.Date) {
+			return bar1.Symbol < bar2.Symbol
+		}
 
-func (s barStream) Less(i, j int) bool {
-	// if date is equal sort by symbol
-	if s[i].date.Equal(s[j].date) {
-		return s[i].symbol < s[j].symbol
-	}
+		// else sort by date
+		return bar1.Date.Before(bar2.Date)
+	})
 
-	return s[i].date.Before(s[j].date)
-}
-
-func (s barStream) Swap(i, j int) {
-	s[i], s[j] = s[j], s[i]
+	return stream
 }

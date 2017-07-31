@@ -10,44 +10,44 @@ type EventHandler interface {
 
 // BarEvent declares an event for an OHLCV bar (Open, High, Low, Close, Volume).
 type BarEvent struct {
-	date          time.Time
-	symbol        string
-	openPrice     int64
-	highPrice     int64
-	lowPrice      int64
-	closePrice    int64
-	adjClosePrice int64
-	volume        int64
+	Date          time.Time
+	Symbol        string
+	OpenPrice     float64
+	HighPrice     float64
+	LowPrice      float64
+	ClosePrice    float64
+	AdjClosePrice float64
+	Volume        int64
 }
 
 // SignalEvent declares a basic signal event
 type SignalEvent struct {
-	timestamp    time.Time
-	symbol       string
-	direction    string // long or short
-	suggestedQty int64  // suggested quantitity
+	Timestamp    time.Time
+	Symbol       string
+	Direction    string // long or short
+	SuggestedQty int64  // suggested quantitity
 }
 
-// OrderEvent declrares a basic order event
+// OrderEvent declares a basic order event
 type OrderEvent struct {
-	symbol    string
-	orderType string // market or limit
-	direction string // buy or sell
-	limit     int64  // limit for the order
-	qty       int64  // quantity of the order
+	Symbol    string
+	OrderType string // market or limit
+	Direction string // buy or sell
+	Limit     int64  // limit for the order
+	Qty       int64  // quantity of the order
 }
 
-// FillEvent declrares a basic fill event
+// FillEvent declares a basic fill event
 type FillEvent struct {
-	timestamp   time.Time
-	symbol      string
-	exchange    string
-	direction   string // buy or sell
-	qty         int64
-	price       float64
-	commission  float64
-	exchangeFee float64
-	cost        float64 // the total cost of the filled order incl commision and fees
+	Timestamp   time.Time
+	Symbol      string
+	Exchange    string
+	Direction   string // buy or sell
+	Qty         int64
+	Price       float64
+	Commission  float64
+	ExchangeFee float64
+	Cost        float64 // the total cost of the filled order incl commision and fees
 }
 
 // calculateComission() calculates the commission for a stock trade
@@ -60,12 +60,12 @@ func (f FillEvent) calculateComission() float64 {
 	var comRate = 0.0025 // in percent
 
 	switch {
-	case (float64(f.qty) * f.price * comRate) < comMin:
+	case (float64(f.Qty) * f.Price * comRate) < comMin:
 		return comMin
-	case (float64(f.qty) * f.price * comRate) > comMax:
+	case (float64(f.Qty) * f.Price * comRate) > comMax:
 		return comMax
 	default:
-		return float64(f.qty) * f.price * comRate
+		return float64(f.Qty) * f.Price * comRate
 	}
 }
 
@@ -79,5 +79,5 @@ func (f FillEvent) calculateExchangeFee() float64 {
 
 // calculateCost() calculates the total cost for a stock trade
 func (f FillEvent) calculateCost() float64 {
-	return float64(f.qty)*f.price + f.commission + f.exchangeFee
+	return float64(f.Qty)*f.Price + f.Commission + f.ExchangeFee
 }

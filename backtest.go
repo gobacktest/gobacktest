@@ -16,54 +16,35 @@ type Test struct {
 	// portfolio    internal.PortfolioHandler
 }
 
-// New creates a test backtest value for use.
-func New(symbols []string) Test {
-	test := Test{}
-	test.symbols = symbols
-	test.data = &internal.BarEventFromCSVFileData{FilePath: "../data/"}
-	d, err := test.loadData(test.data, symbols)
-	if err != nil {
-		// handle error
-		log.Fatal(err)
-	}
-	test.data = d
-	// log.Printf("test.data: [%T] %+v \n", test.data, test.data)
-	// log.Printf("test: [%T] %+v \n", test, test)
-	return test
+// New creates a default test backtest value for use.
+func New() *Test {
+	return &Test{}
+}
+
+// SetSymbols sets the symbols to include into the test
+func (t *Test) SetSymbols(symbols []string) {
+	t.symbols = symbols
+}
+
+// SetData sets the data provider to to be used within the test
+func (t *Test) SetData(data internal.DataHandler) {
+	t.data = data
 }
 
 // Run starts the test.
-func (t Test) Run() {
+func (t *Test) Run() {
 	log.Println("Hello test.")
-	// log.Printf("t.symbols: [%T] %v \n", t.symbols, t.symbols)
-	// log.Printf("t.data: [%T] %v \n", t.data, t.data)
-}
 
-// load data into internal data struct
-func (t Test) loadData(dh internal.DataHandler, symbols []string) (data internal.DataHandler, err error) {
-
-	if len(symbols) == 0 {
-		// bt.data.LoadAll()
-		log.Println("No symbols given")
-	} else {
-		err := dh.Load(t.symbols)
-		if err != nil {
-			// handle error
-			log.Fatal(err)
-		}
-
-		eventStream := make([]internal.BarEvent, len(t.data))
-		for i, v := range dh.dataStream {
-			eventStream[i] = v
-		}
-
-		stream := dh.GetStream()
-		for i := 0; i < 10; i++ {
-			log.Printf("event: %s %s\n", stream[i].date.Format("2006-01-02"), stream[i].symbol)
+	// view the first entries of the data stream
+	for i, v := range t.data.Stream() {
+		// type switch for event type in stream
+		switch val := v.(type) {
+		case internal.BarEvent:
+			if i < 10 {
+				log.Printf("%d: dataEvent: %s %s\n", i, val.Date.Format("2006-01-02"), val.Symbol)
+			}
 		}
 	}
-
-	return dh, nil
 }
 
 func (t Test) continueLoopCondition() bool {

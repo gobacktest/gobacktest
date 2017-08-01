@@ -1,22 +1,33 @@
 package internal
 
-// PortfolioHandler interface is the basic building block for a portfolio.
+// PortfolioHandler is the combined interface building block for a portfolio.
 type PortfolioHandler interface {
-	updateSignal()
-	updateFill()
+	OnSignaler
+	OnFiller
 }
 
-// SimplePortfolio represent a simple portfolio struct.
-type SimplePortfolio struct {
-	// bars   []Bar
-	events []EventHandler
-	Cash   int64
+// OnSignaler as an intercafe for the OnSignal method
+type OnSignaler interface {
+	OnSignal(SignalEvent) (OrderEvent, bool)
 }
 
-func (sp SimplePortfolio) updateSignal() {
-
+// OnFiller as an intercafe for the OnFill method
+type OnFiller interface {
+	OnFill()
 }
 
-func (sp SimplePortfolio) updateFill() {
+// Portfolio represent a simple portfolio struct.
+type Portfolio struct {
+	Cash      int64
+	positions map[string]Position
+}
+
+// OnSignal handles an incomming signal event
+func (p *Portfolio) OnSignal(s SignalEvent) (order OrderEvent, ok bool) {
+	return order, true
+}
+
+// OnFill handles an incomming fill event
+func (p *Portfolio) OnFill() {
 
 }

@@ -24,7 +24,11 @@ type DataLoader interface {
 // DataStreamer is the interface returning the data streams
 type DataStreamer interface {
 	Stream() []EventHandler
+	Next() (EventHandler, bool)
+	StreamIsEmpty() bool
 }
+
+/***** Example Data struct with implemented methods *****/
 
 // Data is a basic data struct
 type Data struct {
@@ -40,6 +44,18 @@ func (d *Data) Load(s []string) error {
 func (d *Data) Stream() []EventHandler {
 	return d.dataStream
 }
+
+// Next returns the first element of the data stream and deletes it from the stream
+func (d *Data) Next() (EventHandler, bool) {
+	return BarEvent{}, false
+}
+
+// StreamIsEmpty checks if the data stream is empty
+func (d *Data) StreamIsEmpty() bool {
+	return false
+}
+
+/***** Concrete BarEventFromCSVFileData struct *****/
 
 // BarEventFromCSVFileData is a data struct, which loads the market data from csv files
 type BarEventFromCSVFileData struct {
@@ -98,6 +114,26 @@ func (d *BarEventFromCSVFileData) Stream() []EventHandler {
 	return d.dataStream
 }
 
+// Next returns the first element of the data stream and deletes it from the stream
+func (d *BarEventFromCSVFileData) Next() (event EventHandler, ok bool) {
+	if len(d.dataStream) == 0 {
+		return BarEvent{}, false
+	}
+
+	event = d.dataStream[0]
+	d.dataStream = d.dataStream[1:]
+
+	return event, true
+}
+
+// StreamIsEmpty checks if the data stream is empty
+func (d *BarEventFromCSVFileData) StreamIsEmpty() bool {
+	if len(d.dataStream) == 0 {
+		return true
+	}
+	return false
+}
+
 // readCSVFile opens and reads a csv file line by line
 // and returns a slice with a key/value map for each line
 func readCSVFile(fileName, fileDir string) ([]map[string]string, error) {
@@ -146,7 +182,7 @@ func createBarEventFromLine(line map[string]string, symbol string) (BarEvent, er
 
 	// create and populate new event
 	be := BarEvent{
-		Date:          date,
+		Timestamp:     date,
 		Symbol:        strings.ToUpper(symbol),
 		OpenPrice:     openPrice,
 		HighPrice:     highPrice,
@@ -167,12 +203,12 @@ func sortStream(stream []EventHandler) []EventHandler {
 		bar2 := stream[j].(BarEvent)
 
 		// if date is equal sort by symbol
-		if bar1.Date.Equal(bar2.Date) {
+		if bar1.Timestamp.Equal(bar2.Timestamp) {
 			return bar1.Symbol < bar2.Symbol
 		}
 
 		// else sort by date
-		return bar1.Date.Before(bar2.Date)
+		return bar1.Timestamp.Before(bar2.Timestamp)
 	})
 
 	return stream

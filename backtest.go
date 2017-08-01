@@ -9,11 +9,11 @@ import (
 
 // Test is a basic back test struct
 type Test struct {
-	symbols []string
-	data    internal.DataHandler
-	// strategy     internal.StrategyHandler
-	// eventStream []internal.EventHandler
-	// portfolio    internal.PortfolioHandler
+	symbols    []string
+	data       internal.DataHandler
+	strategy   internal.StrategyHandler
+	portfolio  internal.PortfolioHandler
+	eventQueue []internal.EventHandler
 }
 
 // New creates a default test backtest value for use.
@@ -31,22 +31,74 @@ func (t *Test) SetData(data internal.DataHandler) {
 	t.data = data
 }
 
+// SetStrategy sets the strategy provider to to be used within the test
+func (t *Test) SetStrategy(strategy internal.StrategyHandler) {
+	t.strategy = strategy
+}
+
+// SetPortfolio sets the portfolio provider to to be used within the test
+func (t *Test) SetPortfolio(portfolio internal.PortfolioHandler) {
+	t.portfolio = portfolio
+}
+
 // Run starts the test.
 func (t *Test) Run() {
-	log.Println("Hello test.")
+	log.Println("Running backtest:")
 
-	// view the first entries of the data stream
-	for i, v := range t.data.Stream() {
-		// type switch for event type in stream
-		switch val := v.(type) {
-		case internal.BarEvent:
-			if i < 10 {
-				log.Printf("%d: dataEvent: %s %s\n", i, val.Date.Format("2006-01-02"), val.Symbol)
+	events := 0
+	for dataEvent, ok := t.data.Next(); ok; dataEvent, ok = t.data.Next() {
+		// add data event to event queue
+		t.eventQueue = append(t.eventQueue, dataEvent)
+
+		// if event queue has an event
+		for event, ok := t.nextEvent(); ok; event, ok = t.nextEvent() {
+			events++
+			// type switch for event type
+			switch ev := event.(type) {
+			case internal.BarEvent:
+				signal, ok := t.strategy.CalculateSignal(ev)
+				if !ok {
+					continue
+				}
+				t.eventQueue = append(t.eventQueue, signal)
+			case internal.SignalEvent:
+				order, ok := t.portfolio.OnSignal(ev)
+				if !ok {
+					continue
+				}
+				t.eventQueue = append(t.eventQueue, order)
+			case internal.OrderEvent:
+
+			case internal.FillEvent:
+
+			default:
 			}
 		}
 	}
+
+	// dataStream should be empty now
+	log.Printf("counted %d events\n", events)
+	// log.Printf("dataStream is empty: %v\n", t.data.StreamIsEmpty())
+	// log.Printf("eventQueue is empty: %v\n", t.queueIsEmpty())
 }
 
-func (t Test) continueLoopCondition() bool {
-	return true
+func (t *Test) nextEvent() (event internal.EventHandler, ok bool) {
+	// if event queue empty return false
+	if len(t.eventQueue) == 0 {
+		return event, false
+	}
+
+	// return first element in event queue
+	event = t.eventQueue[0]
+	t.eventQueue = t.eventQueue[1:]
+
+	return event, true
+}
+
+func (t *Test) queueIsEmpty() bool {
+	// if event queue is empty return false
+	if len(t.eventQueue) == 0 {
+		return true
+	}
+	return false
 }

@@ -10,7 +10,7 @@ type EventHandler interface {
 
 // BarEvent declares an event for an OHLCV bar (Open, High, Low, Close, Volume).
 type BarEvent struct {
-	Date          time.Time
+	Timestamp     time.Time
 	Symbol        string
 	OpenPrice     float64
 	HighPrice     float64
@@ -30,6 +30,7 @@ type SignalEvent struct {
 
 // OrderEvent declares a basic order event
 type OrderEvent struct {
+	Timestamp time.Time
 	Symbol    string
 	OrderType string // market or limit
 	Direction string // buy or sell

@@ -13,6 +13,7 @@ type Test struct {
 	data       internal.DataHandler
 	strategy   internal.StrategyHandler
 	portfolio  internal.PortfolioHandler
+	exchange   internal.ExecutionHandler
 	eventQueue []internal.EventHandler
 }
 
@@ -41,6 +42,11 @@ func (t *Test) SetPortfolio(portfolio internal.PortfolioHandler) {
 	t.portfolio = portfolio
 }
 
+// SetExchange sets the execution provider to to be used within the test
+func (t *Test) SetExchange(exchange internal.ExecutionHandler) {
+	t.exchange = exchange
+}
+
 // Run starts the test.
 func (t *Test) Run() {
 	log.Println("Running backtest:")
@@ -50,7 +56,7 @@ func (t *Test) Run() {
 		// add data event to event queue
 		t.eventQueue = append(t.eventQueue, dataEvent)
 
-		// if event queue has an event
+		// if event queue has an event, start event loop
 		for event, ok := t.nextEvent(); ok; event, ok = t.nextEvent() {
 			events++
 			// type switch for event type
@@ -68,9 +74,17 @@ func (t *Test) Run() {
 				}
 				t.eventQueue = append(t.eventQueue, order)
 			case internal.OrderEvent:
-
+				fill, ok := t.exchange.ExecuteOrder(ev)
+				if !ok {
+					continue
+				}
+				t.eventQueue = append(t.eventQueue, fill)
 			case internal.FillEvent:
-
+				transaction, ok := t.portfolio.OnFill(ev)
+				if !ok {
+					continue
+				}
+				log.Printf("Transaction recorded: %#v\n", transaction)
 			default:
 			}
 		}

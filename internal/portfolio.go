@@ -13,7 +13,7 @@ type OnSignaler interface {
 
 // OnFiller as an intercafe for the OnFill method
 type OnFiller interface {
-	OnFill()
+	OnFill(FillEvent) (FillEvent, bool)
 }
 
 // Portfolio represent a simple portfolio struct.
@@ -28,6 +28,6 @@ func (p *Portfolio) OnSignal(s SignalEvent) (order OrderEvent, ok bool) {
 }
 
 // OnFill handles an incomming fill event
-func (p *Portfolio) OnFill() {
-
+func (p *Portfolio) OnFill(f FillEvent) (fill FillEvent, ok bool) {
+	return f, true
 }

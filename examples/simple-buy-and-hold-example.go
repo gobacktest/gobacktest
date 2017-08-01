@@ -26,5 +26,9 @@ func main() {
 	strategy := &internal.SimpleStrategy{}
 	bt.SetStrategy(strategy)
 
+	// create execution provider and load into the backtest
+	exchange := &internal.Exchange{}
+	bt.SetExchange(exchange)
+
 	bt.Run()
 }

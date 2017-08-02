@@ -2,6 +2,8 @@ package internal
 
 import (
 	"time"
+
+	"github.com/dirkolbrich/gobacktest/internal/utils"
 )
 
 // EventHandler declares the basic event interface
@@ -32,19 +34,19 @@ type SignalEvent struct {
 type OrderEvent struct {
 	Timestamp time.Time
 	Symbol    string
-	OrderType string // market or limit
-	Direction string // buy or sell
-	Limit     int64  // limit for the order
-	Qty       int64  // quantity of the order
+	Direction string  // buy or sell
+	Qty       int64   // quantity of the order
+	OrderType string  // market or limit
+	Limit     float64 // limit for the order
 }
 
 // FillEvent declares a basic fill event
 type FillEvent struct {
 	Timestamp   time.Time
 	Symbol      string
-	Exchange    string
+	Exchange    string // exchange symbol
 	Direction   string // buy or sell
-	Qty         int64
+	Qty         int64  // positive for buy, negativ for sell
 	Price       float64
 	Commission  float64
 	ExchangeFee float64
@@ -66,7 +68,7 @@ func (f FillEvent) calculateComission() float64 {
 	case (float64(f.Qty) * f.Price * comRate) > comMax:
 		return comMax
 	default:
-		return float64(f.Qty) * f.Price * comRate
+		return utils.Round(float64(f.Qty)*f.Price*comRate, 3)
 	}
 }
 
@@ -80,5 +82,5 @@ func (f FillEvent) calculateExchangeFee() float64 {
 
 // calculateCost() calculates the total cost for a stock trade
 func (f FillEvent) calculateCost() float64 {
-	return float64(f.Qty)*f.Price + f.Commission + f.ExchangeFee
+	return f.Commission + f.ExchangeFee
 }

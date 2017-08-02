@@ -67,6 +67,10 @@ func (t *Test) Run() {
 					continue
 				}
 				t.eventQueue = append(t.eventQueue, signal)
+
+				// portfolio should be updated here as well
+				// to the last known price data
+
 			case internal.SignalEvent:
 				order, ok := t.portfolio.OnSignal(ev)
 				if !ok {
@@ -85,7 +89,6 @@ func (t *Test) Run() {
 					continue
 				}
 				log.Printf("Transaction recorded: %#v\n", transaction)
-			default:
 			}
 		}
 	}

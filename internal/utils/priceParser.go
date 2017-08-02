@@ -25,15 +25,16 @@ func (p *PriceParser) Parse(f float64) int64 {
 
 // Display an int as float with 2 decimal places
 func (p *PriceParser) Display(i int64) float64 {
-	return round(float64(i/priceMultiplier), 2)
+	return Round(float64(i/priceMultiplier), 2)
 }
 
 // DisplayDecimal an int as float with custom decimal places
 func (p *PriceParser) DisplayDecimal(i int64, decimal int) float64 {
-	return round(float64(i/priceMultiplier), decimal)
+	return Round(float64(i/priceMultiplier), decimal)
 }
 
-func round(f float64, decimals int) float64 {
+// Round rounds a float to the specified length of dezimals
+func Round(f float64, decimals int) float64 {
 	shift := math.Pow(10, float64(decimals))
 	return math.Floor((f*shift)+.5) / shift
 }

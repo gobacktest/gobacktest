@@ -21,8 +21,7 @@ func (s *SimpleStrategy) CalculateSignal(event EventHandler) (signal SignalEvent
 	switch ev := event.(type) {
 	case BarEvent:
 		signal = SignalEvent{
-			Timestamp:    time.Now(),
-			Symbol:       ev.Symbol,
+			Event:        Event{timestamp: time.Now(), symbol: ev.Symbol()},
 			Direction:    "long",
 			SuggestedQty: 100,
 		}

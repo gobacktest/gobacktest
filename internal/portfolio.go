@@ -1,8 +1,9 @@
 package internal
 
 import (
-	"log"
 	"time"
+
+	"github.com/dirkolbrich/gobacktest/internal/utils"
 )
 
 // PortfolioHandler is the combined interface building block for a portfolio.
@@ -35,7 +36,7 @@ func (p *Portfolio) SetRiskManager(risk RiskHandler) {
 
 // OnSignal handles an incomming signal event
 func (p *Portfolio) OnSignal(s SignalEvent) (order OrderEvent, ok bool) {
-	log.Printf("Portfolio receives Signal: %#v \n", s)
+	// log.Printf("Portfolio receives Signal: %#v \n", s)
 
 	// set order action
 	var action string
@@ -53,8 +54,7 @@ func (p *Portfolio) OnSignal(s SignalEvent) (order OrderEvent, ok bool) {
 	var limit float64
 
 	initialOrder := OrderEvent{
-		Timestamp: time.Now(),
-		Symbol:    s.Symbol,
+		Event:     Event{timestamp: time.Now(), symbol: s.Symbol()},
 		Direction: action,
 		Qty:       s.SuggestedQty,
 		OrderType: orderType,
@@ -68,7 +68,7 @@ func (p *Portfolio) OnSignal(s SignalEvent) (order OrderEvent, ok bool) {
 
 // OnFill handles an incomming fill event
 func (p *Portfolio) OnFill(f FillEvent) (fill FillEvent, ok bool) {
-	log.Printf("Portfolio receives Fill: %#v \n", f)
+	// log.Printf("Portfolio receives Fill: %#v \n", f)
 
 	// Check for nil map, else initialise the map
 	if p.holdings == nil {
@@ -76,15 +76,22 @@ func (p *Portfolio) OnFill(f FillEvent) (fill FillEvent, ok bool) {
 	}
 
 	// check if portfolio has already a holding of the symbol from this fill
-	if pos, ok := p.holdings[f.Symbol]; ok {
-		log.Printf("holding to this symbol exists: %+v \n", pos)
+	if pos, ok := p.holdings[f.Symbol()]; ok {
+		// log.Printf("holding to this symbol exists: %+v \n", pos)
 		// update existing Position
-		p.holdings[f.Symbol] = p.updatePosition(pos, f)
-		p.Cash -= f.Cost
+		p.holdings[f.Symbol()] = p.updatePosition(pos, f)
 	} else {
-		log.Println("No holding to this transaction")
+		// log.Println("No holding to this transaction")
 		// create new Position
-		p.holdings[f.Symbol] = p.createPosition(f)
+		p.holdings[f.Symbol()] = p.createPosition(f)
+	}
+
+	// update cash
+	if f.Direction == "buy" {
+		p.Cash = utils.Round(p.Cash-f.Net, 3)
+	} else {
+		// direction is "sell"
+		p.Cash = utils.Round(p.Cash+f.Net, 3)
 	}
 
 	return f, true
@@ -94,7 +101,7 @@ func (p *Portfolio) OnFill(f FillEvent) (fill FillEvent, ok bool) {
 func (p *Portfolio) createPosition(f FillEvent) Position {
 	pos := Position{}
 	pos.timestamp = time.Now()
-	pos.symbol = f.Symbol
+	pos.symbol = f.Symbol()
 	pos.qty = f.Qty
 	pos.avgPrice = f.Price
 	pos.value = float64(f.Qty) * f.Price
@@ -121,9 +128,9 @@ func (p *Portfolio) updatePosition(pos Position, f FillEvent) Position {
 	pos.marketPrice = f.Price
 	pos.marketValue = pos.value
 
-	pos.commission += f.Commission
-	pos.exchangeFee += f.ExchangeFee
-	pos.cost += f.Cost
+	pos.commission = utils.Round(pos.commission+f.Commission, 3)
+	pos.exchangeFee = utils.Round(pos.exchangeFee+f.ExchangeFee, 3)
+	pos.cost = utils.Round(pos.cost+f.Cost, 3)
 
 	pos.netValue = pos.value - pos.cost
 

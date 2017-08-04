@@ -8,12 +8,29 @@ import (
 
 // EventHandler declares the basic event interface
 type EventHandler interface {
+	Timestamp() time.Time
+	Symbol() string
+}
+
+// Event is a basic impementation of an event.
+type Event struct {
+	timestamp time.Time
+	symbol    string
+}
+
+// Timestamp returns the time property of an event.
+func (e Event) Timestamp() time.Time {
+	return e.timestamp
+}
+
+// Symbol returns the symbol property of an event.
+func (e Event) Symbol() string {
+	return e.symbol
 }
 
 // BarEvent declares an event for an OHLCV bar (Open, High, Low, Close, Volume).
 type BarEvent struct {
-	Timestamp     time.Time
-	Symbol        string
+	Event
 	OpenPrice     float64
 	HighPrice     float64
 	LowPrice      float64
@@ -24,16 +41,14 @@ type BarEvent struct {
 
 // SignalEvent declares a basic signal event
 type SignalEvent struct {
-	Timestamp    time.Time
-	Symbol       string
+	Event
 	Direction    string // long or short
 	SuggestedQty int64  // suggested quantitity
 }
 
 // OrderEvent declares a basic order event
 type OrderEvent struct {
-	Timestamp time.Time
-	Symbol    string
+	Event
 	Direction string  // buy or sell
 	Qty       int64   // quantity of the order
 	OrderType string  // market or limit
@@ -42,8 +57,7 @@ type OrderEvent struct {
 
 // FillEvent declares a basic fill event
 type FillEvent struct {
-	Timestamp   time.Time
-	Symbol      string
+	Event
 	Exchange    string // exchange symbol
 	Direction   string // buy or sell
 	Qty         int64  // positive for buy, negativ for sell
@@ -51,6 +65,7 @@ type FillEvent struct {
 	Commission  float64
 	ExchangeFee float64
 	Cost        float64 // the total cost of the filled order incl commision and fees
+	Net         float64 // the net value of the filled order e.g. spend/taken incl expenses
 }
 
 // calculateComission() calculates the commission for a stock trade
@@ -83,4 +98,13 @@ func (f FillEvent) calculateExchangeFee() float64 {
 // calculateCost() calculates the total cost for a stock trade
 func (f FillEvent) calculateCost() float64 {
 	return f.Commission + f.ExchangeFee
+}
+
+// calculateCost() calculates the total cost for a stock trade
+func (f FillEvent) calculateNet() float64 {
+	if f.Direction == "buy" {
+		return utils.Round(float64(f.Qty)*f.Price+f.Cost, 3)
+	}
+	// if "sell"
+	return utils.Round(float64(f.Qty)*f.Price-f.Cost, 3)
 }

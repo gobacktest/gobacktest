@@ -55,6 +55,7 @@ func (t *Test) Run() {
 	for dataEvent, ok := t.data.Next(); ok; dataEvent, ok = t.data.Next() {
 		// add data event to event queue
 		t.eventQueue = append(t.eventQueue, dataEvent)
+		log.Printf("Portfolio: %+v\n", t.portfolio)
 
 		// if event queue has an event, start event loop
 		for event, ok := t.nextEvent(); ok; event, ok = t.nextEvent() {
@@ -84,19 +85,17 @@ func (t *Test) Run() {
 				}
 				t.eventQueue = append(t.eventQueue, fill)
 			case internal.FillEvent:
-				transaction, ok := t.portfolio.OnFill(ev)
+				_, ok := t.portfolio.OnFill(ev)
 				if !ok {
 					continue
 				}
-				log.Printf("Transaction recorded: %#v\n", transaction)
+				// log.Printf("Transaction recorded: %#v\n", transaction)
 			}
 		}
 	}
 
 	// dataStream should be empty now
 	log.Printf("counted %d events\n", events)
-	// log.Printf("dataStream is empty: %v\n", t.data.StreamIsEmpty())
-	// log.Printf("eventQueue is empty: %v\n", t.queueIsEmpty())
 }
 
 func (t *Test) nextEvent() (event internal.EventHandler, ok bool) {

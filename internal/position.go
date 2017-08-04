@@ -2,6 +2,7 @@ package internal
 
 import "time"
 
+// Position represents the holdings position
 type Position struct {
 	timestamp          time.Time
 	symbol             string

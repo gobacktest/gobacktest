@@ -26,8 +26,8 @@ var barDataTests = []struct {
 		"Adj Close": "12.00",
 		"Volume":    "100"},
 		"bas.de",
-		BarEvent{Date: exampleTime,
-			Symbol:        "BAS.DE",
+		BarEvent{
+			Event:         Event{timestamp: exampleTime, symbol: "BAS.DE"},
 			OpenPrice:     float64(10.50),
 			HighPrice:     float64(15),
 			LowPrice:      float64(9),
@@ -44,8 +44,9 @@ var barDataTests = []struct {
 		"Adj Close": "null",
 		"Volume":    "null"},
 		"BAS.DE",
-		BarEvent{Date: exampleTime,
-			Symbol: "BAS.DE"}, // other values are nil
+		BarEvent{
+			Event: Event{timestamp: exampleTime, symbol: "BAS.DE"},
+		}, // other values are nil
 		nil},
 }
 

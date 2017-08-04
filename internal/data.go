@@ -10,6 +10,8 @@ import (
 	"time"
 )
 
+/***** Define DataHandler interface *****/
+
 // DataHandler is the combined data interface
 type DataHandler interface {
 	DataLoader
@@ -23,16 +25,20 @@ type DataLoader interface {
 
 // DataStreamer is the interface returning the data streams
 type DataStreamer interface {
-	Stream() []EventHandler
 	Next() (EventHandler, bool)
+	Stream() []EventHandler
 	StreamIsEmpty() bool
+	StreamHistory() []EventHandler
 }
 
-/***** Example Data struct with implemented methods *****/
+/***** Basic Data struct with implemented interface methods *****/
 
 // Data is a basic data struct
 type Data struct {
-	dataStream []EventHandler
+	dataCurrent       map[string]EventHandler
+	dataList          map[string][]EventHandler
+	dataStream        []EventHandler
+	dataStreamHistory []EventHandler
 }
 
 // Load loads data endpoints into a stream
@@ -45,9 +51,24 @@ func (d *Data) Stream() []EventHandler {
 	return d.dataStream
 }
 
-// Next returns the first element of the data stream and deletes it from the stream
-func (d *Data) Next() (EventHandler, bool) {
-	return BarEvent{}, false
+// Next returns the first element of the data stream
+// deletes it from the stream and appends it to history
+func (d *Data) Next() (event EventHandler, ok bool) {
+	if len(d.dataStream) == 0 {
+		return event, false
+	}
+
+	event = d.dataStream[0]
+	d.dataStream = d.dataStream[1:] // delete from dataStream
+	d.dataStreamHistory = append(d.dataStream, event)
+
+	// update list of current data events
+	d.updateCurrent(event)
+
+	// update list of data events for single symbol
+	d.updateList(event)
+
+	return event, true
 }
 
 // StreamIsEmpty checks if the data stream is empty
@@ -55,25 +76,44 @@ func (d *Data) StreamIsEmpty() bool {
 	return false
 }
 
+// StreamHistory returns the historic data stream
+func (d *Data) StreamHistory() []EventHandler {
+	return d.dataStreamHistory
+}
+
+func (d *Data) updateCurrent(e EventHandler) {
+	// Check for nil map, else initialise the map
+	if d.dataCurrent == nil {
+		d.dataCurrent = make(map[string]EventHandler)
+	}
+
+	d.dataCurrent[e.Symbol()] = e
+}
+
+func (d *Data) updateList(e EventHandler) {
+	// Check for nil map, else initialise the map
+	if d.dataList == nil {
+		d.dataList = make(map[string][]EventHandler)
+	}
+
+	d.dataList[e.Symbol()] = append(d.dataList[e.Symbol()], e)
+}
+
 /***** Concrete BarEventFromCSVFileData struct *****/
 
-// BarEventFromCSVFileData is a data struct, which loads the market data from csv files
+// BarEventFromCSVFileData is a data struct, which loads the market data from csv files.
+// It expands the underlying data struct
 type BarEventFromCSVFileData struct {
-	dataStream []EventHandler
-	FileDir    string
+	Data
+	FileDir string
 }
 
 // Load loads single data endpoints into a stream ordered by date (latest first).
 func (d *BarEventFromCSVFileData) Load(symbols []string) error {
-	//log.Printf("Loading %d symbols from file: %v\n", len(symbols), symbols)
-	// startLoad := time.Now()
-
 	// load elements for each symbol
 	for _, symbol := range symbols {
 		// set filename and filepath
 		fileName := symbol + ".csv"
-
-		// startReadCSV := time.Now()
 		// open file for corresponding symbol
 		lines, err := readCSVFile(fileName, d.FileDir)
 		if err != nil {
@@ -89,49 +129,12 @@ func (d *BarEventFromCSVFileData) Load(symbols []string) error {
 			}
 			d.dataStream = append(d.dataStream, event)
 		}
-
-		// elapsedReadCSV := time.Since(startReadCSV)
-		// log.Printf("Loading %s file with %d entrys took %s", fileName, len(lines), elapsedReadCSV)
 	}
 
-	// elapsed := time.Since(startLoad)
-	// log.Printf("Loading %d files took %s", len(symbols), elapsed)
-
-	//log.Printf("[%T] %v\n", d.dataStream, d.dataStream)
-
-	startSortStream := time.Now()
+	// sort data stream
 	d.dataStream = sortStream(d.Stream())
-	elapsedSortStream := time.Since(startSortStream)
-	log.Printf("Sorting %T with %d entrys took %s", d.dataStream, len(d.dataStream), elapsedSortStream)
-
-	//log.Printf("[%T] %+v\n", d.dataStream, d.dataStream)
 
 	return nil
-}
-
-// Stream returns the data stream
-func (d *BarEventFromCSVFileData) Stream() []EventHandler {
-	return d.dataStream
-}
-
-// Next returns the first element of the data stream and deletes it from the stream
-func (d *BarEventFromCSVFileData) Next() (event EventHandler, ok bool) {
-	if len(d.dataStream) == 0 {
-		return BarEvent{}, false
-	}
-
-	event = d.dataStream[0]
-	d.dataStream = d.dataStream[1:]
-
-	return event, true
-}
-
-// StreamIsEmpty checks if the data stream is empty
-func (d *BarEventFromCSVFileData) StreamIsEmpty() bool {
-	if len(d.dataStream) == 0 {
-		return true
-	}
-	return false
 }
 
 // readCSVFile opens and reads a csv file line by line
@@ -182,8 +185,7 @@ func createBarEventFromLine(line map[string]string, symbol string) (BarEvent, er
 
 	// create and populate new event
 	be := BarEvent{
-		Timestamp:     date,
-		Symbol:        strings.ToUpper(symbol),
+		Event:         Event{timestamp: date, symbol: strings.ToUpper(symbol)},
 		OpenPrice:     openPrice,
 		HighPrice:     highPrice,
 		LowPrice:      lowPrice,
@@ -203,12 +205,12 @@ func sortStream(stream []EventHandler) []EventHandler {
 		bar2 := stream[j].(BarEvent)
 
 		// if date is equal sort by symbol
-		if bar1.Timestamp.Equal(bar2.Timestamp) {
-			return bar1.Symbol < bar2.Symbol
+		if bar1.Timestamp().Equal(bar2.Timestamp()) {
+			return bar1.Symbol() < bar2.Symbol()
 		}
 
 		// else sort by date
-		return bar1.Timestamp.Before(bar2.Timestamp)
+		return bar1.Timestamp().Before(bar2.Timestamp())
 	})
 
 	return stream

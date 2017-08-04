@@ -1,8 +1,16 @@
+_**Heads up:** this is a framework in developement, not ready for any useful action. A lot of the functionality is still missing._
+
+_You can read along and follow the development of this project. And if you like, give me some tips or discussion points for improvement._
+
+___
+
 # gobacktest - fundamental stock analysis backtesting 
 
-My attempt to create a event-driven backtesting framework to test stock trading strategies based on fundamental analysis. Preverably this package will be the core of a backend service exposed via a REST API.
+My attempt to create a event-driven backtesting framework to test stock trading strategies based on fundamental analysis. Preferably this package will be the core of a backend service exposed via a REST API.
 
 ## basic components
+
+These are the basic components of an event-driven framework. 
 
 1. BackTester - general test case, bundles the follwing elements into a single test
 2. DataHandler - interface to a set of data, e.g historical quotes, fundamental data etc.
@@ -10,10 +18,13 @@ My attempt to create a event-driven backtesting framework to test stock trading 
 4. PortfolioHandler - generates orders and manages profit & loss
     + (RiskHandler) - manages the risk allocation of a portfolio
 5. ExecutionHandler - sends orders to the broker and receives the “fills” or signals that the stock has been bought or sold
+6. EventHandler - the different types of events, which travel through this system - data event, signal event, order event and fill event
+
+---
 
 ## infrastructure
 
-An overviev of the infrastructure of a complete backtesting and trading environment
+An overviev of the infrastructure of a complete backtesting and trading environment. Taken from the production roadmap of [QuantRocket](https://www.quantrocket.com/#product-roadmap).
 
 - General
     + API gateway
@@ -39,12 +50,16 @@ An overviev of the infrastructure of a complete backtesting and trading environm
     + order management and trade ledger service
     + backtesting and trading engine
 
+---
+
 ## resources
 
 ### articles
 
-- Initial idea via a blog post [Python For Finance: Algorithmic Trading](https://www.datacamp.com/community/tutorials/finance-python-trading#backtesting) by Karlijn Willems [@willems_karlijn](https://twitter.com/willems_karlijn)
-- Very good explanation of the internals of a back testing system by Michael Halls-Moore [@mhallsmoore](https://twitter.com/mhallsmoore) in the blog post series [Event-Driven-Backtesting-with-Python](https://www.quantstart.com/articles/Event-Driven-Backtesting-with-Python-Part-I).
+These links to articles are a good starting point to understand the intentions and basic functions of an event-driven backtesting framework.
+
+- Initial idea via a blog post [Python For Finance: Algorithmic Trading](https://www.datacamp.com/community/tutorials/finance-python-trading#backtesting) by Karlijn Willems [@willems_karlijn](https://twitter.com/willems_karlijn).
+- Very good explanation of the internals of a backtesting system by Michael Halls-Moore [@mhallsmoore](https://twitter.com/mhallsmoore) in the blog post series [Event-Driven-Backtesting-with-Python](https://www.quantstart.com/articles/Event-Driven-Backtesting-with-Python-Part-I).
 
 ### other backtesting frameworks
 

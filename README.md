@@ -2,11 +2,59 @@ _**Heads up:** this is a framework in developement, not ready for any useful act
 
 _You can read along and follow the development of this project. And if you like, give me some tips or discussion points for improvement._
 
-___
+---
 
 # gobacktest - fundamental stock analysis backtesting 
 
 My attempt to create a event-driven backtesting framework to test stock trading strategies based on fundamental analysis. Preferably this package will be the core of a backend service exposed via a REST API.
+
+## usage
+
+Example tests are in the `/examples` folder.
+
+```golang
+package main
+
+import (
+	"github.com/dirkolbrich/gobacktest"
+	"github.com/dirkolbrich/gobacktest/internal"
+)
+
+func main() {
+	// define symbols
+	var symbols = []string{"SDF.DE"}
+
+	// initiate new backtester and load symbols
+	test := gobacktest.New()
+	test.SetSymbols(symbols)
+
+	// set portfolio with inital cash and risk manager
+	portfolio := &internal.Portfolio{Cash: 10000}
+	riskManager := &internal.Risk{}
+	portfolio.SetRiskManager(riskManager)
+	test.SetPortfolio(portfolio)
+
+	// create data provider and load data into the backtest
+	data := &internal.BarEventFromCSVFileData{FileDir: "../data/test/"}
+	data.Load(symbols)
+	test.SetData(data)
+
+	// create strategy provider and load into the backtest
+	strategy := &internal.SimpleStrategy{}
+	test.SetStrategy(strategy)
+
+	// create execution provider and load into the backtest
+	exchange := &internal.Exchange{}
+	test.SetExchange(exchange)
+
+	// run the backtest
+	test.Run()
+
+}
+
+```
+
+---
 
 ## basic components
 

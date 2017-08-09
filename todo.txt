@@ -1,0 +1,6 @@
+load all data if no symbol is privided
+calculate metrics on new data points, e.g. SMA200, SMA50
+add transaction history list to portfolio
+update portfolio value by latest data set
+set timestamp in events to actual time of the running backtest
+split eventHandler up to dataEventHandler and backtestEventHandler?

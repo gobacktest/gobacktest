@@ -7,7 +7,7 @@ type StrategyHandler interface {
 	CalculateSignal(EventHandler) (SignalEvent, bool)
 }
 
-// SimpleStrategy is a basic test strategy, which interprets every DataEvent as a sign to buy
+// SimpleStrategy is a basic test strategy, which interprets every DataEvent as a signal to buy
 type SimpleStrategy struct {
 	eventStream []EventHandler
 }
@@ -23,7 +23,6 @@ func (s *SimpleStrategy) CalculateSignal(event EventHandler) (signal SignalEvent
 		signal = SignalEvent{
 			Event:        Event{timestamp: time.Now(), symbol: ev.Symbol()},
 			Direction:    "long",
-			SuggestedQty: 100,
 		}
 	}
 

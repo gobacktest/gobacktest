@@ -26,15 +26,15 @@ var barDataTests = []struct {
 		"Adj Close": "12.00",
 		"Volume":    "100"},
 		"bas.de",
-		BarEvent{
-			Event:         Event{timestamp: exampleTime, symbol: "BAS.DE"},
-			OpenPrice:     float64(10.50),
-			HighPrice:     float64(15),
-			LowPrice:      float64(9),
-			ClosePrice:    float64(12),
-			AdjClosePrice: float64(12),
-			Volume:        100},
-		nil},
+	BarEvent{
+		Event:         Event{timestamp: exampleTime, symbol: "BAS.DE"},
+		OpenPrice:     float64(10.50),
+		HighPrice:     float64(15),
+		LowPrice:      float64(9),
+		ClosePrice:    float64(12),
+		AdjClosePrice: float64(12),
+		Volume:        100},
+	nil},
 	{map[string]string{
 		"Date":      exampleTimeString,
 		"Open":      "null", // field in csv ist marked null, means no data
@@ -44,10 +44,10 @@ var barDataTests = []struct {
 		"Adj Close": "null",
 		"Volume":    "null"},
 		"BAS.DE",
-		BarEvent{
-			Event: Event{timestamp: exampleTime, symbol: "BAS.DE"},
-		}, // other values are nil
-		nil},
+	BarEvent{
+		Event: Event{timestamp: exampleTime, symbol: "BAS.DE"},
+	}, // other values are nil
+	nil},
 }
 
 func TestCreateBarEventFromLine(t *testing.T) {

@@ -14,7 +14,7 @@ type PortfolioHandler interface {
 
 // OnSignaler as an intercafe for the OnSignal method
 type OnSignaler interface {
-	OnSignal(SignalEvent) (OrderEvent, bool)
+	OnSignal(SignalEvent, EventHandler) (OrderEvent, bool)
 }
 
 // OnFiller as an intercafe for the OnFill method
@@ -24,23 +24,30 @@ type OnFiller interface {
 
 // Portfolio represent a simple portfolio struct.
 type Portfolio struct {
-	Cash        float64
-	holdings    map[string]Position
-	riskManager RiskHandler
+	Cash         float64
+	holdings     map[string]Position
+	transactions []FillEvent
+	sizeManager  SizeHandler
+	riskManager  RiskHandler
 }
 
-// SetRiskManager sets the risk manager to to be used within the portfolio
+// SetSizeManager sets the size manager to be used with the portfolio
+func (p *Portfolio) SetSizeManager(size SizeHandler) {
+	p.sizeManager = size
+}
+
+// SetRiskManager sets the risk manager to be used with the portfolio
 func (p *Portfolio) SetRiskManager(risk RiskHandler) {
 	p.riskManager = risk
 }
 
 // OnSignal handles an incomming signal event
-func (p *Portfolio) OnSignal(s SignalEvent) (order OrderEvent, ok bool) {
+func (p *Portfolio) OnSignal(signal SignalEvent, current EventHandler) (OrderEvent, bool) {
 	// log.Printf("Portfolio receives Signal: %#v \n", s)
 
 	// set order action
 	var action string
-	switch s.Direction {
+	switch signal.Direction {
 	case "long":
 		action = "buy"
 	case "short":
@@ -54,20 +61,25 @@ func (p *Portfolio) OnSignal(s SignalEvent) (order OrderEvent, ok bool) {
 	var limit float64
 
 	initialOrder := OrderEvent{
-		Event:     Event{timestamp: time.Now(), symbol: s.Symbol()},
+		Event:     Event{
+			timestamp: signal.Timestamp(),
+			symbol: signal.Symbol(),
+			},
 		Direction: action,
-		Qty:       s.SuggestedQty,
+		// Qty should be set by PositionSizer
 		OrderType: orderType,
 		Limit:     limit,
 	}
 
-	order, ok = p.riskManager.EvaluateOrder(initialOrder, p.holdings)
+	sizedOrder, ok := p.sizeManager.SizeOrder(initialOrder, current, p.holdings)
+
+	order, ok := p.riskManager.EvaluateOrder(sizedOrder, current, p.holdings)
 
 	return order, ok
 }
 
 // OnFill handles an incomming fill event
-func (p *Portfolio) OnFill(f FillEvent) (fill FillEvent, ok bool) {
+func (p *Portfolio) OnFill(fill FillEvent, current EventHandler) (FillEvent, bool) {
 	// log.Printf("Portfolio receives Fill: %#v \n", f)
 
 	// Check for nil map, else initialise the map
@@ -76,63 +88,27 @@ func (p *Portfolio) OnFill(f FillEvent) (fill FillEvent, ok bool) {
 	}
 
 	// check if portfolio has already a holding of the symbol from this fill
-	if pos, ok := p.holdings[f.Symbol()]; ok {
+	if pos, ok := p.holdings[fill.Symbol()]; ok {
 		// log.Printf("holding to this symbol exists: %+v \n", pos)
 		// update existing Position
-		p.holdings[f.Symbol()] = p.updatePosition(pos, f)
+		pos.Update(fill)
 	} else {
 		// log.Println("No holding to this transaction")
 		// create new Position
-		p.holdings[f.Symbol()] = p.createPosition(f)
+		pos = new(Position)
+		p.holdings[fill.Symbol()] = pos.Create(fill)
 	}
 
 	// update cash
-	if f.Direction == "buy" {
-		p.Cash = utils.Round(p.Cash-f.Net, 3)
+	if fill.Direction == "BOT" {
+		p.Cash = utils.Round(p.Cash-fill.Net, 3)
 	} else {
-		// direction is "sell"
-		p.Cash = utils.Round(p.Cash+f.Net, 3)
+		// direction is "SLD"
+		p.Cash = utils.Round(p.Cash+fill.Net, 3)
 	}
 
-	return f, true
-}
+	// add to transactions
+	p.transactions = append(p.transactions, fill)
 
-// create a new position
-func (p *Portfolio) createPosition(f FillEvent) Position {
-	pos := Position{}
-	pos.timestamp = time.Now()
-	pos.symbol = f.Symbol()
-	pos.qty = f.Qty
-	pos.avgPrice = f.Price
-	pos.value = float64(f.Qty) * f.Price
-
-	pos.marketPrice = f.Price
-	pos.marketValue = pos.value
-
-	pos.commission = f.Commission
-	pos.exchangeFee = f.ExchangeFee
-	pos.cost = f.Cost
-
-	pos.netValue = pos.value - pos.cost
-
-	return pos
-}
-
-// update a new position
-func (p *Portfolio) updatePosition(pos Position, f FillEvent) Position {
-	pos.timestamp = time.Now()
-	pos.avgPrice = (float64(pos.qty)*pos.avgPrice + float64(f.Qty)*f.Price) / float64(pos.qty+f.Qty)
-	pos.qty += f.Qty
-	pos.value = float64(pos.qty) * pos.avgPrice
-
-	pos.marketPrice = f.Price
-	pos.marketValue = pos.value
-
-	pos.commission = utils.Round(pos.commission+f.Commission, 3)
-	pos.exchangeFee = utils.Round(pos.exchangeFee+f.ExchangeFee, 3)
-	pos.cost = utils.Round(pos.cost+f.Cost, 3)
-
-	pos.netValue = pos.value - pos.cost
-
-	return pos
+	return fill, true
 }

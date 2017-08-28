@@ -4,7 +4,7 @@ import "time"
 
 // ExecutionHandler is the basic interface for executing orders
 type ExecutionHandler interface {
-	ExecuteOrder(OrderEvent, EventHandler) (FillEvent, bool)
+	ExecuteOrder(orderEvent, DataEvent) (fillEvent, bool)
 }
 
 // Exchange is a basic execution handler implementation
@@ -14,15 +14,15 @@ type Exchange struct {
 }
 
 // ExecuteOrder executes an order event
-func (e *Exchange) ExecuteOrder(order OrderEvent, data EventHandler) (FillEvent, bool) {
+func (e *Exchange) ExecuteOrder(order orderEvent, data DataEvent) (fillEvent, bool) {
 	// log.Printf("Exchange receives Order: %#v \n", order)
 
 	// parse data event
 
 	// simple implementation, creates a direct fill from the order
 	// based on the last known closing price
-	f := FillEvent{
-		Event:     Event{timestamp: time.Now(), symbol: order.Symbol()},
+	f := fillEvent{
+		event:     event{timestamp: time.Now(), symbol: order.Symbol()},
 		Exchange:  e.Symbol,
 		Direction: order.Direction,
 		Qty:       order.Qty,

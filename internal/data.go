@@ -27,21 +27,21 @@ type DataLoader interface {
 
 // DataStreamer is the interface returning the data streams
 type DataStreamer interface {
-	Next() (EventHandler, bool)
-	Stream() []EventHandler
-	History() []EventHandler
-	Current(string) EventHandler
-	List(string) []EventHandler
+	Next() (DataEvent, bool)
+	Stream() []DataEvent
+	History() []DataEvent
+	Current(string) DataEvent
+	List(string) []DataEvent
 }
 
 /***** Basic Data struct with implemented interface methods *****/
 
 // Data is a basic data struct
 type Data struct {
-	current       map[string]EventHandler
-	list          map[string][]EventHandler
-	stream        []EventHandler
-	streamHistory []EventHandler
+	current       map[string]DataEvent
+	list          map[string][]DataEvent
+	stream        []DataEvent
+	streamHistory []DataEvent
 }
 
 // Load loads data endpoints into a stream
@@ -50,13 +50,13 @@ func (d *Data) Load(s []string) error {
 }
 
 // Stream returns the data stream
-func (d *Data) Stream() []EventHandler {
+func (d *Data) Stream() []DataEvent {
 	return d.stream
 }
 
 // Next returns the first element of the data stream
 // deletes it from the stream and appends it to history
-func (d *Data) Next() (event EventHandler, ok bool) {
+func (d *Data) Next() (event DataEvent, ok bool) {
 	// check for element in datastream
 	if len(d.stream) == 0 {
 		return event, false
@@ -66,7 +66,7 @@ func (d *Data) Next() (event EventHandler, ok bool) {
 	d.stream = d.stream[1:] // delete first element from stream
 	d.streamHistory = append(d.stream, event)
 
-	if event.(type) == BarEvent {
+	if event.(type) == barEvent {
 		event = d.calculateBarMetrics(event, d.List(event.Symbol()))
 	}
 
@@ -80,43 +80,58 @@ func (d *Data) Next() (event EventHandler, ok bool) {
 }
 
 // History returns the historic data stream
-func (d *Data) History() []EventHandler {
+func (d *Data) History() []DataEvent {
 	return d.streamHistory
 }
 
 // Current returns the latest data event for a symbol.
-func (d *Data) Current(symbol string) EventHandler {
+func (d *Data) Current(symbol string) DataEvent {
 	return d.current[symbol]
 }
 
 // updateCurrent puts the last current data event to the current list.
-func (d *Data) updateCurrent(event EventHandler) {
+func (d *Data) updateCurrent(event DataEvent) {
 	// check for nil map, else initialise the map
 	if d.current == nil {
-		d.current = make(map[string]EventHandler)
+		d.current = make(map[string]DataEvent)
 	}
 
 	d.current[event.Symbol()] = event
 }
 
 // List returns the data event list for a symbol.
-func (d *Data) List(symbol string) []EventHandler {
+func (d *Data) List(symbol string) []DataEvent {
 	return d.list[symbol]
 }
 
 // updateList appends an event to the data list.
-func (d *Data) updateList(event EventHandler) {
+func (d *Data) updateList(event DataEvent) {
 	// Check for nil map, else initialise the map
 	if d.list == nil {
-		d.list = make(map[string][]EventHandler)
+		d.list = make(map[string][]DataEvent)
 	}
 
 	d.list[event.Symbol()] = append(d.list[event.Symbol()], event)
 }
 
 // calculateBarMetrics calculates metrics for a bar event
-func (d *Data) calculateBarMetrics(bar BarEvent, list []EventHandler) BarEvent {
+func (d *Data) calculateBarMetrics(bar BarEvent, list []DataEvent) BarEvent {
 	return bar
+}
+
+// sortStream sorts the dataStream
+func (d *Data) sortStream() {
+	sort.Slice(d.stream, func(i, j int) bool {
+		b1 := stream[i]
+		b2 := stream[j]
+
+		// if date is equal sort by symbol
+		if b1.Timestamp().Equal(b2.Timestamp()) {
+			return b1.Symbol() < b2.Symbol()
+		}
+		// else sort by date
+		return b1.Timestamp().Before(b2.Timestamp())
+	})
 }
 
 /***** Concrete BarEventFromCSVFileData struct *****/
@@ -171,7 +186,7 @@ func (d *BarEventFromCSVFileData) Load(symbols []string) error {
 	}
 
 	// sort data stream
-	d.stream = sortStream(d.Stream())
+	d.sortStream()
 
 	return nil
 }
@@ -237,8 +252,8 @@ func readCSVFile(path string) (lines []map[string]string, error) {
 	return lines, nil
 }
 
-// createBarEventFromLine takes a key/value line and builds a BarEvent struct
-func createBarEventFromLine(line map[string]string, symbol string) (BarEvent, error) {
+// createBarEventFromLine takes a key/value line and builds a barEvent struct
+func createBarEventFromLine(line map[string]string, symbol string) (barEvent, error) {
 	// parse each string in line to corresponding record value
 	date, _ := time.Parse("2006-01-02", line["Date"])
 	openPrice, _ := strconv.ParseFloat(line["Open"], 64)
@@ -249,8 +264,8 @@ func createBarEventFromLine(line map[string]string, symbol string) (BarEvent, er
 	volume, _ := strconv.ParseInt(line["Volume"], 10, 64)
 
 	// create and populate new event
-	event := BarEvent{
-		Event:         Event{timestamp: date, symbol: strings.ToUpper(symbol)},
+	event := barEvent{
+		event:         event{timestamp: date, symbol: strings.ToUpper(symbol)},
 		OpenPrice:     openPrice,
 		HighPrice:     highPrice,
 		LowPrice:      lowPrice,
@@ -260,22 +275,4 @@ func createBarEventFromLine(line map[string]string, symbol string) (BarEvent, er
 	}
 
 	return event, nil
-}
-
-// sortStream sorts the dataStream
-func sortStream(stream []EventHandler) []EventHandler {
-	sort.Slice(stream, func(i, j int) bool {
-		// cast EventHandler interface{} to concrete BarEvent{} implementation
-		b1 := stream[i].(BarEvent)
-		b2 := stream[j].(BarEvent)
-
-		// if date is equal sort by symbol
-		if b1.Timestamp().Equal(b2.Timestamp()) {
-			return b1.Symbol() < b2.Symbol()
-		}
-		// else sort by date
-		return b1.Timestamp().Before(b2.Timestamp())
-	})
-
-	return stream
 }

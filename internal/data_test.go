@@ -27,7 +27,7 @@ var barDataTests = []struct {
 		"Volume":    "100"},
 		"bas.de",
 	BarEvent{
-		Event:         Event{timestamp: exampleTime, symbol: "BAS.DE"},
+		event:         Event{timestamp: exampleTime, symbol: "BAS.DE"},
 		OpenPrice:     float64(10.50),
 		HighPrice:     float64(15),
 		LowPrice:      float64(9),
@@ -45,7 +45,7 @@ var barDataTests = []struct {
 		"Volume":    "null"},
 		"BAS.DE",
 	BarEvent{
-		Event: Event{timestamp: exampleTime, symbol: "BAS.DE"},
+		event: Event{timestamp: exampleTime, symbol: "BAS.DE"},
 	}, // other values are nil
 	nil},
 }

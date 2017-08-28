@@ -25,7 +25,7 @@ type Position struct {
 }
 
 // Create a new position based on a fill event
-func (p *Position) Create(fill FillEvent) {
+func (p *Position) Create(fill fillEvent) {
 	p.timestamp = fill.Timestamp()
 	p.symbol = fill.Symbol()
 	
@@ -44,7 +44,7 @@ func (p *Position) Create(fill FillEvent) {
 }
 
 // Update a position on a new fill event
-func (p *Position) Update(fill FillEvent) {
+func (p *Position) Update(fill fillEvent) {
 	p.timestamp = fill.Timestamp()
 	
 	p.avgPrice = (float64(p.qty)*p.avgPrice + float64(fill.Qty)*fill.Price) / float64(p.qty+fill.Qty)

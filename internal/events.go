@@ -4,58 +4,73 @@ import (
 	"time"
 )
 
-// EventHandler declares the basic event interface
-type EventHandler interface {
+// Event declares the basic event interface
+type Event interface {
 	Timestamp() time.Time
 	Symbol() string
 }
 
-// Event is a basic impementation of an event.
-type Event struct {
-	timestamp time.Time
-	symbol    string
-}
-
 // Timestamp returns the time property of an event.
-func (e Event) Timestamp() time.Time {
+func (e event) Timestamp() time.Time {
 	return e.timestamp
 }
 
 // Symbol returns the symbol property of an event.
-func (e Event) Symbol() string {
+func (e event) Symbol() string {
 	return e.symbol
 }
 
-// BarEvent declares an event for an OHLCV bar (Open, High, Low, Close, Volume).
-type BarEvent struct {
-	Event
+// DataEvent declares a data event interface
+type DataEvent interface {
+	Metrics() map[string]float64
+	Metric(string) float64
+}
+
+// dataEvent is the implementation of the basic DataEvent.
+type dataEvent struct {
+	metrics map[string]float64
+}
+
+// Metrics returns the a map of metrics
+func (d dataEvent) Metrics() map[string]float64 {
+	return d.metrics
+}
+
+// Metric() returns the specific metrics by key
+func (d dataEvent) Metrics(s string) (metric float64, ok bool) {
+	return d.metric[s]
+}
+
+// barEvent declares an event for an OHLCV bar (Open, High, Low, Close, Volume).
+type barEvent struct {
+	event
+	dataEvent
 	OpenPrice     float64
 	HighPrice     float64
 	LowPrice      float64
 	ClosePrice    float64
 	AdjClosePrice float64
 	Volume        int64
-	metrics       map[string]float64
 }
 
-// SignalEvent declares a basic signal event
-type SignalEvent struct {
-	Event
+// signalEvent declares a basic signal event
+type signalEvent struct {
+	event
 	Direction    string // long or short
 }
 
-// OrderEvent declares a basic order event
-type OrderEvent struct {
-	Event
+// orderEvent declares a basic order event
+type orderEvent struct {
+	event
 	Direction string  // buy or sell
 	Qty       int64   // quantity of the order
 	OrderType string  // market or limit
 	Limit     float64 // limit for the order
 }
 
-// FillEvent declares a basic fill event
-type FillEvent struct {
-	Event
+// fillEvent declares a basic fill event
+type fillEvent struct {
+	event
 	Exchange    string // exchange symbol
 	Direction   string // BOT for buy or SLD for sell
 	Qty         int64

@@ -71,7 +71,7 @@ func (t *Test) Run() {
 }
 
 // nextEvent gets the next event from the events queue
-func (t *Test) nextEvent() (event internal.EventHandler, ok bool) {
+func (t *Test) nextEvent() (event internal.Event, ok bool) {
 	// if event queue empty return false
 	if len(t.eventQueue) == 0 {
 		return event, false
@@ -85,12 +85,12 @@ func (t *Test) nextEvent() (event internal.EventHandler, ok bool) {
 }
 
 // eventLoop
-func (t *Test) eventLoop(e internal.EventHandler) {
+func (t *Test) eventLoop(e internal.Event) {
 	// symbol for this event
 	symbol := e.Symbol()
 
 	switch event := e.(type) {
-	case internal.BarEvent:
+	case internal.DataEvent:
 		signal, ok := t.strategy.CalculateSignal(event)
 		if !ok {
 			continue
@@ -100,7 +100,7 @@ func (t *Test) eventLoop(e internal.EventHandler) {
 		// portfolio should be updated here as well
 		// to the last known price data
 
-	case internal.SignalEvent:
+	case internal.signalEvent:
 		// get latest data event for this symbol
 		current := t.data.Current(symbol)
 		order, ok := t.portfolio.OnSignal(event, current)
@@ -109,7 +109,7 @@ func (t *Test) eventLoop(e internal.EventHandler) {
 		}
 		t.eventQueue = append(t.eventQueue, order)
 
-	case internal.OrderEvent:
+	case internal.orderEvent:
 		current := t.data.Current(symbol)
 		fill, ok := t.exchange.ExecuteOrder(event, current)
 		if !ok {
@@ -117,7 +117,7 @@ func (t *Test) eventLoop(e internal.EventHandler) {
 		}
 		t.eventQueue = append(t.eventQueue, fill)
 
-	case internal.FillEvent:
+	case internal.fillEvent:
 		current := t.data.Current(symbol)
 		_, ok := t.portfolio.OnFill(event, current)
 		if !ok {

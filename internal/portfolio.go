@@ -14,19 +14,19 @@ type PortfolioHandler interface {
 
 // OnSignaler as an intercafe for the OnSignal method
 type OnSignaler interface {
-	OnSignal(SignalEvent, EventHandler) (OrderEvent, bool)
+	OnSignal(signalEvent, DataEvent) (orderEvent, bool)
 }
 
 // OnFiller as an intercafe for the OnFill method
 type OnFiller interface {
-	OnFill(FillEvent) (FillEvent, bool)
+	OnFill(fillEvent) (fillEvent, bool)
 }
 
 // Portfolio represent a simple portfolio struct.
 type Portfolio struct {
 	Cash         float64
 	holdings     map[string]Position
-	transactions []FillEvent
+	transactions []fillEvent
 	sizeManager  SizeHandler
 	riskManager  RiskHandler
 }
@@ -42,7 +42,7 @@ func (p *Portfolio) SetRiskManager(risk RiskHandler) {
 }
 
 // OnSignal handles an incomming signal event
-func (p *Portfolio) OnSignal(signal SignalEvent, current EventHandler) (OrderEvent, bool) {
+func (p *Portfolio) OnSignal(signal signalEvent, current DataEvent) (orderEvent, bool) {
 	// log.Printf("Portfolio receives Signal: %#v \n", s)
 
 	// set order action
@@ -60,8 +60,8 @@ func (p *Portfolio) OnSignal(signal SignalEvent, current EventHandler) (OrderEve
 	orderType := "market" // default, should be set by risk manager
 	var limit float64
 
-	initialOrder := OrderEvent{
-		Event:     Event{
+	initialOrder := orderEvent{
+		event:     event{
 			timestamp: signal.Timestamp(),
 			symbol: signal.Symbol(),
 			},
@@ -79,7 +79,7 @@ func (p *Portfolio) OnSignal(signal SignalEvent, current EventHandler) (OrderEve
 }
 
 // OnFill handles an incomming fill event
-func (p *Portfolio) OnFill(fill FillEvent, current EventHandler) (FillEvent, bool) {
+func (p *Portfolio) OnFill(fill fillEvent, current DataEvent) (fillEvent, bool) {
 	// log.Printf("Portfolio receives Fill: %#v \n", f)
 
 	// Check for nil map, else initialise the map

@@ -1,3 +1,9 @@
+<a href="/LICENSE.md"><img alt="Software License" src="https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square"></a>
+<a href="https://travis-ci.org/dirkolbrich/gobacktest"><img alt="Travis" src="https://img.shields.io/travis/dirkolbrich/gobacktest.svg?style=flat-square"></a>
+<a href="http://godoc.org/github.com/dirkolbrich/gobacktest"><img alt="Go Doc" src="https://img.shields.io/badge/godoc-reference-blue.svg?style=flat-square"></a>
+<a href="https://codecov.io/gh/dirkolbrich/gobacktest"><img alt="Codecov branch" src="https://img.shields.io/codecov/c/github/dirkolbrich/gobacktest/master.svg?style=flat-square"></a>
+<a href="https://goreportcard.com/report/github.com/dirkolbrich/gobacktest"><img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/dirkolbrich/gobacktest?style=flat-square"></a>
+
 _**Heads up:** this is a framework in developement, not ready for any useful action. A lot of the functionality is still missing._
 
 _You can read along and follow the development of this project. And if you like, give me some tips or discussion points for improvement._

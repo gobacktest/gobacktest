@@ -243,7 +243,7 @@ type fill struct {
 	price       float64
 	commission  float64
 	exchangeFee float64
-	cost        float64 // the total cost of the filled order incl commision and fees
+	cost        float64 // the total cost of the filled order incl commission and fees
 	net         float64 // the net value of the filled order e.g. spend/taken incl expenses
 }
 

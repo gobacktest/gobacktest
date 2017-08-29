@@ -18,7 +18,7 @@ func main() {
 	data.Load(symbols)
 	test.SetData(data)
 
-	// set portfolio with inital cash and default size and risk manager
+	// set portfolio with initial cash and default size and risk manager
 	portfolio := &internal.Portfolio{Cash: 10000}
 
 	sizeManager := &internal.Size{DefaultSize: 100, DefaultValue: 1000}

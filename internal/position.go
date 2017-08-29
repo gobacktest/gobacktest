@@ -11,13 +11,13 @@ type position struct {
 	timestamp        time.Time
 	symbol           string
 	qty              int64
-	avgPrice         float64 // average price this position is aquired
+	avgPrice         float64 // average price this position is acquired
 	value            float64 // qty * price
 	marketPrice      float64 // last known market price
 	marketValue      float64 // qty * price
 	commission       float64
 	exchangeFee      float64
-	cost             float64 // value - commision - fees
+	cost             float64 // value - commission - fees
 	netValue         float64 // current value - cost
 	realProfitLoss   float64
 	unrealProfitLoss float64

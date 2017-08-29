@@ -2,14 +2,15 @@ package internal
 
 import (
 	"encoding/csv"
+	"errors"
+	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
-	"io/ioutil"
-	"path/filepath"
 )
 
 /***** Define DataHandler interface *****/
@@ -66,7 +67,8 @@ func (d *Data) Next() (event DataEvent, ok bool) {
 	d.stream = d.stream[1:] // delete first element from stream
 	d.streamHistory = append(d.stream, event)
 
-	if event.(type) == barEvent {
+	switch event := event.(type) {
+	case bar:
 		event = d.calculateBarMetrics(event, d.List(event.Symbol()))
 	}
 
@@ -115,15 +117,15 @@ func (d *Data) updateList(event DataEvent) {
 }
 
 // calculateBarMetrics calculates metrics for a bar event
-func (d *Data) calculateBarMetrics(bar BarEvent, list []DataEvent) BarEvent {
-	return bar
+func (d *Data) calculateBarMetrics(b bar, list []DataEvent) bar {
+	return b
 }
 
 // sortStream sorts the dataStream
 func (d *Data) sortStream() {
 	sort.Slice(d.stream, func(i, j int) bool {
-		b1 := stream[i]
-		b2 := stream[j]
+		b1 := d.stream[i]
+		b2 := d.stream[j]
 
 		// if date is equal sort by symbol
 		if b1.Timestamp().Equal(b2.Timestamp()) {
@@ -144,14 +146,14 @@ type BarEventFromCSVFileData struct {
 }
 
 // Load loads single data endpoints into a stream ordered by date (latest first).
-func (d *BarEventFromCSVFileData) Load(symbols []string) error {
+func (d *BarEventFromCSVFileData) Load(symbols []string) (err error) {
 	// check file location
-	if d.FileDir == nil {
-		return error.New("No directory for data provided.")
+	if len(d.FileDir) == 0 {
+		return errors.New("no directory for data provided: ")
 	}
 
 	// create a map for holding the file name for each symbol
-	var files map[string]string
+	files := make(map[string]string)
 
 	// read all files from directory
 	if len(symbols) == 0 {
@@ -193,7 +195,7 @@ func (d *BarEventFromCSVFileData) Load(symbols []string) error {
 
 // fetchFilesFromDir returns a map of all filenames in a directory
 // e.g map{"BAS.DE": "BAS.DE.csv"}
-func fetchFilesFromDir(dir string) (m map[string]string, error) {
+func fetchFilesFromDir(dir string) (m map[string]string, err error) {
 	// read filenames from directory
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
@@ -213,7 +215,7 @@ func fetchFilesFromDir(dir string) (m map[string]string, error) {
 			continue
 		}
 
-		name := filename[0 : len(filename) - len(extension)]
+		name := filename[0 : len(filename)-len(extension)]
 		m[name] = filename
 	}
 	return m, nil
@@ -221,7 +223,7 @@ func fetchFilesFromDir(dir string) (m map[string]string, error) {
 
 // readCSVFile opens and reads a csv file line by line
 // and returns a slice with a key/value map for each line
-func readCSVFile(path string) (lines []map[string]string, error) {
+func readCSVFile(path string) (lines []map[string]string, err error) {
 	// open file
 	file, err := os.Open(path)
 	if err != nil {
@@ -237,7 +239,7 @@ func readCSVFile(path string) (lines []map[string]string, error) {
 	keys, err := reader.Read()
 
 	// create a slice for holding the different maps of each line
-	var lines []map[string]string
+	// var lines []map[string]string
 
 	// read each line and create a map of values combined to the keys
 	for line, err := reader.Read(); err == nil; line, err = reader.Read() {
@@ -252,8 +254,8 @@ func readCSVFile(path string) (lines []map[string]string, error) {
 	return lines, nil
 }
 
-// createBarEventFromLine takes a key/value line and builds a barEvent struct
-func createBarEventFromLine(line map[string]string, symbol string) (barEvent, error) {
+// createBarEventFromLine takes a key/value map and a string and builds a bar struct
+func createBarEventFromLine(line map[string]string, symbol string) (BarEvent, error) {
 	// parse each string in line to corresponding record value
 	date, _ := time.Parse("2006-01-02", line["Date"])
 	openPrice, _ := strconv.ParseFloat(line["Open"], 64)
@@ -264,14 +266,14 @@ func createBarEventFromLine(line map[string]string, symbol string) (barEvent, er
 	volume, _ := strconv.ParseInt(line["Volume"], 10, 64)
 
 	// create and populate new event
-	event := barEvent{
+	event := bar{
 		event:         event{timestamp: date, symbol: strings.ToUpper(symbol)},
-		OpenPrice:     openPrice,
-		HighPrice:     highPrice,
-		LowPrice:      lowPrice,
-		ClosePrice:    closePrice,
-		AdjClosePrice: adjClosePrice,
-		Volume:        volume,
+		openPrice:     openPrice,
+		highPrice:     highPrice,
+		lowPrice:      lowPrice,
+		closePrice:    closePrice,
+		adjClosePrice: adjClosePrice,
+		volume:        volume,
 	}
 
 	return event, nil

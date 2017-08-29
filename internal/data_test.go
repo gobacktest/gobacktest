@@ -14,27 +14,27 @@ var exampleTime, _ = time.Parse("2006-01-02", exampleTimeString)
 var barDataTests = []struct {
 	line     map[string]string // start input
 	symbol   string            // symbol input
-	expEvent BarEvent          // expected BarEvent return
+	expEvent BarEvent          // expected bar return
 	expErr   error             // expected error output
 }{
 	{map[string]string{
 		"Date":      exampleTimeString,
-		"Open":      "10.50",
-		"High":      "15.00",
-		"Low":       "9.00",
-		"Close":     "12.00",
-		"Adj Close": "12.00",
+		"Open":      "10",
+		"High":      "10",
+		"Low":       "10",
+		"Close":     "10",
+		"Adj Close": "10",
 		"Volume":    "100"},
-		"bas.de",
-	BarEvent{
-		event:         Event{timestamp: exampleTime, symbol: "BAS.DE"},
-		OpenPrice:     float64(10.50),
-		HighPrice:     float64(15),
-		LowPrice:      float64(9),
-		ClosePrice:    float64(12),
-		AdjClosePrice: float64(12),
-		Volume:        100},
-	nil},
+		"TEST.DE",
+		&bar{
+			event:         event{timestamp: exampleTime, symbol: "TEST.DE"},
+			openPrice:     float64(10),
+			highPrice:     float64(10),
+			lowPrice:      float64(10),
+			closePrice:    float64(10),
+			adjClosePrice: float64(10),
+			volume:        100},
+		nil},
 	{map[string]string{
 		"Date":      exampleTimeString,
 		"Open":      "null", // field in csv ist marked null, means no data
@@ -43,19 +43,27 @@ var barDataTests = []struct {
 		"Close":     "null",
 		"Adj Close": "null",
 		"Volume":    "null"},
-		"BAS.DE",
-	BarEvent{
-		event: Event{timestamp: exampleTime, symbol: "BAS.DE"},
-	}, // other values are nil
-	nil},
+		"TEST.DE",
+		&bar{
+			event: event{timestamp: exampleTime, symbol: "TEST.DE"},
+		}, // other values are nil
+		nil},
 }
 
 func TestCreateBarEventFromLine(t *testing.T) {
 	for _, tt := range barDataTests {
 		event, err := createBarEventFromLine(tt.line, tt.symbol)
 		if (event != tt.expEvent) || (reflect.TypeOf(err) != reflect.TypeOf(tt.expErr)) {
-			t.Errorf("createBarEventFromLine(%v, %v): expected %+v %v, actual %+v %v",
+			t.Errorf("createBarEventFromLine(%v, %v): \nexpected %#v %v, \nactual   %#v %v",
 				tt.line, tt.symbol, tt.expEvent, tt.expErr, event, err)
+		}
+		if event != tt.expEvent {
+			t.Errorf("createBarEventFromLine(): \nexpected %p %T %v, \nactual   %p %T %v",
+				tt.expEvent, tt.expEvent, tt.expEvent, event, event, event)
+		}
+		if reflect.ValueOf(event) != reflect.ValueOf(tt.expEvent) {
+			t.Errorf("createBarEventFromLine(): \nexpected %T %v, \nactual   %T %v",
+				reflect.ValueOf(tt.expEvent), reflect.ValueOf(tt.expEvent), reflect.ValueOf(event), reflect.ValueOf(event))
 		}
 	}
 }

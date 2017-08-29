@@ -2,6 +2,7 @@
 package gobacktest
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/dirkolbrich/gobacktest/internal"
@@ -14,8 +15,8 @@ type Test struct {
 	strategy     internal.StrategyHandler
 	portfolio    internal.PortfolioHandler
 	exchange     internal.ExecutionHandler
-	eventQueue   []internal.EventHandler
-	eventHistory []internal.EventHandler
+	eventQueue   []internal.Event
+	eventHistory []internal.Event
 }
 
 // New creates a default test backtest value for use.
@@ -61,7 +62,7 @@ func (t *Test) Run() {
 		for event, ok := t.nextEvent(); ok; event, ok = t.nextEvent() {
 			// add event to history
 			t.eventHistory = append(t.eventHistory, event)
-			
+
 			// run event loop
 			t.eventLoop(event)
 		}
@@ -87,41 +88,40 @@ func (t *Test) nextEvent() (event internal.Event, ok bool) {
 // eventLoop
 func (t *Test) eventLoop(e internal.Event) {
 	// symbol for this event
+	fmt.Printf("%#v", e)
 	symbol := e.Symbol()
 
 	switch event := e.(type) {
 	case internal.DataEvent:
 		signal, ok := t.strategy.CalculateSignal(event)
 		if !ok {
-			continue
+			break
 		}
 		t.eventQueue = append(t.eventQueue, signal)
 
 		// portfolio should be updated here as well
 		// to the last known price data
 
-	case internal.signalEvent:
+	case internal.SignalEvent:
 		// get latest data event for this symbol
 		current := t.data.Current(symbol)
 		order, ok := t.portfolio.OnSignal(event, current)
 		if !ok {
-			continue
+			break
 		}
 		t.eventQueue = append(t.eventQueue, order)
 
-	case internal.orderEvent:
+	case internal.OrderEvent:
 		current := t.data.Current(symbol)
 		fill, ok := t.exchange.ExecuteOrder(event, current)
 		if !ok {
-			continue
+			break
 		}
 		t.eventQueue = append(t.eventQueue, fill)
-
-	case internal.fillEvent:
-		current := t.data.Current(symbol)
-		_, ok := t.portfolio.OnFill(event, current)
+	case internal.FillEvent:
+		_, ok := t.portfolio.OnFill(event)
 		if !ok {
-			continue
+			break
 		}
 		// log.Printf("Transaction recorded: %#v\n", transaction)
 	}

@@ -1,10 +1,6 @@
 package internal
 
-import (
-	"time"
-
-	"github.com/dirkolbrich/gobacktest/internal/utils"
-)
+import "github.com/dirkolbrich/gobacktest/internal/utils"
 
 // PortfolioHandler is the combined interface building block for a portfolio.
 type PortfolioHandler interface {
@@ -14,19 +10,19 @@ type PortfolioHandler interface {
 
 // OnSignaler as an intercafe for the OnSignal method
 type OnSignaler interface {
-	OnSignal(signalEvent, DataEvent) (orderEvent, bool)
+	OnSignal(SignalEvent, DataEvent) (OrderEvent, bool)
 }
 
 // OnFiller as an intercafe for the OnFill method
 type OnFiller interface {
-	OnFill(fillEvent) (fillEvent, bool)
+	OnFill(FillEvent) (FillEvent, bool)
 }
 
 // Portfolio represent a simple portfolio struct.
 type Portfolio struct {
 	Cash         float64
-	holdings     map[string]Position
-	transactions []fillEvent
+	holdings     map[string]position
+	transactions []FillEvent
 	sizeManager  SizeHandler
 	riskManager  RiskHandler
 }
@@ -42,12 +38,12 @@ func (p *Portfolio) SetRiskManager(risk RiskHandler) {
 }
 
 // OnSignal handles an incomming signal event
-func (p *Portfolio) OnSignal(signal signalEvent, current DataEvent) (orderEvent, bool) {
+func (p *Portfolio) OnSignal(signal SignalEvent, current DataEvent) (OrderEvent, bool) {
 	// log.Printf("Portfolio receives Signal: %#v \n", s)
 
 	// set order action
 	var action string
-	switch signal.Direction {
+	switch signal.Direction() {
 	case "long":
 		action = "buy"
 	case "short":
@@ -60,15 +56,15 @@ func (p *Portfolio) OnSignal(signal signalEvent, current DataEvent) (orderEvent,
 	orderType := "market" // default, should be set by risk manager
 	var limit float64
 
-	initialOrder := orderEvent{
-		event:     event{
+	initialOrder := &order{
+		event: event{
 			timestamp: signal.Timestamp(),
-			symbol: signal.Symbol(),
-			},
-		Direction: action,
+			symbol:    signal.Symbol(),
+		},
+		direction: action,
 		// Qty should be set by PositionSizer
-		OrderType: orderType,
-		Limit:     limit,
+		orderType: orderType,
+		limit:     limit,
 	}
 
 	sizedOrder, ok := p.sizeManager.SizeOrder(initialOrder, current, p.holdings)
@@ -79,12 +75,12 @@ func (p *Portfolio) OnSignal(signal signalEvent, current DataEvent) (orderEvent,
 }
 
 // OnFill handles an incomming fill event
-func (p *Portfolio) OnFill(fill fillEvent, current DataEvent) (fillEvent, bool) {
+func (p *Portfolio) OnFill(fill FillEvent) (FillEvent, bool) {
 	// log.Printf("Portfolio receives Fill: %#v \n", f)
 
 	// Check for nil map, else initialise the map
 	if p.holdings == nil {
-		p.holdings = make(map[string]Position)
+		p.holdings = make(map[string]position)
 	}
 
 	// check if portfolio has already a holding of the symbol from this fill
@@ -94,17 +90,18 @@ func (p *Portfolio) OnFill(fill fillEvent, current DataEvent) (fillEvent, bool) 
 		pos.Update(fill)
 	} else {
 		// log.Println("No holding to this transaction")
-		// create new Position
-		pos = new(Position)
-		p.holdings[fill.Symbol()] = pos.Create(fill)
+		// create new position
+		pos := position{}
+		pos.Create(fill)
+		p.holdings[fill.Symbol()] = pos
 	}
 
 	// update cash
-	if fill.Direction == "BOT" {
-		p.Cash = utils.Round(p.Cash-fill.Net, 3)
+	if fill.Direction() == "BOT" {
+		p.Cash = utils.Round(p.Cash-fill.Net(), 3)
 	} else {
 		// direction is "SLD"
-		p.Cash = utils.Round(p.Cash+fill.Net, 3)
+		p.Cash = utils.Round(p.Cash+fill.Net(), 3)
 	}
 
 	// add to transactions

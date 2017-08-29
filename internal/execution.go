@@ -1,10 +1,14 @@
 package internal
 
-import "time"
+import (
+	"time"
+
+	"github.com/dirkolbrich/gobacktest/internal/utils"
+)
 
 // ExecutionHandler is the basic interface for executing orders
 type ExecutionHandler interface {
-	ExecuteOrder(orderEvent, DataEvent) (fillEvent, bool)
+	ExecuteOrder(OrderEvent, DataEvent) (FillEvent, bool)
 }
 
 // Exchange is a basic execution handler implementation
@@ -14,25 +18,33 @@ type Exchange struct {
 }
 
 // ExecuteOrder executes an order event
-func (e *Exchange) ExecuteOrder(order orderEvent, data DataEvent) (fillEvent, bool) {
+func (e *Exchange) ExecuteOrder(order OrderEvent, data DataEvent) (FillEvent, bool) {
 	// log.Printf("Exchange receives Order: %#v \n", order)
 
+	var latestPrice float64
+
 	// parse data event
+	switch data := data.(type) {
+	case BarEvent:
+		latestPrice = data.Close()
+	case TickEvent:
+		latestPrice = (data.Bid() + data.Ask()) / 2
+	}
 
 	// simple implementation, creates a direct fill from the order
 	// based on the last known closing price
-	f := fillEvent{
+	f := &fill{
 		event:     event{timestamp: time.Now(), symbol: order.Symbol()},
-		Exchange:  e.Symbol,
-		Direction: order.Direction,
-		Qty:       order.Qty,
-		Price:     data.Close // implement fetching last price from data handler
+		exchange:  e.Symbol,
+		direction: order.Direction(),
+		qty:       order.Qty(),
+		price:     latestPrice, // implement fetching last price from data handler
 	}
 
-	f.Commission = e.calculateComission(float64(f.Qty), f.Price)
-	f.ExchangeFee = e.calculateExchangeFee()
-	f.Cost = e.calculateCost(f.Commission, f.ExchangeFee)
-	f.Net = e.calculateNet(f.Direction, float64(f.Qty), f.Price, f.Cost)
+	f.commission = e.calculateComission(float64(f.qty), f.price)
+	f.exchangeFee = e.calculateExchangeFee()
+	f.cost = e.calculateCost(f.commission, f.exchangeFee)
+	f.net = e.calculateNet(f.direction, float64(f.qty), f.price, f.cost)
 
 	return f, true
 }
@@ -69,8 +81,8 @@ func (e *Exchange) calculateCost(commission, fee float64) float64 {
 // calculateCost() calculates the total cost for a stock trade
 func (e *Exchange) calculateNet(dir string, qty, price, cost float64) float64 {
 	if dir == "BOT" {
-		return utils.Round(qty*price + cost, 4)
+		return utils.Round(qty*price+cost, 4)
 	}
 	// if "SLD"
-	return utils.Round(qty*price - cost, 4)
+	return utils.Round(qty*price-cost, 4)
 }

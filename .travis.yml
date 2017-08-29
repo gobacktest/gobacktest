@@ -1,15 +1,18 @@
 language: go
 
+env:
+  CODECLIMATE_REPO_TOKEN: 74f39697bd13028a3d7e12f5c1aa2528c54fc01b97dd0395de465f2490326a3d
+
 go:
   - 1.8
   - 1.9
   - master
 
-  before_install:
+before_install:
   - go get -t -v ./...
 
 script:
-  - go test -race -coverprofile=coverage.txt -covermode=atomic
+  - go test -v ./... -race -coverprofile=coverage.txt -covermode=atomic
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

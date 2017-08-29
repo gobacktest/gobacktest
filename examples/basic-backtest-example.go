@@ -34,7 +34,7 @@ func main() {
 	test.SetStrategy(strategy)
 
 	// create execution provider and load into the backtest
-	exchange := &internal.Exchange{Symbol: "XETRA", ExchangeFee: 1.75}
+	exchange := &internal.Exchange{Symbol: "TEST", ExchangeFee: 1.00}
 	test.SetExchange(exchange)
 
 	// run the backtest

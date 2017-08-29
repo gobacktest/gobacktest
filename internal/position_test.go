@@ -1,6 +1,9 @@
 package internal
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 // initialize new Position ready for use
 var p = new(position)
@@ -42,8 +45,8 @@ var createPositionTests = []struct {
 func TestCreate(t *testing.T) {
 	for _, tt := range createPositionTests {
 		p.Create(tt.fill)
-		if p != tt.expPos {
-			t.Errorf("Create(%v): \nexpected %p %+v, \nactual   %p %+v", tt.fill, tt.expPos, tt.expPos, p, p)
+		if !reflect.DeepEqual(p, tt.expPos) {
+			t.Fatalf("Create(%v): \nexpected %p %#v, \nactual   %p %#v", tt.fill, tt.expPos, tt.expPos, p, p)
 		}
 	}
 }

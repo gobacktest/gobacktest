@@ -26,7 +26,7 @@ var barDataTests = []struct {
 		"Adj Close": "10",
 		"Volume":    "100"},
 		"TEST.DE",
-		&bar{
+		bar{
 			event:         event{timestamp: exampleTime, symbol: "TEST.DE"},
 			openPrice:     float64(10),
 			highPrice:     float64(10),
@@ -44,7 +44,7 @@ var barDataTests = []struct {
 		"Adj Close": "null",
 		"Volume":    "null"},
 		"TEST.DE",
-		&bar{
+		bar{
 			event: event{timestamp: exampleTime, symbol: "TEST.DE"},
 		}, // other values are nil
 		nil},
@@ -53,17 +53,9 @@ var barDataTests = []struct {
 func TestCreateBarEventFromLine(t *testing.T) {
 	for _, tt := range barDataTests {
 		event, err := createBarEventFromLine(tt.line, tt.symbol)
-		if (event != tt.expEvent) || (reflect.TypeOf(err) != reflect.TypeOf(tt.expErr)) {
-			t.Errorf("createBarEventFromLine(%v, %v): \nexpected %#v %v, \nactual   %#v %v",
+		if !reflect.DeepEqual(event, tt.expEvent) || (reflect.TypeOf(err) != reflect.TypeOf(tt.expErr)) {
+			t.Fatalf("createBarEventFromLine(%v, %v): \nexpected %#v %v, \nactual   %#v %v",
 				tt.line, tt.symbol, tt.expEvent, tt.expErr, event, err)
-		}
-		if event != tt.expEvent {
-			t.Errorf("createBarEventFromLine(): \nexpected %p %T %v, \nactual   %p %T %v",
-				tt.expEvent, tt.expEvent, tt.expEvent, event, event, event)
-		}
-		if reflect.ValueOf(event) != reflect.ValueOf(tt.expEvent) {
-			t.Errorf("createBarEventFromLine(): \nexpected %T %v, \nactual   %T %v",
-				reflect.ValueOf(tt.expEvent), reflect.ValueOf(tt.expEvent), reflect.ValueOf(event), reflect.ValueOf(event))
 		}
 	}
 }

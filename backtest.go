@@ -113,8 +113,8 @@ func (t *Test) eventLoop(e internal.Event) {
 
 	case internal.OrderEvent:
 		current := t.data.Current(symbol)
-		fill, ok := t.exchange.ExecuteOrder(event, current)
-		if !ok {
+		fill, err := t.exchange.ExecuteOrder(event, current)
+		if err != nil {
 			break
 		}
 		t.eventQueue = append(t.eventQueue, fill)

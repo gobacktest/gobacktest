@@ -1,8 +1,8 @@
-<a href="/LICENSE.md"><img alt="Software License" src="https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square"></a>
-<a href="https://travis-ci.org/dirkolbrich/gobacktest"><img alt="Travis" src="https://img.shields.io/travis/dirkolbrich/gobacktest.svg?style=flat-square"></a>
-<a href="http://godoc.org/github.com/dirkolbrich/gobacktest"><img alt="Go Doc" src="https://img.shields.io/badge/godoc-reference-blue.svg?style=flat-square"></a>
-<a href="https://codecov.io/gh/dirkolbrich/gobacktest"><img alt="Codecov branch" src="https://img.shields.io/codecov/c/github/dirkolbrich/gobacktest/master.svg?style=flat-square"></a>
-<a href="https://goreportcard.com/report/github.com/dirkolbrich/gobacktest"><img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/dirkolbrich/gobacktest?style=flat-square"></a>
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](/LICENSE.md)
+[![Travis](https://img.shields.io/travis/dirkolbrich/gobacktest.svg?style=flat-square)](https://travis-ci.org/dirkolbrich/gobacktest)
+[![Go Doc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat-square)](http://godoc.org/github.com/dirkolbrich/gobacktest)
+[![Coverage Status](https://img.shields.io/coveralls/dirkolbrich/gobacktest/master.svg?style=flat-square)](https://coveralls.io/github/dirkolbrich/gobacktest?branch=master)
+[![Go Report Card](https://goreportcard.com/badge/github.com/dirkolbrich/gobacktest?style=flat-square)](https://goreportcard.com/report/github.com/dirkolbrich/gobacktest)
 
 _**Heads up:** this is a framework in developement, not ready for any useful action. A lot of the functionality is still missing._
 

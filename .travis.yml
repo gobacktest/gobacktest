@@ -1,8 +1,5 @@
 language: go
 
-env:
-  CODECLIMATE_REPO_TOKEN: 74f39697bd13028a3d7e12f5c1aa2528c54fc01b97dd0395de465f2490326a3d
-
 go:
   - 1.8
   - 1.9
@@ -10,9 +7,11 @@ go:
 
 before_install:
   - go get -t -v ./...
+  
+install:
+  - go get -v github.com/golang/lint/golint
+  - go get -v golang.org/x/tools/cmd/cover
+  - go get -v github.com/mattn/goveralls
 
 script:
-  - go test -v ./... -race
-
-# after_success:
-#   - bash <(curl -s https://codecov.io/bash)
+  - $HOME/gopath/bin/goveralls -service=travis-ci 

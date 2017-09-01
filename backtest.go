@@ -50,25 +50,39 @@ func (t *Test) SetExchange(exchange internal.ExecutionHandler) {
 }
 
 // Run starts the test.
-func (t *Test) Run() {
+func (t *Test) Run() error {
 	log.Println("Running backtest:")
 
-	for data, ok := t.data.Next(); ok; data, ok = t.data.Next() {
-		// add data event to event queue
-		t.eventQueue = append(t.eventQueue, data)
-		log.Printf("Portfolio: %+v\n", t.portfolio)
-
-		// if event queue has an event, start event loop
-		for event, ok := t.nextEvent(); ok; event, ok = t.nextEvent() {
-			// add event to history
-			t.eventHistory = append(t.eventHistory, event)
-
-			// run event loop
-			t.eventLoop(event)
+	// poll event queue
+	for event, ok := t.nextEvent(); true; event, ok = t.nextEvent() {
+		// no event in queue
+		if !ok {
+			// poll data stream
+			for data, ok := t.data.Next(); true; data, ok = t.data.Next() {
+				// no  data event, exit
+				if !ok {
+					return nil
+				}
+				// found data, add to event stream
+				t.eventQueue = append(t.eventQueue, data)
+				break
+			}
+			// start new event polling cycle
+			continue
 		}
+		// event in queue found, processing
+		err := t.eventLoop(event)
+		if err != nil {
+			return err
+		}
+
+		// add event to history
+		t.eventHistory = append(t.eventHistory, event)
 	}
 
 	log.Printf("counted %d events\n", len(t.eventHistory))
+
+	return nil
 }
 
 // nextEvent gets the next event from the events queue
@@ -86,15 +100,15 @@ func (t *Test) nextEvent() (event internal.Event, ok bool) {
 }
 
 // eventLoop
-func (t *Test) eventLoop(e internal.Event) {
+func (t *Test) eventLoop(e internal.Event) error {
 	// symbol for this event
-	fmt.Printf("%#v", e)
+	fmt.Printf("%#v\n", e)
 	symbol := e.Symbol()
 
 	switch event := e.(type) {
 	case internal.DataEvent:
-		signal, ok := t.strategy.CalculateSignal(event)
-		if !ok {
+		signal, err := t.strategy.CalculateSignal(event)
+		if err != nil {
 			break
 		}
 		t.eventQueue = append(t.eventQueue, signal)
@@ -105,8 +119,8 @@ func (t *Test) eventLoop(e internal.Event) {
 	case internal.SignalEvent:
 		// get latest data event for this symbol
 		current := t.data.Current(symbol)
-		order, ok := t.portfolio.OnSignal(event, current)
-		if !ok {
+		order, err := t.portfolio.OnSignal(event, current)
+		if err != nil {
 			break
 		}
 		t.eventQueue = append(t.eventQueue, order)
@@ -119,10 +133,12 @@ func (t *Test) eventLoop(e internal.Event) {
 		}
 		t.eventQueue = append(t.eventQueue, fill)
 	case internal.FillEvent:
-		_, ok := t.portfolio.OnFill(event)
-		if !ok {
+		_, err := t.portfolio.OnFill(event)
+		if err != nil {
 			break
 		}
 		// log.Printf("Transaction recorded: %#v\n", transaction)
 	}
+
+	return nil
 }

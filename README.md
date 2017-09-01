@@ -27,15 +27,16 @@ import (
 )
 
 func main() {
-	// define symbols
-	var symbols = []string{"SDF.DE"}
-
-	// initiate new backtester and load symbols
+	// we nee a new backtester
 	test := gobacktest.New()
+
+	// define symbols to be tested and load them into the backtest
+	var symbols = []string{"TEST.DE"}
 	test.SetSymbols(symbols)
 
-	// set portfolio with inital cash and risk manager
+	// set a portfolio with inital cash
 	portfolio := &internal.Portfolio{Cash: 10000}
+	// choose a risk manager and load into the portfolio
 	riskManager := &internal.Risk{}
 	portfolio.SetRiskManager(riskManager)
 	test.SetPortfolio(portfolio)

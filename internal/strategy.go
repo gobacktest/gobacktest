@@ -4,7 +4,7 @@ import "time"
 
 // StrategyHandler is a basic strategy interface
 type StrategyHandler interface {
-	CalculateSignal(DataEvent) (SignalEvent, bool)
+	CalculateSignal(DataEvent) (SignalEvent, error)
 }
 
 // SimpleStrategy is a basic test strategy, which interprets every DataEvent as a signal to buy
@@ -13,7 +13,7 @@ type SimpleStrategy struct {
 }
 
 // CalculateSignal handles the single Event
-func (s *SimpleStrategy) CalculateSignal(data DataEvent) (se SignalEvent, ok bool) {
+func (s *SimpleStrategy) CalculateSignal(data DataEvent) (se SignalEvent, err error) {
 	// log.Printf("reveived event, adding to eventStream: %#v\n", event)
 	s.eventStream = append(s.eventStream, data)
 
@@ -26,5 +26,5 @@ func (s *SimpleStrategy) CalculateSignal(data DataEvent) (se SignalEvent, ok boo
 		}
 	}
 
-	return se, true
+	return se, nil
 }

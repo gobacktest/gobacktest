@@ -117,16 +117,16 @@ func (t *Test) eventLoop(e internal.Event) error {
 
 	case internal.SignalEvent:
 		// get latest data event for this symbol
-		current := t.data.Current(symbol)
-		order, err := t.portfolio.OnSignal(event, current)
+		latest := t.data.Latest(symbol)
+		order, err := t.portfolio.OnSignal(event, latest)
 		if err != nil {
 			break
 		}
 		t.eventQueue = append(t.eventQueue, order)
 
 	case internal.OrderEvent:
-		current := t.data.Current(symbol)
-		fill, err := t.exchange.ExecuteOrder(event, current)
+		latest := t.data.Latest(symbol)
+		fill, err := t.exchange.ExecuteOrder(event, latest)
 		if err != nil {
 			break
 		}

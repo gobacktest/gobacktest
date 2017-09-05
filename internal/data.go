@@ -31,7 +31,7 @@ type DataStreamer interface {
 	Next() (DataEvent, bool)
 	Stream() []DataEvent
 	History() []DataEvent
-	Current(string) DataEvent
+	Latest(string) DataEvent
 	List(string) []DataEvent
 }
 
@@ -39,7 +39,7 @@ type DataStreamer interface {
 
 // Data is a basic data struct
 type Data struct {
-	current       map[string]DataEvent
+	latest        map[string]DataEvent
 	list          map[string][]DataEvent
 	stream        []DataEvent
 	streamHistory []DataEvent
@@ -67,14 +67,8 @@ func (d *Data) Next() (event DataEvent, ok bool) {
 	d.stream = d.stream[1:] // delete first element from stream
 	d.streamHistory = append(d.stream, event)
 
-	switch event := event.(type) {
-	case bar:
-		event = d.calculateBarMetrics(event, d.List(event.Symbol()))
-	}
-
 	// update list of current data events
-	d.updateCurrent(event)
-
+	d.updateLatest(event)
 	// update list of data events for single symbol
 	d.updateList(event)
 
@@ -86,19 +80,19 @@ func (d *Data) History() []DataEvent {
 	return d.streamHistory
 }
 
-// Current returns the latest data event for a symbol.
-func (d *Data) Current(symbol string) DataEvent {
-	return d.current[symbol]
+// Latest returns the last known data event for a symbol.
+func (d *Data) Latest(symbol string) DataEvent {
+	return d.latest[symbol]
 }
 
 // updateCurrent puts the last current data event to the current list.
-func (d *Data) updateCurrent(event DataEvent) {
+func (d *Data) updateLatest(event DataEvent) {
 	// check for nil map, else initialise the map
-	if d.current == nil {
-		d.current = make(map[string]DataEvent)
+	if d.latest == nil {
+		d.latest = make(map[string]DataEvent)
 	}
 
-	d.current[event.Symbol()] = event
+	d.latest[event.Symbol()] = event
 }
 
 // List returns the data event list for a symbol.
@@ -114,11 +108,6 @@ func (d *Data) updateList(event DataEvent) {
 	}
 
 	d.list[event.Symbol()] = append(d.list[event.Symbol()], event)
-}
-
-// calculateBarMetrics calculates metrics for a bar event
-func (d *Data) calculateBarMetrics(b bar, list []DataEvent) bar {
-	return b
 }
 
 // sortStream sorts the dataStream

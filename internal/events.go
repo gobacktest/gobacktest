@@ -30,17 +30,10 @@ func (e event) Symbol() string {
 type DataEvent interface {
 	Event
 	LatestPrice() float64
-	Metrics() map[string]float64
 }
 
 // dataEvent is the implementation of the basic DataEvent.
 type dataEvent struct {
-	metrics map[string]float64
-}
-
-// Metrics returns the a map of metrics
-func (d dataEvent) Metrics() map[string]float64 {
-	return d.metrics
 }
 
 // BarEvent declares a bar event interface.

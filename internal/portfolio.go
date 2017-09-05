@@ -10,12 +10,12 @@ type PortfolioHandler interface {
 
 // OnSignaler as an intercafe for the OnSignal method
 type OnSignaler interface {
-	OnSignal(SignalEvent, DataEvent) (OrderEvent, error)
+	OnSignal(SignalEvent, DataHandler) (OrderEvent, error)
 }
 
 // OnFiller as an intercafe for the OnFill method
 type OnFiller interface {
-	OnFill(FillEvent) (FillEvent, error)
+	OnFill(FillEvent, DataHandler) (FillEvent, error)
 }
 
 // Portfolio represent a simple portfolio struct.
@@ -38,7 +38,7 @@ func (p *Portfolio) SetRiskManager(risk RiskHandler) {
 }
 
 // OnSignal handles an incomming signal event
-func (p *Portfolio) OnSignal(signal SignalEvent, current DataEvent) (OrderEvent, error) {
+func (p *Portfolio) OnSignal(signal SignalEvent, data DataHandler) (OrderEvent, error) {
 	// log.Printf("Portfolio receives Signal: %#v \n", s)
 
 	// set order action
@@ -53,7 +53,7 @@ func (p *Portfolio) OnSignal(signal SignalEvent, current DataEvent) (OrderEvent,
 	}
 
 	// set order type
-	orderType := "market" // default, should be set by risk manager
+	orderType := "MKT" // default Market, should be set by risk manager
 	var limit float64
 
 	initialOrder := &order{
@@ -67,11 +67,14 @@ func (p *Portfolio) OnSignal(signal SignalEvent, current DataEvent) (OrderEvent,
 		limit:     limit,
 	}
 
-	sizedOrder, err := p.sizeManager.SizeOrder(initialOrder, current, p.holdings)
+	// fetch latest known price for the symbol
+	latest := data.Latest(signal.Symbol())
+
+	sizedOrder, err := p.sizeManager.SizeOrder(initialOrder, latest, p.holdings)
 	if err != nil {
 	}
 
-	order, err := p.riskManager.EvaluateOrder(sizedOrder, current, p.holdings)
+	order, err := p.riskManager.EvaluateOrder(sizedOrder, latest, p.holdings)
 	if err != nil {
 	}
 
@@ -79,7 +82,7 @@ func (p *Portfolio) OnSignal(signal SignalEvent, current DataEvent) (OrderEvent,
 }
 
 // OnFill handles an incomming fill event
-func (p *Portfolio) OnFill(fill FillEvent) (FillEvent, error) {
+func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (FillEvent, error) {
 	// log.Printf("Portfolio receives Fill: %#v \n", f)
 
 	// Check for nil map, else initialise the map

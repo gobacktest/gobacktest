@@ -4,7 +4,7 @@ import "github.com/dirkolbrich/gobacktest/internal/utils"
 
 // ExecutionHandler is the basic interface for executing orders
 type ExecutionHandler interface {
-	ExecuteOrder(OrderEvent, DataEvent) (FillEvent, error)
+	ExecuteOrder(OrderEvent, DataHandler) (FillEvent, error)
 }
 
 // Exchange is a basic execution handler implementation
@@ -14,8 +14,11 @@ type Exchange struct {
 }
 
 // ExecuteOrder executes an order event
-func (e *Exchange) ExecuteOrder(order OrderEvent, data DataEvent) (FillEvent, error) {
+func (e *Exchange) ExecuteOrder(order OrderEvent, data DataHandler) (FillEvent, error) {
 	// log.Printf("Exchange receives Order: \n%#v \n%#v\n", order, data)
+
+	// fetch latest known data event for the symbol
+	latest := data.Latest(order.Symbol())
 
 	// simple implementation, creates a direct fill from the order
 	// based on the last known data price
@@ -23,7 +26,7 @@ func (e *Exchange) ExecuteOrder(order OrderEvent, data DataEvent) (FillEvent, er
 		event:    event{timestamp: order.Timestamp(), symbol: order.Symbol()},
 		exchange: e.Symbol,
 		qty:      order.Qty(),
-		price:    data.LatestPrice(), // last price from data event
+		price:    latest.LatestPrice(), // last price from data event
 	}
 
 	switch order.Direction() {

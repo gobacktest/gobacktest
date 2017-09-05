@@ -2,7 +2,6 @@
 package gobacktest
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/dirkolbrich/gobacktest/internal"
@@ -65,7 +64,6 @@ func (t *Test) Run() error {
 			}
 			// found data, add to event stream
 			t.eventQueue = append(t.eventQueue, data)
-
 			// start new event polling cycle
 			continue
 		}
@@ -100,10 +98,7 @@ func (t *Test) nextEvent() (event internal.Event, ok bool) {
 
 // eventLoop
 func (t *Test) eventLoop(e internal.Event) error {
-	// symbol for this event
-	fmt.Printf("%#v\n", e)
-	symbol := e.Symbol()
-
+	// type check for event type
 	switch event := e.(type) {
 	case internal.DataEvent:
 		signal, err := t.strategy.CalculateSignal(event, t.data)
@@ -116,23 +111,20 @@ func (t *Test) eventLoop(e internal.Event) error {
 		// to the last known price data
 
 	case internal.SignalEvent:
-		// get latest data event for this symbol
-		latest := t.data.Latest(symbol)
-		order, err := t.portfolio.OnSignal(event, latest)
+		order, err := t.portfolio.OnSignal(event, t.data)
 		if err != nil {
 			break
 		}
 		t.eventQueue = append(t.eventQueue, order)
 
 	case internal.OrderEvent:
-		latest := t.data.Latest(symbol)
-		fill, err := t.exchange.ExecuteOrder(event, latest)
+		fill, err := t.exchange.ExecuteOrder(event, t.data)
 		if err != nil {
 			break
 		}
 		t.eventQueue = append(t.eventQueue, fill)
 	case internal.FillEvent:
-		_, err := t.portfolio.OnFill(event)
+		_, err := t.portfolio.OnFill(event, t.data)
 		if err != nil {
 			break
 		}

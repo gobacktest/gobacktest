@@ -16,7 +16,7 @@ type Size struct {
 }
 
 // SizeOrder adjusts the size of an order
-func (s *Size) SizeOrder(order OrderEvent, current DataEvent, positions map[string]position) (OrderEvent, error) {
+func (s *Size) SizeOrder(order OrderEvent, latest DataEvent, positions map[string]position) (OrderEvent, error) {
 	// no default set, no sizing possible, order rejected
 	if (s.DefaultSize == 0) || (s.DefaultValue == 0) {
 		return order, errors.New("cant size order: no defaulsize or defaultValue set,")

@@ -41,17 +41,6 @@ func (p *Portfolio) SetRiskManager(risk RiskHandler) {
 func (p *Portfolio) OnSignal(signal SignalEvent, data DataHandler) (OrderEvent, error) {
 	// log.Printf("Portfolio receives Signal: %#v \n", s)
 
-	// set order action
-	var action string
-	switch signal.Direction() {
-	case "long":
-		action = "buy"
-	case "short":
-		action = "sell"
-	case "exit": // all shares should be sold or bought, depending on position
-		action = "sell"
-	}
-
 	// set order type
 	orderType := "MKT" // default Market, should be set by risk manager
 	var limit float64
@@ -61,7 +50,7 @@ func (p *Portfolio) OnSignal(signal SignalEvent, data DataHandler) (OrderEvent, 
 			timestamp: signal.Timestamp(),
 			symbol:    signal.Symbol(),
 		},
-		direction: action,
+		direction: signal.Direction(),
 		// Qty should be set by PositionSizer
 		orderType: orderType,
 		limit:     limit,

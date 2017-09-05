@@ -58,15 +58,14 @@ func (t *Test) Run() error {
 		// no event in queue
 		if !ok {
 			// poll data stream
-			for data, ok := t.data.Next(); true; data, ok = t.data.Next() {
-				// no  data event, exit
-				if !ok {
-					return nil
-				}
-				// found data, add to event stream
-				t.eventQueue = append(t.eventQueue, data)
+			data, ok := t.data.Next()
+			// no  data event, exit event loop
+			if !ok {
 				break
 			}
+			// found data, add to event stream
+			t.eventQueue = append(t.eventQueue, data)
+
 			// start new event polling cycle
 			continue
 		}

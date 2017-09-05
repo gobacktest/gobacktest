@@ -190,6 +190,10 @@ func fetchFilesFromDir(dir string) (m map[string]string, err error) {
 	if err != nil {
 		return m, err
 	}
+
+	// initialise the map
+	m = make(map[string]string)
+
 	// read filenames from directory
 	for _, file := range files {
 		// file is directory

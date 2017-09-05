@@ -20,7 +20,8 @@ type OnFiller interface {
 
 // Portfolio represent a simple portfolio struct.
 type Portfolio struct {
-	Cash         float64
+	InitialCash  float64
+	cash         float64
 	holdings     map[string]position
 	transactions []FillEvent
 	sizeManager  SizeHandler
@@ -92,12 +93,17 @@ func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (FillEvent, error) 
 		p.holdings[fill.Symbol()] = pos
 	}
 
+	// before first trade, set cash
+	if len(p.transactions) == 0 {
+		p.cash = p.InitialCash
+	}
+
 	// update cash
 	if fill.Direction() == "BOT" {
-		p.Cash = utils.Round(p.Cash-fill.Net(), 3)
+		p.cash = utils.Round(p.cash-fill.Net(), 3)
 	} else {
 		// direction is "SLD"
-		p.Cash = utils.Round(p.Cash+fill.Net(), 3)
+		p.cash = utils.Round(p.cash+fill.Net(), 3)
 	}
 
 	// add to transactions

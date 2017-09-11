@@ -35,7 +35,6 @@ var orderEventTests = []struct {
 			commission:  9.90,
 			exchangeFee: 1,
 			cost:        10.90,
-			net:         110.90,
 		},
 		nil,
 	},
@@ -45,7 +44,7 @@ func TestExecuteOrder(t *testing.T) {
 	for _, tt := range orderEventTests {
 		fill, err := e.ExecuteOrder(tt.order, tt.data)
 		if !reflect.DeepEqual(fill, tt.expFill) || (reflect.TypeOf(err) != reflect.TypeOf(tt.expErr)) {
-			t.Fatalf("ExecuteOrder(%v): \nexpected %+v %v, \nactual   %+v %v",
+			t.Errorf("ExecuteOrder(%v): \nexpected %+v %v, \nactual   %+v %v",
 				tt.order, tt.expFill, tt.expErr, fill, err)
 		}
 	}

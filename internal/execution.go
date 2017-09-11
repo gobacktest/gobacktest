@@ -39,7 +39,6 @@ func (e *Exchange) ExecuteOrder(order OrderEvent, data DataHandler) (FillEvent, 
 	f.commission = e.calculateCommission(float64(f.qty), f.price)
 	f.exchangeFee = e.calculateExchangeFee()
 	f.cost = e.calculateCost(f.commission, f.exchangeFee)
-	f.net = e.calculateNet(f.direction, float64(f.qty), f.price, f.cost)
 
 	return f, nil
 }
@@ -71,13 +70,4 @@ func (e *Exchange) calculateExchangeFee() float64 {
 // calculateCost() calculates the total cost for a stock trade
 func (e *Exchange) calculateCost(commission, fee float64) float64 {
 	return commission + fee
-}
-
-// calculateCost() calculates the total cost for a stock trade
-func (e *Exchange) calculateNet(dir string, qty, price, cost float64) float64 {
-	if dir == "BOT" {
-		return utils.Round(qty*price+cost, 4)
-	}
-	// if "SLD"
-	return utils.Round(qty*price-cost, 4)
 }

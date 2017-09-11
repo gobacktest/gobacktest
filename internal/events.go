@@ -224,7 +224,8 @@ type FillEvent interface {
 	Commission() float64
 	ExchangeFee() float64
 	Cost() float64
-	Net() float64
+	Value() float64
+	NetValue() float64
 }
 
 // fillEvent declares a basic fill event
@@ -237,7 +238,6 @@ type fill struct {
 	commission  float64
 	exchangeFee float64
 	cost        float64 // the total cost of the filled order incl commission and fees
-	net         float64 // the net value of the filled order e.g. spend/taken incl expenses
 }
 
 func (f fill) IsFill() bool {
@@ -276,6 +276,15 @@ func (f fill) Cost() float64 {
 	return f.cost
 }
 
-func (f fill) Net() float64 {
-	return f.net
+func (f fill) Value() float64 {
+	return float64(f.qty) * f.price
+}
+
+func (f fill) NetValue() float64 {
+	if f.direction == "BOT" {
+		return float64(f.qty)*f.price + f.cost
+	}
+	// SLD
+	return float64(f.qty)*f.price - f.cost
+
 }

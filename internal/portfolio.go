@@ -100,10 +100,10 @@ func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (FillEvent, error) 
 
 	// update cash
 	if fill.Direction() == "BOT" {
-		p.cash = utils.Round(p.cash-fill.Net(), 3)
+		p.cash = utils.Round(p.cash-fill.NetValue(), 3)
 	} else {
 		// direction is "SLD"
-		p.cash = utils.Round(p.cash+fill.Net(), 3)
+		p.cash = utils.Round(p.cash+fill.NetValue(), 3)
 	}
 
 	// add to transactions

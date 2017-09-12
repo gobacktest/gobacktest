@@ -78,7 +78,7 @@ func (t *Test) Run() error {
 		t.eventHistory = append(t.eventHistory, event)
 	}
 
-	log.Printf("counted %d events\n", len(t.eventHistory))
+	log.Printf("Counted %d total events.\n", len(t.eventHistory))
 
 	return nil
 }

@@ -111,3 +111,30 @@ func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (FillEvent, error) 
 
 	return fill, nil
 }
+
+// IsInvested checks if the portfolio has an open position on the given symbol
+func (p Portfolio) IsInvested(symbol string) (ok bool) {
+	pos, ok := p.holdings[symbol]
+	if ok && (pos.qty != 0) {
+		return true
+	}
+	return false
+}
+
+// IsLong checks if the portfolio has an open long position on the given symbol
+func (p Portfolio) IsLong(symbol string) (ok bool) {
+	pos, ok := p.holdings[symbol]
+	if ok && (pos.qty > 0) {
+		return true
+	}
+	return false
+}
+
+// IsShort checks if the portfolio has an open short position on the given symbol
+func (p Portfolio) IsShort(symbol string) (ok bool) {
+	pos, ok := p.holdings[symbol]
+	if ok && (pos.qty < 0) {
+		return true
+	}
+	return false
+}

@@ -6,6 +6,7 @@ import "github.com/dirkolbrich/gobacktest/internal/utils"
 type PortfolioHandler interface {
 	OnSignaler
 	OnFiller
+	Investor
 }
 
 // OnSignaler as an intercafe for the OnSignal method
@@ -16,6 +17,13 @@ type OnSignaler interface {
 // OnFiller as an intercafe for the OnFill method
 type OnFiller interface {
 	OnFill(FillEvent, DataHandler) (FillEvent, error)
+}
+
+// Investor is an inteface to check if a portfolio has a position of a symbol
+type Investor interface {
+	IsInvested(string) (position, bool)
+	IsLong(string) (position, bool)
+	IsShort(string) (position, bool)
 }
 
 // Portfolio represent a simple portfolio struct.
@@ -60,7 +68,7 @@ func (p *Portfolio) OnSignal(signal SignalEvent, data DataHandler) (OrderEvent, 
 	// fetch latest known price for the symbol
 	latest := data.Latest(signal.Symbol())
 
-	sizedOrder, err := p.sizeManager.SizeOrder(initialOrder, latest, p.holdings)
+	sizedOrder, err := p.sizeManager.SizeOrder(initialOrder, latest, p)
 	if err != nil {
 	}
 
@@ -113,28 +121,28 @@ func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (FillEvent, error) 
 }
 
 // IsInvested checks if the portfolio has an open position on the given symbol
-func (p Portfolio) IsInvested(symbol string) (ok bool) {
-	pos, ok := p.holdings[symbol]
+func (p Portfolio) IsInvested(symbol string) (pos position, ok bool) {
+	pos, ok = p.holdings[symbol]
 	if ok && (pos.qty != 0) {
-		return true
+		return pos, true
 	}
-	return false
+	return pos, false
 }
 
 // IsLong checks if the portfolio has an open long position on the given symbol
-func (p Portfolio) IsLong(symbol string) (ok bool) {
-	pos, ok := p.holdings[symbol]
+func (p Portfolio) IsLong(symbol string) (pos position, ok bool) {
+	pos, ok = p.holdings[symbol]
 	if ok && (pos.qty > 0) {
-		return true
+		return pos, true
 	}
-	return false
+	return pos, false
 }
 
 // IsShort checks if the portfolio has an open short position on the given symbol
-func (p Portfolio) IsShort(symbol string) (ok bool) {
-	pos, ok := p.holdings[symbol]
+func (p Portfolio) IsShort(symbol string) (pos position, ok bool) {
+	pos, ok = p.holdings[symbol]
 	if ok && (pos.qty < 0) {
-		return true
+		return pos, true
 	}
-	return false
+	return pos, false
 }

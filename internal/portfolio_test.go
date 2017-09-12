@@ -10,11 +10,13 @@ func TestIsInvested(t *testing.T) {
 		msg       string    // error message
 		symbol    string    // input string
 		portfolio Portfolio // input portfolio
-		expOk     bool      // expected return
+		expPos    position  // expected position return
+		expOk     bool      // expected bool return
 	}{
 		{"Portfolio is empty:",
 			"TEST.DE",
 			Portfolio{},
+			position{},
 			false,
 		},
 		{"Portfolio should be invested with long:",
@@ -24,6 +26,7 @@ func TestIsInvested(t *testing.T) {
 					"TEST.DE": {qty: 10},
 				},
 			},
+			position{},
 			true,
 		},
 		{"Portfolio should be invested with short:",
@@ -33,6 +36,7 @@ func TestIsInvested(t *testing.T) {
 					"TEST.DE": {qty: -10},
 				},
 			},
+			position{},
 			true,
 		},
 		{"Portfolio should not be invested:",
@@ -42,14 +46,15 @@ func TestIsInvested(t *testing.T) {
 					"TEST.DE": {qty: 0},
 				},
 			},
+			position{},
 			false,
 		},
 	}
 
 	for _, tc := range testCases {
-		ok := tc.portfolio.IsInvested(tc.symbol)
-		if ok != tc.expOk {
-			t.Errorf("%v\nIsInvested(%v): \nexpected %#v, \nactual %#v", tc.msg, tc.symbol, tc.expOk, ok)
+		pos, ok := tc.portfolio.IsInvested(tc.symbol)
+		if (pos != tc.expPos) && (ok != tc.expOk) {
+			t.Errorf("%v\nIsInvested(%v): \nexpected %#v %v, \nactual %#v %v", tc.msg, tc.symbol, tc.expOk, tc.expPos, pos, ok)
 		}
 	}
 }
@@ -60,11 +65,13 @@ func TestIsLong(t *testing.T) {
 		msg       string    // error message
 		symbol    string    // input string
 		portfolio Portfolio // input portfolio
-		expOk     bool      // expected return
+		expPos    position  // expected position return
+		expOk     bool      // expected bool return
 	}{
 		{"Portfolio is empty:",
 			"TEST.DE",
 			Portfolio{},
+			position{},
 			false,
 		},
 		{"Portfolio should be long:",
@@ -74,6 +81,7 @@ func TestIsLong(t *testing.T) {
 					"TEST.DE": {qty: 10},
 				},
 			},
+			position{},
 			true,
 		},
 		{"Portfolio is short:",
@@ -83,6 +91,7 @@ func TestIsLong(t *testing.T) {
 					"TEST.DE": {qty: -10},
 				},
 			},
+			position{},
 			false,
 		},
 		{"Portfolio is not invested:",
@@ -92,14 +101,15 @@ func TestIsLong(t *testing.T) {
 					"TEST.DE": {qty: 0},
 				},
 			},
+			position{},
 			false,
 		},
 	}
 
 	for _, tc := range testCases {
-		ok := tc.portfolio.IsLong(tc.symbol)
-		if ok != tc.expOk {
-			t.Errorf("%v\nIsLong(%v): \nexpected %#v, \nactual %#v", tc.msg, tc.symbol, tc.expOk, ok)
+		pos, ok := tc.portfolio.IsLong(tc.symbol)
+		if (pos != tc.expPos) && (ok != tc.expOk) {
+			t.Errorf("%v\nIsLong(%v): \nexpected %#v %v, \nactual %#v %v", tc.msg, tc.symbol, tc.expOk, tc.expPos, pos, ok)
 		}
 	}
 }
@@ -110,11 +120,13 @@ func TestIsShort(t *testing.T) {
 		msg       string    // error message
 		symbol    string    // input string
 		portfolio Portfolio // input portfolio
-		expOk     bool      // expected return
+		expPos    position  // expected position return
+		expOk     bool      // expected bool return
 	}{
 		{"Portfolio is empty:",
 			"TEST.DE",
 			Portfolio{},
+			position{},
 			false,
 		},
 		{"Portfolio is long:",
@@ -124,6 +136,7 @@ func TestIsShort(t *testing.T) {
 					"TEST.DE": {qty: 10},
 				},
 			},
+			position{},
 			false,
 		},
 		{"Portfolio should be short:",
@@ -133,6 +146,7 @@ func TestIsShort(t *testing.T) {
 					"TEST.DE": {qty: -10},
 				},
 			},
+			position{},
 			true,
 		},
 		{"Portfolio is not invested:",
@@ -142,14 +156,15 @@ func TestIsShort(t *testing.T) {
 					"TEST.DE": {qty: 0},
 				},
 			},
+			position{},
 			false,
 		},
 	}
 
 	for _, tc := range testCases {
-		ok := tc.portfolio.IsShort(tc.symbol)
-		if ok != tc.expOk {
-			t.Errorf("%v\nIsShort(%v): \nexpected %#v, \nactual %#v", tc.msg, tc.symbol, tc.expOk, ok)
+		pos, ok := tc.portfolio.IsShort(tc.symbol)
+		if (pos != tc.expPos) && (ok != tc.expOk) {
+			t.Errorf("%v\nIsShort(%v): \nexpected %#v %v, \nactual %#v %v", tc.msg, tc.symbol, tc.expOk, tc.expPos, pos, ok)
 		}
 	}
 }

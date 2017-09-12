@@ -150,6 +150,7 @@ func (d *BarEventFromCSVFileData) Load(symbols []string) (err error) {
 		if err != nil {
 			return err
 		}
+		log.Printf("%v data files found.\n", len(files))
 	}
 
 	// construct filenames for provided symbols
@@ -157,14 +158,18 @@ func (d *BarEventFromCSVFileData) Load(symbols []string) (err error) {
 		file := symbol + ".csv"
 		files[symbol] = file
 	}
+	log.Printf("Loading %v symbol files.\n", len(files))
 
 	// read file for each fileName
 	for symbol, file := range files {
+		log.Printf("Loading %s file for %s symbol.\n", file, symbol)
+
 		// open file for corresponding symbol
 		lines, err := readCSVFile(d.FileDir + file)
 		if err != nil {
 			return err
 		}
+		log.Printf("%v data lines found.\n", len(lines))
 
 		// for each found record create an event
 		for _, line := range lines {
@@ -217,13 +222,13 @@ func fetchFilesFromDir(dir string) (m map[string]string, err error) {
 // readCSVFile opens and reads a csv file line by line
 // and returns a slice with a key/value map for each line
 func readCSVFile(path string) (lines []map[string]string, err error) {
+	log.Printf("Loading from %s.\n", path)
 	// open file
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
 	defer file.Close()
-
 	// create scanner on top of file
 	reader := csv.NewReader(file)
 	// set delimeter

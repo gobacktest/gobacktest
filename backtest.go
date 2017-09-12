@@ -51,6 +51,7 @@ func (t *Test) SetExchange(exchange internal.ExecutionHandler) {
 // Run starts the test.
 func (t *Test) Run() error {
 	log.Println("Running backtest:")
+	log.Printf("Counting %v data events. \n", len(t.data.Stream()))
 
 	// poll event queue
 	for event, ok := t.nextEvent(); true; event, ok = t.nextEvent() {

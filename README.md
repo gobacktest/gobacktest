@@ -4,17 +4,17 @@
 [![Coverage Status](https://img.shields.io/coveralls/dirkolbrich/gobacktest/master.svg?style=flat-square)](https://coveralls.io/github/dirkolbrich/gobacktest?branch=master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/dirkolbrich/gobacktest?style=flat-square)](https://goreportcard.com/report/github.com/dirkolbrich/gobacktest)
 
-_**Heads up:** this is a framework in developement, not ready for any useful action. A lot of the functionality is still missing._
+_**Heads up:** This is a framework in development, a lot of the functionality is still missing._
 
 _You can read along and follow the development of this project. And if you like, give me some tips or discussion points for improvement._
 
 ---
 
-# gobacktest - fundamental stock analysis backtesting 
+# gobacktest - Fundamental stock analysis backtesting 
 
 My attempt to create a event-driven backtesting framework to test stock trading strategies based on fundamental analysis. Preferably this package will be the core of a backend service exposed via a REST API.
 
-## usage
+## Usage
 
 Example tests are in the `/examples` folder.
 
@@ -27,43 +27,49 @@ import (
 )
 
 func main() {
-	// we nee a new backtester
+	// we need a new blanc backtester
 	test := gobacktest.New()
 
-	// define symbols to be tested and load them into the backtest
+	// define the symbols to be tested and load them into the backtest
 	var symbols = []string{"TEST.DE"}
 	test.SetSymbols(symbols)
 
-	// set a portfolio with inital cash
-	portfolio := &internal.Portfolio{Cash: 10000}
-	// choose a risk manager and load into the portfolio
+	// set a portfolio with some inital cash
+	portfolio := &internal.Portfolio{InitialCash: 10000}
+	
+	// choose a risk manager and load it into the portfolio
 	riskManager := &internal.Risk{}
 	portfolio.SetRiskManager(riskManager)
 	test.SetPortfolio(portfolio)
 
-	// create data provider and load data into the backtest
-	data := &internal.BarEventFromCSVFileData{FileDir: "../data/test/"}
+	// create a data provider and load the data into the backtest
+	data := &internal.BarEventFromCSVFileData{FileDir: "../testdata/test/"}
 	data.Load(symbols)
 	test.SetData(data)
 
-	// create strategy provider and load into the backtest
+	// create a strategy provider and load it into the backtest
 	strategy := &internal.SimpleStrategy{}
 	test.SetStrategy(strategy)
 
-	// create execution provider and load into the backtest
+	// create an execution provider and load it into the backtest
 	exchange := &internal.Exchange{}
 	test.SetExchange(exchange)
 
 	// run the backtest
 	test.Run()
-
 }
-
 ```
 
 ---
+## Dependencies
 
-## basic components
+The internal calculations use the [github.com/shopspring/decimal](https://github.com/shopspring/decimal) package for arbitrary-precision fixed-point decimals.
+
+Make sure to install it into your `$GOPATH` with
+
+	go get github.com/shopspring/decimal
+---
+## Basic components
 
 These are the basic components of an event-driven framework. 
 
@@ -76,8 +82,7 @@ These are the basic components of an event-driven framework.
 6. EventHandler - the different types of events, which travel through this system - data event, signal event, order event and fill event
 
 ---
-
-## infrastructure
+## Infrastructure example
 
 An overviev of the infrastructure of a complete backtesting and trading environment. Taken from the production roadmap of [QuantRocket](https://www.quantrocket.com/#product-roadmap).
 
@@ -107,16 +112,16 @@ An overviev of the infrastructure of a complete backtesting and trading environm
 
 ---
 
-## resources
+## Resources
 
-### articles
+### Articles
 
 These links to articles are a good starting point to understand the intentions and basic functions of an event-driven backtesting framework.
 
 - Initial idea via a blog post [Python For Finance: Algorithmic Trading](https://www.datacamp.com/community/tutorials/finance-python-trading#backtesting) by Karlijn Willems [@willems_karlijn](https://twitter.com/willems_karlijn).
 - Very good explanation of the internals of a backtesting system by Michael Halls-Moore [@mhallsmoore](https://twitter.com/mhallsmoore) in the blog post series [Event-Driven-Backtesting-with-Python](https://www.quantstart.com/articles/Event-Driven-Backtesting-with-Python-Part-I).
 
-### other backtesting frameworks
+### Other backtesting frameworks
 
 - [QuantConnect](https://www.quantconnect.com)
 - [Quantopian](https://www.quantopian.com)
@@ -124,7 +129,7 @@ These links to articles are a good starting point to understand the intentions a
 - [Quandl](https://www.quandl.com) - financial data
 - [QSTrader](https://www.quantstart.com/qstrader) - open-source backtesting framework from [QuantStart](https://www.quantstart.com)
 
-### general information on quantitative finance
+### General information on Quantitative Finance
 
  - [Quantocracy](http://quantocracy.com) - forum for quant news
  - [QuantStart](https://www.quantstart.com) - articels and tutorials about quant finance

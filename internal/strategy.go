@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"errors"
 	"fmt"
 )
 
@@ -41,7 +40,7 @@ func (s *BuyAndHoldStrategy) CalculateSignal(e DataEvent, data DataHandler, p Po
 	case bar:
 		// check if already invested
 		if _, ok := p.IsInvested(e.Symbol()); ok {
-			return se, errors.New(fmt.Sprintf("already invested in %v, no signal created,", e.Symbol()))
+			return se, fmt.Errorf("already invested in %v, no signal created,", e.Symbol())
 		}
 		// create Signal
 		se = &signal{

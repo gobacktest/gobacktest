@@ -7,6 +7,7 @@ type PortfolioHandler interface {
 	OnSignaler
 	OnFiller
 	Investor
+	Updater
 }
 
 // OnSignaler as an intercafe for the OnSignal method
@@ -24,6 +25,11 @@ type Investor interface {
 	IsInvested(string) (position, bool)
 	IsLong(string) (position, bool)
 	IsShort(string) (position, bool)
+}
+
+// Updater handles the updating of the portfolio on data events
+type Updater interface {
+	Update(DataEvent)
 }
 
 // Portfolio represent a simple portfolio struct.
@@ -148,4 +154,12 @@ func (p Portfolio) IsShort(symbol string) (pos position, ok bool) {
 		return pos, true
 	}
 	return pos, false
+}
+
+// Update updates the holding on a data event
+func (p *Portfolio) Update(d DataEvent) {
+	if pos, ok := p.IsInvested(d.Symbol()); ok {
+		pos.UpdateValue(d)
+		p.holdings[d.Symbol()] = pos
+	}
 }

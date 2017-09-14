@@ -108,8 +108,8 @@ func (t *Test) eventLoop(e internal.Event) error {
 		}
 		t.eventQueue = append(t.eventQueue, signal)
 
-		// portfolio should be updated here as well
-		// to the last known price data
+		// update portfolio to the last known price data
+		t.portfolio.Update(event)
 
 	case internal.SignalEvent:
 		order, err := t.portfolio.OnSignal(event, t.data)

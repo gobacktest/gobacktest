@@ -37,6 +37,10 @@ func main() {
 	exchange := &internal.Exchange{Symbol: "TEST", ExchangeFee: 1.00}
 	test.SetExchange(exchange)
 
+	// choose a statisitc and load into the backtest
+	statistic := &internal.Statistic{}
+	test.SetStatistic(statistic)
+
 	// run the backtest
 	test.Run()
 

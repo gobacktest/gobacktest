@@ -9,13 +9,13 @@ import (
 
 // Test is a basic back test struct
 type Test struct {
-	symbols      []string
-	data         internal.DataHandler
-	strategy     internal.StrategyHandler
-	portfolio    internal.PortfolioHandler
-	exchange     internal.ExecutionHandler
-	eventQueue   []internal.Event
-	eventHistory []internal.Event
+	symbols    []string
+	data       internal.DataHandler
+	strategy   internal.StrategyHandler
+	portfolio  internal.PortfolioHandler
+	exchange   internal.ExecutionHandler
+	statistic  internal.StatisticHandler
+	eventQueue []internal.Event
 }
 
 // New creates a default test backtest value for use.
@@ -48,6 +48,11 @@ func (t *Test) SetExchange(exchange internal.ExecutionHandler) {
 	t.exchange = exchange
 }
 
+// SetStatistic sets the statistic provider to to be used within the test
+func (t *Test) SetStatistic(statistic internal.StatisticHandler) {
+	t.statistic = statistic
+}
+
 // Run starts the test.
 func (t *Test) Run() error {
 	log.Println("Running backtest:")
@@ -68,17 +73,19 @@ func (t *Test) Run() error {
 			// start new event polling cycle
 			continue
 		}
-		// event in queue found, processing
+
+		// processing event
 		err := t.eventLoop(event)
 		if err != nil {
 			return err
 		}
-
-		// add event to history
-		t.eventHistory = append(t.eventHistory, event)
+		// event in queue found, add to event history
+		// log.Printf("%#v", event)
+		// log.Printf("%#v", t.statistic)
+		t.statistic.TrackEvent(event)
 	}
 
-	log.Printf("Counted %d total events.\n", len(t.eventHistory))
+	log.Printf("Counted %d total events.\n", len(t.statistic.Events()))
 
 	return nil
 }

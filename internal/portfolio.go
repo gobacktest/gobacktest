@@ -1,6 +1,8 @@
 package internal
 
-// import "fmt"
+import (
+	"github.com/shopspring/decimal"
+)
 
 // PortfolioHandler is the combined interface building block for a portfolio.
 type PortfolioHandler interface {
@@ -8,6 +10,8 @@ type PortfolioHandler interface {
 	OnFiller
 	Investor
 	Updater
+	Casher
+	Valuer
 }
 
 // OnSignaler as an intercafe for the OnSignal method
@@ -32,9 +36,22 @@ type Updater interface {
 	Update(DataEvent)
 }
 
+// Casher handles basic portolio info
+type Casher interface {
+	SetInitialCash(float64)
+	InitialCash() float64
+	SetCash(float64)
+	Cash() float64
+}
+
+// Valuer returns the values of the portfolio
+type Valuer interface {
+	Value() float64
+}
+
 // Portfolio represent a simple portfolio struct.
 type Portfolio struct {
-	InitialCash  float64
+	initialCash  float64
 	cash         float64
 	holdings     map[string]position
 	transactions []FillEvent
@@ -87,11 +104,6 @@ func (p *Portfolio) OnSignal(signal SignalEvent, data DataHandler) (OrderEvent, 
 
 // OnFill handles an incomming fill event
 func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (FillEvent, error) {
-	// before first trade, set cash
-	if len(p.transactions) == 0 {
-		p.cash = p.InitialCash
-	}
-
 	// Check for nil map, else initialise the map
 	if p.holdings == nil {
 		p.holdings = make(map[string]position)
@@ -162,4 +174,37 @@ func (p *Portfolio) Update(d DataEvent) {
 		pos.UpdateValue(d)
 		p.holdings[d.Symbol()] = pos
 	}
+}
+
+// SetInitialCash sets the initial cash value of the portfolio
+func (p *Portfolio) SetInitialCash(initial float64) {
+	p.initialCash = initial
+}
+
+// InitialCash returns the initial cash value of the portfolio
+func (p Portfolio) InitialCash() float64 {
+	return p.initialCash
+}
+
+// SetCash sets the current cash value of the portfolio
+func (p *Portfolio) SetCash(cash float64) {
+	p.cash = cash
+}
+
+// Cash returns the current cash value of the portfolio
+func (p Portfolio) Cash() float64 {
+	return p.cash
+}
+
+// Value return the current vlue of the portfolio
+func (p Portfolio) Value() float64 {
+	holdingValue := decimal.NewFromFloat(0)
+	for _, pos := range p.holdings {
+		marketValue := decimal.NewFromFloat(pos.marketValue)
+		holdingValue = holdingValue.Add(marketValue)
+	}
+
+	cash := decimal.NewFromFloat(p.cash)
+	value, _ := cash.Add(holdingValue).Round(4).Float64()
+	return value
 }

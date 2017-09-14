@@ -58,6 +58,9 @@ func (t *Test) Run() error {
 	log.Println("Running backtest:")
 	log.Printf("Counting %v data events. \n", len(t.data.Stream()))
 
+	// before first run, set portfolio cash
+	t.portfolio.SetCash(t.portfolio.InitialCash())
+
 	// poll event queue
 	for event, ok := t.nextEvent(); true; event, ok = t.nextEvent() {
 		// no event in queue
@@ -80,12 +83,10 @@ func (t *Test) Run() error {
 			return err
 		}
 		// event in queue found, add to event history
-		// log.Printf("%#v", event)
-		// log.Printf("%#v", t.statistic)
 		t.statistic.TrackEvent(event)
 	}
 
-	log.Printf("Counted %d total events.\n", len(t.statistic.Events()))
+	t.statistic.PrintResult()
 
 	return nil
 }
@@ -109,14 +110,16 @@ func (t *Test) eventLoop(e internal.Event) error {
 	// type check for event type
 	switch event := e.(type) {
 	case internal.DataEvent:
+		// update portfolio to the last known price data
+		t.portfolio.Update(event)
+		// update statistics
+		t.statistic.Update(event, t.portfolio)
+
 		signal, err := t.strategy.CalculateSignal(event, t.data, t.portfolio)
 		if err != nil {
 			break
 		}
 		t.eventQueue = append(t.eventQueue, signal)
-
-		// update portfolio to the last known price data
-		t.portfolio.Update(event)
 
 	case internal.SignalEvent:
 		order, err := t.portfolio.OnSignal(event, t.data)
@@ -132,11 +135,11 @@ func (t *Test) eventLoop(e internal.Event) error {
 		}
 		t.eventQueue = append(t.eventQueue, fill)
 	case internal.FillEvent:
-		_, err := t.portfolio.OnFill(event, t.data)
+		transaction, err := t.portfolio.OnFill(event, t.data)
 		if err != nil {
 			break
 		}
-		// log.Printf("Transaction recorded: %#v\n", transaction)
+		t.statistic.TrackTransaction(transaction)
 	}
 
 	return nil

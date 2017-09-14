@@ -102,7 +102,7 @@ func (t *Test) eventLoop(e internal.Event) error {
 	// type check for event type
 	switch event := e.(type) {
 	case internal.DataEvent:
-		signal, err := t.strategy.CalculateSignal(event, t.data)
+		signal, err := t.strategy.CalculateSignal(event, t.data, t.portfolio)
 		if err != nil {
 			break
 		}

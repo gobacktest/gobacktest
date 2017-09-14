@@ -1,6 +1,6 @@
 package internal
 
-import "github.com/dirkolbrich/gobacktest/internal/utils"
+// import "fmt"
 
 // PortfolioHandler is the combined interface building block for a portfolio.
 type PortfolioHandler interface {
@@ -81,18 +81,24 @@ func (p *Portfolio) OnSignal(signal SignalEvent, data DataHandler) (OrderEvent, 
 
 // OnFill handles an incomming fill event
 func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (FillEvent, error) {
-	// log.Printf("Portfolio receives Fill: %#v \n", f)
+	// before first trade, set cash
+	if len(p.transactions) == 0 {
+		p.cash = p.InitialCash
+	}
 
 	// Check for nil map, else initialise the map
 	if p.holdings == nil {
 		p.holdings = make(map[string]position)
 	}
 
+	// fmt.Printf("holdings before: %+v\n", p.holdings)
+
 	// check if portfolio has already a holding of the symbol from this fill
 	if pos, ok := p.holdings[fill.Symbol()]; ok {
 		// log.Printf("holding to this symbol exists: %+v \n", pos)
 		// update existing Position
 		pos.Update(fill)
+		p.holdings[fill.Symbol()] = pos
 	} else {
 		// log.Println("No holding to this transaction")
 		// create new position
@@ -101,20 +107,17 @@ func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (FillEvent, error) 
 		p.holdings[fill.Symbol()] = pos
 	}
 
-	// before first trade, set cash
-	if len(p.transactions) == 0 {
-		p.cash = p.InitialCash
-	}
+	// fmt.Printf("holdings after: %+v\n", p.holdings)
 
 	// update cash
 	if fill.Direction() == "BOT" {
-		p.cash = utils.Round(p.cash-fill.NetValue(), 3)
+		p.cash = p.cash - fill.NetValue()
 	} else {
 		// direction is "SLD"
-		p.cash = utils.Round(p.cash+fill.NetValue(), 3)
+		p.cash = p.cash + fill.NetValue()
 	}
 
-	// add to transactions
+	// add fill to transactions
 	p.transactions = append(p.transactions, fill)
 
 	return fill, nil

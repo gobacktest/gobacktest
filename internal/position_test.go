@@ -257,72 +257,74 @@ func TestUpdate(t *testing.T) {
 		p := &position{}
 		*p = *tc.pos
 		p.Update(tc.fill)
-		if p.qty != tc.expPos.qty {
-			t.Errorf("%v qty: expected %#v, actual %#v", tc.msg, tc.expPos.qty, p.qty)
-		}
-		if p.qtyBOT != tc.expPos.qtyBOT {
-			t.Errorf("%v qtyBOT: expected %#v, actual %#v", tc.msg, tc.expPos.qtyBOT, p.qtyBOT)
-		}
-		if p.qtySLD != tc.expPos.qtySLD {
-			t.Errorf("%v qtySLD: expected %#v, actual %#v", tc.msg, tc.expPos.qtySLD, p.qtySLD)
-		}
-		if p.avgPrice != tc.expPos.avgPrice {
-			t.Errorf("%v avgPrice: expected %#v, actual %#v", tc.msg, tc.expPos.avgPrice, p.avgPrice)
-		}
-		if p.avgPriceNet != tc.expPos.avgPriceNet {
-			t.Errorf("%v avgPriceNet: expected %#v, actual %#v", tc.msg, tc.expPos.avgPriceNet, p.avgPriceNet)
-		}
-		if p.avgPriceBOT != tc.expPos.avgPriceBOT {
-			t.Errorf("%v avgPriceBOT: expected %#v, actual %#v", tc.msg, tc.expPos.avgPriceBOT, p.avgPriceBOT)
-		}
-		if p.avgPriceSLD != tc.expPos.avgPriceSLD {
-			t.Errorf("%v avgPriceSLD: expected %#v, actual %#v", tc.msg, tc.expPos.avgPriceSLD, p.avgPriceSLD)
-		}
-		if p.value != tc.expPos.value {
-			t.Errorf("%v value: expected %#v, actual %#v", tc.msg, tc.expPos.value, p.value)
-		}
-		if p.valueBOT != tc.expPos.valueBOT {
-			t.Errorf("%v valueBOT: expected %#v, actual %#v", tc.msg, tc.expPos.valueBOT, p.valueBOT)
-		}
-		if p.valueSLD != tc.expPos.valueSLD {
-			t.Errorf("%v valueSLD: expected %#v, actual %#v", tc.msg, tc.expPos.valueSLD, p.valueSLD)
-		}
-		if p.marketPrice != tc.expPos.marketPrice {
-			t.Errorf("%v marketPrice: expected %#v, actual %#v", tc.msg, tc.expPos.marketPrice, p.marketPrice)
-		}
-		if p.marketValue != tc.expPos.marketValue {
-			t.Errorf("%v marketValue: expected %#v, actual %#v", tc.msg, tc.expPos.marketValue, p.marketValue)
-		}
-		if p.commission != tc.expPos.commission {
-			t.Errorf("%v commission: expected %#v, actual %#v", tc.msg, tc.expPos.commission, p.commission)
-		}
-		if p.exchangeFee != tc.expPos.exchangeFee {
-			t.Errorf("%v exchangeFee: expected %#v, actual %#v", tc.msg, tc.expPos.exchangeFee, p.exchangeFee)
-		}
-		if p.cost != tc.expPos.cost {
-			t.Errorf("%v cost: expected %#v, actual %#v", tc.msg, tc.expPos.cost, p.cost)
-		}
-		if p.costBasis != tc.expPos.costBasis {
-			t.Errorf("%v costBasis: expected %#v, actual %#v", tc.msg, tc.expPos.costBasis, p.costBasis)
-		}
-		if p.netValue != tc.expPos.netValue {
-			t.Errorf("%v netValue: expected %#v, actual %#v", tc.msg, tc.expPos.netValue, p.netValue)
-		}
-		if p.netValueBOT != tc.expPos.netValueBOT {
-			t.Errorf("%v netValueBOT: expected %#v, actual %#v", tc.msg, tc.expPos.netValueBOT, p.netValueBOT)
-		}
-		if p.netValueSLD != tc.expPos.netValueSLD {
-			t.Errorf("%v netValueSLD: expected %#v, actual %#v", tc.msg, tc.expPos.netValueSLD, p.netValueSLD)
-		}
-		if p.realProfitLoss != tc.expPos.realProfitLoss {
-			t.Errorf("%v realProfitLoss: expected %#v, actual %#v", tc.msg, tc.expPos.realProfitLoss, p.realProfitLoss)
-		}
-		if p.unrealProfitLoss != tc.expPos.unrealProfitLoss {
-			t.Errorf("%v unrealProfitLoss: expected %#v, actual %#v", tc.msg, tc.expPos.unrealProfitLoss, p.unrealProfitLoss)
-		}
-		if p.totalProfitLoss != tc.expPos.totalProfitLoss {
-			t.Errorf("%v totalProfitLoss: expected %#v, actual %#v", tc.msg, tc.expPos.totalProfitLoss, p.totalProfitLoss)
-		}
+		// Check single values of position
+		// if p.qty != tc.expPos.qty {
+		// 	t.Errorf("%v qty: expected %#v, actual %#v", tc.msg, tc.expPos.qty, p.qty)
+		// }
+		// if p.qtyBOT != tc.expPos.qtyBOT {
+		// 	t.Errorf("%v qtyBOT: expected %#v, actual %#v", tc.msg, tc.expPos.qtyBOT, p.qtyBOT)
+		// }
+		// if p.qtySLD != tc.expPos.qtySLD {
+		// 	t.Errorf("%v qtySLD: expected %#v, actual %#v", tc.msg, tc.expPos.qtySLD, p.qtySLD)
+		// }
+		// if p.avgPrice != tc.expPos.avgPrice {
+		// 	t.Errorf("%v avgPrice: expected %#v, actual %#v", tc.msg, tc.expPos.avgPrice, p.avgPrice)
+		// }
+		// if p.avgPriceNet != tc.expPos.avgPriceNet {
+		// 	t.Errorf("%v avgPriceNet: expected %#v, actual %#v", tc.msg, tc.expPos.avgPriceNet, p.avgPriceNet)
+		// }
+		// if p.avgPriceBOT != tc.expPos.avgPriceBOT {
+		// 	t.Errorf("%v avgPriceBOT: expected %#v, actual %#v", tc.msg, tc.expPos.avgPriceBOT, p.avgPriceBOT)
+		// }
+		// if p.avgPriceSLD != tc.expPos.avgPriceSLD {
+		// 	t.Errorf("%v avgPriceSLD: expected %#v, actual %#v", tc.msg, tc.expPos.avgPriceSLD, p.avgPriceSLD)
+		// }
+		// if p.value != tc.expPos.value {
+		// 	t.Errorf("%v value: expected %#v, actual %#v", tc.msg, tc.expPos.value, p.value)
+		// }
+		// if p.valueBOT != tc.expPos.valueBOT {
+		// 	t.Errorf("%v valueBOT: expected %#v, actual %#v", tc.msg, tc.expPos.valueBOT, p.valueBOT)
+		// }
+		// if p.valueSLD != tc.expPos.valueSLD {
+		// 	t.Errorf("%v valueSLD: expected %#v, actual %#v", tc.msg, tc.expPos.valueSLD, p.valueSLD)
+		// }
+		// if p.marketPrice != tc.expPos.marketPrice {
+		// 	t.Errorf("%v marketPrice: expected %#v, actual %#v", tc.msg, tc.expPos.marketPrice, p.marketPrice)
+		// }
+		// if p.marketValue != tc.expPos.marketValue {
+		// 	t.Errorf("%v marketValue: expected %#v, actual %#v", tc.msg, tc.expPos.marketValue, p.marketValue)
+		// }
+		// if p.commission != tc.expPos.commission {
+		// 	t.Errorf("%v commission: expected %#v, actual %#v", tc.msg, tc.expPos.commission, p.commission)
+		// }
+		// if p.exchangeFee != tc.expPos.exchangeFee {
+		// 	t.Errorf("%v exchangeFee: expected %#v, actual %#v", tc.msg, tc.expPos.exchangeFee, p.exchangeFee)
+		// }
+		// if p.cost != tc.expPos.cost {
+		// 	t.Errorf("%v cost: expected %#v, actual %#v", tc.msg, tc.expPos.cost, p.cost)
+		// }
+		// if p.costBasis != tc.expPos.costBasis {
+		// 	t.Errorf("%v costBasis: expected %#v, actual %#v", tc.msg, tc.expPos.costBasis, p.costBasis)
+		// }
+		// if p.netValue != tc.expPos.netValue {
+		// 	t.Errorf("%v netValue: expected %#v, actual %#v", tc.msg, tc.expPos.netValue, p.netValue)
+		// }
+		// if p.netValueBOT != tc.expPos.netValueBOT {
+		// 	t.Errorf("%v netValueBOT: expected %#v, actual %#v", tc.msg, tc.expPos.netValueBOT, p.netValueBOT)
+		// }
+		// if p.netValueSLD != tc.expPos.netValueSLD {
+		// 	t.Errorf("%v netValueSLD: expected %#v, actual %#v", tc.msg, tc.expPos.netValueSLD, p.netValueSLD)
+		// }
+		// if p.realProfitLoss != tc.expPos.realProfitLoss {
+		// 	t.Errorf("%v realProfitLoss: expected %#v, actual %#v", tc.msg, tc.expPos.realProfitLoss, p.realProfitLoss)
+		// }
+		// if p.unrealProfitLoss != tc.expPos.unrealProfitLoss {
+		// 	t.Errorf("%v unrealProfitLoss: expected %#v, actual %#v", tc.msg, tc.expPos.unrealProfitLoss, p.unrealProfitLoss)
+		// }
+		// if p.totalProfitLoss != tc.expPos.totalProfitLoss {
+		// 	t.Errorf("%v totalProfitLoss: expected %#v, actual %#v", tc.msg, tc.expPos.totalProfitLoss, p.totalProfitLoss)
+		// }
+		// Check complete position
 		if !reflect.DeepEqual(p, tc.expPos) {
 			t.Errorf("\n%v Update(%+v): \nexpected %p %#v, \nactual   %p %#v", tc.msg, tc.fill, tc.expPos, tc.expPos, p, p)
 		}
@@ -390,72 +392,72 @@ func TestMultipleUpdate(t *testing.T) {
 			p.Update(fill)
 		}
 		// checking valus from multiple update
-		if p.qty != tc.expPos.qty {
-			t.Errorf("%v qty: expected %#v, actual %#v", tc.msg, tc.expPos.qty, p.qty)
-		}
-		if p.qtyBOT != tc.expPos.qtyBOT {
-			t.Errorf("%v qtyBOT: expected %#v, actual %#v", tc.msg, tc.expPos.qtyBOT, p.qtyBOT)
-		}
-		if p.qtySLD != tc.expPos.qtySLD {
-			t.Errorf("%v qtySLD: expected %#v, actual %#v", tc.msg, tc.expPos.qtySLD, p.qtySLD)
-		}
-		if p.avgPrice != tc.expPos.avgPrice {
-			t.Errorf("%v avgPrice: expected %#v, actual %#v", tc.msg, tc.expPos.avgPrice, p.avgPrice)
-		}
-		if p.avgPriceNet != tc.expPos.avgPriceNet {
-			t.Errorf("%v avgPriceNet: expected %#v, actual %#v", tc.msg, tc.expPos.avgPriceNet, p.avgPriceNet)
-		}
-		if p.avgPriceBOT != tc.expPos.avgPriceBOT {
-			t.Errorf("%v avgPriceBOT: expected %#v, actual %#v", tc.msg, tc.expPos.avgPriceBOT, p.avgPriceBOT)
-		}
-		if p.avgPriceSLD != tc.expPos.avgPriceSLD {
-			t.Errorf("%v avgPriceSLD: expected %#v, actual %#v", tc.msg, tc.expPos.avgPriceSLD, p.avgPriceSLD)
-		}
-		if p.value != tc.expPos.value {
-			t.Errorf("%v value: expected %#v, actual %#v", tc.msg, tc.expPos.value, p.value)
-		}
-		if p.valueBOT != tc.expPos.valueBOT {
-			t.Errorf("%v valueBOT: expected %#v, actual %#v", tc.msg, tc.expPos.valueBOT, p.valueBOT)
-		}
-		if p.valueSLD != tc.expPos.valueSLD {
-			t.Errorf("%v valueSLD: expected %#v, actual %#v", tc.msg, tc.expPos.valueSLD, p.valueSLD)
-		}
-		if p.marketPrice != tc.expPos.marketPrice {
-			t.Errorf("%v marketPrice: expected %#v, actual %#v", tc.msg, tc.expPos.marketPrice, p.marketPrice)
-		}
-		if p.marketValue != tc.expPos.marketValue {
-			t.Errorf("%v marketValue: expected %#v, actual %#v", tc.msg, tc.expPos.marketValue, p.marketValue)
-		}
-		if p.commission != tc.expPos.commission {
-			t.Errorf("%v commission: expected %#v, actual %#v", tc.msg, tc.expPos.commission, p.commission)
-		}
-		if p.exchangeFee != tc.expPos.exchangeFee {
-			t.Errorf("%v exchangeFee: expected %#v, actual %#v", tc.msg, tc.expPos.exchangeFee, p.exchangeFee)
-		}
-		if p.cost != tc.expPos.cost {
-			t.Errorf("%v cost: expected %#v, actual %#v", tc.msg, tc.expPos.cost, p.cost)
-		}
-		if p.costBasis != tc.expPos.costBasis {
-			t.Errorf("%v costBasis: expected %#v, actual %#v", tc.msg, tc.expPos.costBasis, p.costBasis)
-		}
-		if p.netValue != tc.expPos.netValue {
-			t.Errorf("%v netValue: expected %#v, actual %#v", tc.msg, tc.expPos.netValue, p.netValue)
-		}
-		if p.netValueBOT != tc.expPos.netValueBOT {
-			t.Errorf("%v netValueBOT: expected %#v, actual %#v", tc.msg, tc.expPos.netValueBOT, p.netValueBOT)
-		}
-		if p.netValueSLD != tc.expPos.netValueSLD {
-			t.Errorf("%v netValueSLD: expected %#v, actual %#v", tc.msg, tc.expPos.netValueSLD, p.netValueSLD)
-		}
-		if p.realProfitLoss != tc.expPos.realProfitLoss {
-			t.Errorf("%v realProfitLoss: expected %#v, actual %#v", tc.msg, tc.expPos.realProfitLoss, p.realProfitLoss)
-		}
-		if p.unrealProfitLoss != tc.expPos.unrealProfitLoss {
-			t.Errorf("%v unrealProfitLoss: expected %#v, actual %#v", tc.msg, tc.expPos.unrealProfitLoss, p.unrealProfitLoss)
-		}
-		if p.totalProfitLoss != tc.expPos.totalProfitLoss {
-			t.Errorf("%v totalProfitLoss: expected %#v, actual %#v", tc.msg, tc.expPos.totalProfitLoss, p.totalProfitLoss)
-		}
+		// if p.qty != tc.expPos.qty {
+		// 	t.Errorf("%v qty: expected %#v, actual %#v", tc.msg, tc.expPos.qty, p.qty)
+		// }
+		// if p.qtyBOT != tc.expPos.qtyBOT {
+		// 	t.Errorf("%v qtyBOT: expected %#v, actual %#v", tc.msg, tc.expPos.qtyBOT, p.qtyBOT)
+		// }
+		// if p.qtySLD != tc.expPos.qtySLD {
+		// 	t.Errorf("%v qtySLD: expected %#v, actual %#v", tc.msg, tc.expPos.qtySLD, p.qtySLD)
+		// }
+		// if p.avgPrice != tc.expPos.avgPrice {
+		// 	t.Errorf("%v avgPrice: expected %#v, actual %#v", tc.msg, tc.expPos.avgPrice, p.avgPrice)
+		// }
+		// if p.avgPriceNet != tc.expPos.avgPriceNet {
+		// 	t.Errorf("%v avgPriceNet: expected %#v, actual %#v", tc.msg, tc.expPos.avgPriceNet, p.avgPriceNet)
+		// }
+		// if p.avgPriceBOT != tc.expPos.avgPriceBOT {
+		// 	t.Errorf("%v avgPriceBOT: expected %#v, actual %#v", tc.msg, tc.expPos.avgPriceBOT, p.avgPriceBOT)
+		// }
+		// if p.avgPriceSLD != tc.expPos.avgPriceSLD {
+		// 	t.Errorf("%v avgPriceSLD: expected %#v, actual %#v", tc.msg, tc.expPos.avgPriceSLD, p.avgPriceSLD)
+		// }
+		// if p.value != tc.expPos.value {
+		// 	t.Errorf("%v value: expected %#v, actual %#v", tc.msg, tc.expPos.value, p.value)
+		// }
+		// if p.valueBOT != tc.expPos.valueBOT {
+		// 	t.Errorf("%v valueBOT: expected %#v, actual %#v", tc.msg, tc.expPos.valueBOT, p.valueBOT)
+		// }
+		// if p.valueSLD != tc.expPos.valueSLD {
+		// 	t.Errorf("%v valueSLD: expected %#v, actual %#v", tc.msg, tc.expPos.valueSLD, p.valueSLD)
+		// }
+		// if p.marketPrice != tc.expPos.marketPrice {
+		// 	t.Errorf("%v marketPrice: expected %#v, actual %#v", tc.msg, tc.expPos.marketPrice, p.marketPrice)
+		// }
+		// if p.marketValue != tc.expPos.marketValue {
+		// 	t.Errorf("%v marketValue: expected %#v, actual %#v", tc.msg, tc.expPos.marketValue, p.marketValue)
+		// }
+		// if p.commission != tc.expPos.commission {
+		// 	t.Errorf("%v commission: expected %#v, actual %#v", tc.msg, tc.expPos.commission, p.commission)
+		// }
+		// if p.exchangeFee != tc.expPos.exchangeFee {
+		// 	t.Errorf("%v exchangeFee: expected %#v, actual %#v", tc.msg, tc.expPos.exchangeFee, p.exchangeFee)
+		// }
+		// if p.cost != tc.expPos.cost {
+		// 	t.Errorf("%v cost: expected %#v, actual %#v", tc.msg, tc.expPos.cost, p.cost)
+		// }
+		// if p.costBasis != tc.expPos.costBasis {
+		// 	t.Errorf("%v costBasis: expected %#v, actual %#v", tc.msg, tc.expPos.costBasis, p.costBasis)
+		// }
+		// if p.netValue != tc.expPos.netValue {
+		// 	t.Errorf("%v netValue: expected %#v, actual %#v", tc.msg, tc.expPos.netValue, p.netValue)
+		// }
+		// if p.netValueBOT != tc.expPos.netValueBOT {
+		// 	t.Errorf("%v netValueBOT: expected %#v, actual %#v", tc.msg, tc.expPos.netValueBOT, p.netValueBOT)
+		// }
+		// if p.netValueSLD != tc.expPos.netValueSLD {
+		// 	t.Errorf("%v netValueSLD: expected %#v, actual %#v", tc.msg, tc.expPos.netValueSLD, p.netValueSLD)
+		// }
+		// if p.realProfitLoss != tc.expPos.realProfitLoss {
+		// 	t.Errorf("%v realProfitLoss: expected %#v, actual %#v", tc.msg, tc.expPos.realProfitLoss, p.realProfitLoss)
+		// }
+		// if p.unrealProfitLoss != tc.expPos.unrealProfitLoss {
+		// 	t.Errorf("%v unrealProfitLoss: expected %#v, actual %#v", tc.msg, tc.expPos.unrealProfitLoss, p.unrealProfitLoss)
+		// }
+		// if p.totalProfitLoss != tc.expPos.totalProfitLoss {
+		// 	t.Errorf("%v totalProfitLoss: expected %#v, actual %#v", tc.msg, tc.expPos.totalProfitLoss, p.totalProfitLoss)
+		// }
 		if !reflect.DeepEqual(p, tc.expPos) {
 			t.Errorf("\n%v Update(): \nexpected %p %#v, \nactual   %p %#v", tc.msg, tc.expPos, tc.expPos, p, p)
 		}

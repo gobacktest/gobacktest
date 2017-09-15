@@ -72,7 +72,7 @@ func (d *Data) Latest(symbol string) DataEvent {
 	return d.latest[symbol]
 }
 
-// updateCurrent puts the last current data event to the current list.
+// updateLatest puts the last current data event to the current list.
 func (d *Data) updateLatest(event DataEvent) {
 	// check for nil map, else initialise the map
 	if d.latest == nil {

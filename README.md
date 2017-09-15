@@ -4,7 +4,7 @@
 [![Coverage Status](https://img.shields.io/coveralls/dirkolbrich/gobacktest/master.svg?style=flat-square)](https://coveralls.io/github/dirkolbrich/gobacktest?branch=master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/dirkolbrich/gobacktest?style=flat-square)](https://goreportcard.com/report/github.com/dirkolbrich/gobacktest)
 
-_**Heads up:** This is a framework in development, a lot of the functionality is still missing._
+_**Heads up:** This is a framework in development, with only limited basic functionality. A lot of the features are still missing._
 
 _You can read along and follow the development of this project. And if you like, give me some tips or discussion points for improvement._
 
@@ -34,18 +34,22 @@ func main() {
 	var symbols = []string{"TEST.DE"}
 	test.SetSymbols(symbols)
 
-	// set a portfolio with some inital cash
-	portfolio := &internal.Portfolio{InitialCash: 10000}
-	
-	// choose a risk manager and load it into the portfolio
-	riskManager := &internal.Risk{}
-	portfolio.SetRiskManager(riskManager)
-	test.SetPortfolio(portfolio)
-
 	// create a data provider and load the data into the backtest
 	data := &internal.BarEventFromCSVFileData{FileDir: "../testdata/test/"}
 	data.Load(symbols)
 	test.SetData(data)
+
+	// set portfolio with initial cash and default size and risk manager
+	portfolio := &internal.Portfolio{}
+	portfolio.SetInitialCash(10000)
+	
+	sizeManager := &internal.Size{DefaultSize: 100, DefaultValue: 1000}
+	portfolio.SetSizeManager(sizeManager)
+
+	riskManager := &internal.Risk{}
+	portfolio.SetRiskManager(riskManager)
+
+	test.SetPortfolio(portfolio)
 
 	// create a strategy provider and load it into the backtest
 	strategy := &internal.SimpleStrategy{}
@@ -54,6 +58,10 @@ func main() {
 	// create an execution provider and load it into the backtest
 	exchange := &internal.Exchange{}
 	test.SetExchange(exchange)
+
+	// choose a statisitc and load into the backtest
+	statistic := &internal.Statistic{}
+	test.SetStatistic(statistic)
 
 	// run the backtest
 	test.Run()
@@ -69,6 +77,7 @@ Make sure to install it into your `$GOPATH` with
 
 	go get github.com/shopspring/decimal
 ---
+
 ## Basic components
 
 These are the basic components of an event-driven framework. 
@@ -111,7 +120,6 @@ An overviev of the infrastructure of a complete backtesting and trading environm
     + backtesting and trading engine
 
 ---
-
 ## Resources
 
 ### Articles

@@ -1,4 +1,4 @@
-package internal
+package backtest
 
 // RiskHandler is the basic interface for accessing risks of a portfolio
 type RiskHandler interface {

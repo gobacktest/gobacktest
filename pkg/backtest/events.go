@@ -1,4 +1,4 @@
-package internal
+package backtest
 
 import (
 	"time"
@@ -10,7 +10,7 @@ type Event interface {
 	Symbol() string
 }
 
-// event is the implementation of the basic event interface.
+// Event is the implementation of the basic event interface.
 type event struct {
 	timestamp time.Time
 	symbol    string
@@ -48,7 +48,7 @@ type BarEvent interface {
 }
 
 // barEvent declares an event for an OHLCV bar (Open, High, Low, Close, Volume).
-type bar struct {
+type Bar struct {
 	event
 	dataEvent
 	openPrice     float64
@@ -59,31 +59,31 @@ type bar struct {
 	volume        int64
 }
 
-func (b bar) Open() float64 {
+func (b Bar) Open() float64 {
 	return b.openPrice
 }
 
-func (b bar) High() float64 {
+func (b Bar) High() float64 {
 	return b.highPrice
 }
 
-func (b bar) Low() float64 {
+func (b Bar) Low() float64 {
 	return b.lowPrice
 }
 
-func (b bar) Close() float64 {
+func (b Bar) Close() float64 {
 	return b.closePrice
 }
 
-func (b bar) AdjClose() float64 {
+func (b Bar) AdjClose() float64 {
 	return b.adjClosePrice
 }
 
-func (b bar) Volume() int64 {
+func (b Bar) Volume() int64 {
 	return b.volume
 }
 
-func (b bar) LatestPrice() float64 {
+func (b Bar) LatestPrice() float64 {
 	return b.closePrice
 }
 
@@ -94,23 +94,23 @@ type TickEvent interface {
 	Ask() float64
 }
 
-// tick declares an tick event
-type tick struct {
+// Tick declares an tick event
+type Tick struct {
 	event
 	dataEvent
 	bidPrice float64
 	askPrice float64
 }
 
-func (t tick) LatestPrice() float64 {
+func (t Tick) LatestPrice() float64 {
 	return (t.bidPrice + t.askPrice) / 2
 }
 
-func (t tick) Bid() float64 {
+func (t Tick) Bid() float64 {
 	return t.bidPrice
 }
 
-func (t tick) Ask() float64 {
+func (t Tick) Ask() float64 {
 	return t.askPrice
 }
 

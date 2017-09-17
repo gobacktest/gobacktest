@@ -1,10 +1,8 @@
-package gobacktest
+package backtest
 
 import (
 	"testing"
 	"time"
-
-	"github.com/dirkolbrich/gobacktest/internal"
 )
 
 type testEvent struct {
@@ -21,12 +19,12 @@ func (t testEvent) Symbol() string {
 // queueTests is a table for testing the event queue
 var queueTests = []struct {
 	test     Test           // Test struct
-	expEvent internal.Event // expected Event interface return
+	expEvent Event // expected Event interface return
 	expBool  bool           // expected bool return
 }{
 	{Test{}, nil, false}, // Test.eventQueue is empty
 	{Test{
-		eventQueue: []internal.Event{
+		eventQueue: []Event{
 			testEvent{},
 		},
 	}, testEvent{}, true},

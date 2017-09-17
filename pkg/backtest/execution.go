@@ -1,6 +1,6 @@
-package internal
+package backtest
 
-import "github.com/dirkolbrich/gobacktest/internal/utils"
+import "github.com/dirkolbrich/gobacktest/pkg/utils"
 
 // ExecutionHandler is the basic interface for executing orders
 type ExecutionHandler interface {

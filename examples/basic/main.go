@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/dirkolbrich/gobacktest"
-	"github.com/dirkolbrich/gobacktest/internal"
+	"github.com/dirkolbrich/gobacktest/pkg/backtest"
+	"github.com/dirkolbrich/gobacktest/pkg/data"
 )
 
 func main() {
@@ -10,36 +10,36 @@ func main() {
 	var symbols = []string{"TEST.DE"}
 
 	// initiate new backtester and load symbols
-	test := gobacktest.New()
+	test := backtest.New()
 	test.SetSymbols(symbols)
 
 	// create data provider and load data into the backtest
-	data := &internal.BarEventFromCSVFileData{FileDir: "../testdata/test/"}
+	data := &data.BarEventFromCSVFileData{FileDir: "../testdata/test/"}
 	data.Load(symbols)
 	test.SetData(data)
 
 	// set portfolio with initial cash and default size and risk manager
-	portfolio := &internal.Portfolio{}
+	portfolio := &backtest.Portfolio{}
 	portfolio.SetInitialCash(10000)
 
-	sizeManager := &internal.Size{DefaultSize: 100, DefaultValue: 1000}
+	sizeManager := &backtest.Size{DefaultSize: 100, DefaultValue: 1000}
 	portfolio.SetSizeManager(sizeManager)
 
-	riskManager := &internal.Risk{}
+	riskManager := &backtest.Risk{}
 	portfolio.SetRiskManager(riskManager)
 
 	test.SetPortfolio(portfolio)
 
 	// create strategy provider and load into the backtest
-	strategy := &internal.SimpleStrategy{}
+	strategy := &backtest.SimpleStrategy{}
 	test.SetStrategy(strategy)
 
 	// create execution provider and load into the backtest
-	exchange := &internal.Exchange{Symbol: "TEST", ExchangeFee: 1.00}
+	exchange := &backtest.Exchange{Symbol: "TEST", ExchangeFee: 1.00}
 	test.SetExchange(exchange)
 
 	// choose a statisitc and load into the backtest
-	statistic := &internal.Statistic{}
+	statistic := &backtest.Statistic{}
 	test.SetStatistic(statistic)
 
 	// run the backtest

@@ -1,4 +1,4 @@
-package internal
+package backtest
 
 import (
 	"errors"
@@ -20,7 +20,7 @@ type Size struct {
 func (s *Size) SizeOrder(order OrderEvent, data DataEvent, pf PortfolioHandler) (OrderEvent, error) {
 	// no default set, no sizing possible, order rejected
 	if (s.DefaultSize == 0) || (s.DefaultValue == 0) {
-		return order, errors.New("cannot size order: no defaulSize or defaultValue set,")
+		return order, errors.New("cannot size order: no defaultSize or defaultValue set,")
 	}
 
 	// decide on order direction

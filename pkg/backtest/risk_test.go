@@ -1,4 +1,4 @@
-package internal
+package backtest
 
 import (
 	"reflect"

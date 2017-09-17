@@ -1,21 +1,19 @@
-// Package gobacktest provides a simple stock backtesting framework.
-package gobacktest
+// Package backtest provides a simple stock backtesting framework.
+package backtest
 
 import (
 	"log"
-
-	"github.com/dirkolbrich/gobacktest/internal"
 )
 
 // Test is a basic back test struct
 type Test struct {
 	symbols    []string
-	data       internal.DataHandler
-	strategy   internal.StrategyHandler
-	portfolio  internal.PortfolioHandler
-	exchange   internal.ExecutionHandler
-	statistic  internal.StatisticHandler
-	eventQueue []internal.Event
+	data       DataHandler
+	strategy   StrategyHandler
+	portfolio  PortfolioHandler
+	exchange   ExecutionHandler
+	statistic  StatisticHandler
+	eventQueue []Event
 }
 
 // New creates a default test backtest value for use.
@@ -29,27 +27,27 @@ func (t *Test) SetSymbols(symbols []string) {
 }
 
 // SetData sets the data provider to to be used within the test
-func (t *Test) SetData(data internal.DataHandler) {
+func (t *Test) SetData(data DataHandler) {
 	t.data = data
 }
 
 // SetStrategy sets the strategy provider to to be used within the test
-func (t *Test) SetStrategy(strategy internal.StrategyHandler) {
+func (t *Test) SetStrategy(strategy StrategyHandler) {
 	t.strategy = strategy
 }
 
 // SetPortfolio sets the portfolio provider to to be used within the test
-func (t *Test) SetPortfolio(portfolio internal.PortfolioHandler) {
+func (t *Test) SetPortfolio(portfolio PortfolioHandler) {
 	t.portfolio = portfolio
 }
 
 // SetExchange sets the execution provider to to be used within the test
-func (t *Test) SetExchange(exchange internal.ExecutionHandler) {
+func (t *Test) SetExchange(exchange ExecutionHandler) {
 	t.exchange = exchange
 }
 
 // SetStatistic sets the statistic provider to to be used within the test
-func (t *Test) SetStatistic(statistic internal.StatisticHandler) {
+func (t *Test) SetStatistic(statistic StatisticHandler) {
 	t.statistic = statistic
 }
 
@@ -92,7 +90,7 @@ func (t *Test) Run() error {
 }
 
 // nextEvent gets the next event from the events queue
-func (t *Test) nextEvent() (event internal.Event, ok bool) {
+func (t *Test) nextEvent() (event Event, ok bool) {
 	// if event queue empty return false
 	if len(t.eventQueue) == 0 {
 		return event, false
@@ -106,10 +104,10 @@ func (t *Test) nextEvent() (event internal.Event, ok bool) {
 }
 
 // eventLoop
-func (t *Test) eventLoop(e internal.Event) error {
+func (t *Test) eventLoop(e Event) error {
 	// type check for event type
 	switch event := e.(type) {
-	case internal.DataEvent:
+	case DataEvent:
 		// update portfolio to the last known price data
 		t.portfolio.Update(event)
 		// update statistics
@@ -121,20 +119,20 @@ func (t *Test) eventLoop(e internal.Event) error {
 		}
 		t.eventQueue = append(t.eventQueue, signal)
 
-	case internal.SignalEvent:
+	case SignalEvent:
 		order, err := t.portfolio.OnSignal(event, t.data)
 		if err != nil {
 			break
 		}
 		t.eventQueue = append(t.eventQueue, order)
 
-	case internal.OrderEvent:
+	case OrderEvent:
 		fill, err := t.exchange.ExecuteOrder(event, t.data)
 		if err != nil {
 			break
 		}
 		t.eventQueue = append(t.eventQueue, fill)
-	case internal.FillEvent:
+	case FillEvent:
 		transaction, err := t.portfolio.OnFill(event, t.data)
 		if err != nil {
 			break

@@ -1,4 +1,4 @@
-package internal
+package backtest
 
 import (
 	"sort"
@@ -35,6 +35,11 @@ type Data struct {
 // Load loads data endpoints into a stream
 func (d *Data) Load(s []string) error {
 	return nil
+}
+
+// SetStream sets the data stream
+func (d *Data) SetStream(stream []DataEvent)  {
+	d.stream = stream
 }
 
 // Stream returns the data stream
@@ -98,7 +103,7 @@ func (d *Data) updateList(event DataEvent) {
 }
 
 // sortStream sorts the dataStream
-func (d *Data) sortStream() {
+func (d *Data) SortStream() {
 	sort.Slice(d.stream, func(i, j int) bool {
 		b1 := d.stream[i]
 		b2 := d.stream[j]

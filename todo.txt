@@ -3,6 +3,7 @@ set timestamp in events to actual time of the running backtest
 implement statistics, tearsheet etc.
 implement compliance, logging of actions
 
+x 2017-09-18 change package structure
 x 2017-09-14 implement basic statistics
 x 2017-09-11 update portfolio value by latest data set
 x 2017-08-29 split eventHandler up to dataEventHandler and backtestEventHandler?

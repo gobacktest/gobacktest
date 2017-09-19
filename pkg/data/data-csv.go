@@ -16,13 +16,13 @@ import (
 
 // BarEventFromCSVFileData is a data struct, which loads the market data from csv files.
 // It expands the underlying data struct
-type BarEventFromCSVFileData struct {
+type BarEventFromCSVFile struct {
 	backtest.Data
 	FileDir string
 }
 
 // Load loads single data endpoints into a stream ordered by date (latest first).
-func (d *BarEventFromCSVFileData) Load(symbols []string) (err error) {
+func (d *BarEventFromCSVFile) Load(symbols []string) (err error) {
 	// check file location
 	if len(d.FileDir) == 0 {
 		return errors.New("no directory for data provided: ")

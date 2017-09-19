@@ -7,14 +7,14 @@ import (
 
 func main() {
 	// define symbols
-	var symbols = []string{"TEST.DE"}
+	symbols := []string{"TEST.DE"}
 
 	// initiate new backtester and load symbols
 	test := backtest.New()
 	test.SetSymbols(symbols)
 
 	// create data provider and load data into the backtest
-	data := &data.BarEventFromCSVFileData{FileDir: "../testdata/test/"}
+	data := &data.BarEventFromCSVFile{FileDir: "../testdata/test/"}
 	data.Load(symbols)
 	test.SetData(data)
 

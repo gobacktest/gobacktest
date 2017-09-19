@@ -22,45 +22,45 @@ Example tests are in the `/examples` folder.
 package main
 
 import (
-	"github.com/dirkolbrich/gobacktest"
-	"github.com/dirkolbrich/gobacktest/internal"
+	"github.com/dirkolbrich/gobacktest/pkg/backtest"
+	"github.com/dirkolbrich/gobacktest/pkg/data"
 )
 
 func main() {
 	// we need a new blanc backtester
-	test := gobacktest.New()
+	test := backtest.New()
 
 	// define the symbols to be tested and load them into the backtest
-	var symbols = []string{"TEST.DE"}
+	symbols := []string{"TEST.DE"}
 	test.SetSymbols(symbols)
 
 	// create a data provider and load the data into the backtest
-	data := &internal.BarEventFromCSVFileData{FileDir: "../testdata/test/"}
+	data := &data.BarEventFromCSVFile{FileDir: "../testdata/test/"}
 	data.Load(symbols)
 	test.SetData(data)
 
 	// set portfolio with initial cash and default size and risk manager
-	portfolio := &internal.Portfolio{}
+	portfolio := &backtest.Portfolio{}
 	portfolio.SetInitialCash(10000)
 	
-	sizeManager := &internal.Size{DefaultSize: 100, DefaultValue: 1000}
+	sizeManager := &backtest.Size{DefaultSize: 100, DefaultValue: 1000}
 	portfolio.SetSizeManager(sizeManager)
 
-	riskManager := &internal.Risk{}
+	riskManager := &backtest.Risk{}
 	portfolio.SetRiskManager(riskManager)
 
 	test.SetPortfolio(portfolio)
 
 	// create a strategy provider and load it into the backtest
-	strategy := &internal.SimpleStrategy{}
+	strategy := &backtest.SimpleStrategy{}
 	test.SetStrategy(strategy)
 
 	// create an execution provider and load it into the backtest
-	exchange := &internal.Exchange{}
+	exchange := &backtest.Exchange{}
 	test.SetExchange(exchange)
 
 	// choose a statisitc and load into the backtest
-	statistic := &internal.Statistic{}
+	statistic := &backtest.Statistic{}
 	test.SetStatistic(statistic)
 
 	// run the backtest

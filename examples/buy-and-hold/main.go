@@ -14,7 +14,7 @@ func main() {
 	test.SetSymbols(symbols)
 
 	// create data provider and load data into the backtest
-	data := &data.BarEventFromCSVFileData{FileDir: "../testdata/test/"}
+	data := &data.BarEventFromCSVFile{FileDir: "../testdata/test/"}
 	data.Load(symbols)
 	test.SetData(data)
 

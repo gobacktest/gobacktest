@@ -140,7 +140,7 @@ func readCSVFile(path string) (lines []map[string]string, err error) {
 }
 
 // createBarEventFromLine takes a key/value map and a string and builds a bar struct
-func createBarEventFromLine(line map[string]string, symbol string) (backtest.BarEvent, error) {
+func createBarEventFromLine(line map[string]string, symbol string) (bar backtest.BarEvent, err error) {
 	// parse each string in line to corresponding record value
 	date, _ := time.Parse("2006-01-02", line["Date"])
 	openPrice, _ := strconv.ParseFloat(line["Open"], 64)
@@ -151,7 +151,7 @@ func createBarEventFromLine(line map[string]string, symbol string) (backtest.Bar
 	volume, _ := strconv.ParseInt(line["Volume"], 10, 64)
 
 	// create and populate new event
-	event := backtest.Bar{
+	bar = backtest.Bar{
 		Event:    backtest.Event{Timestamp: date, Symbol: strings.ToUpper(symbol)},
 		Open:     openPrice,
 		High:     highPrice,
@@ -161,5 +161,5 @@ func createBarEventFromLine(line map[string]string, symbol string) (backtest.Bar
 		Volume:   volume,
 	}
 
-	return event, nil
+	return bar, nil
 }

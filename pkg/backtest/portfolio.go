@@ -142,8 +142,8 @@ func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (FillEvent, error) 
 }
 
 // IsInvested checks if the portfolio has an open position on the given symbol
-func (p Portfolio) IsInvested(symbol string) (position, bool) {
-	pos, ok := p.holdings[symbol]
+func (p Portfolio) IsInvested(symbol string) (pos position, ok bool) {
+	pos, ok = p.holdings[symbol]
 	if ok && (pos.qty != 0) {
 		return pos, true
 	}

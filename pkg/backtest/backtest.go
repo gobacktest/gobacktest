@@ -90,17 +90,17 @@ func (t *Test) Run() error {
 }
 
 // nextEvent gets the next event from the events queue
-func (t *Test) nextEvent() (event EventHandler, ok bool) {
+func (t *Test) nextEvent() (e EventHandler, ok bool) {
 	// if event queue empty return false
 	if len(t.eventQueue) == 0 {
-		return event, false
+		return e, false
 	}
 
 	// return first element from the event queue
-	event = t.eventQueue[0]
+	e = t.eventQueue[0]
 	t.eventQueue = t.eventQueue[1:]
 
-	return event, true
+	return e, true
 }
 
 // eventLoop

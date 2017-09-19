@@ -49,7 +49,7 @@ func (s *Size) SizeOrder(order OrderEvent, data DataEventHandler, pf PortfolioHa
 	return order, nil
 }
 
-func (s *Size) setDefaultSize(price float64) (qty int64) {
+func (s *Size) setDefaultSize(price float64) int64 {
 	if (float64(s.DefaultSize) * price) > s.DefaultValue {
 		correctedQty := int64(math.Floor(s.DefaultValue / price))
 		return correctedQty

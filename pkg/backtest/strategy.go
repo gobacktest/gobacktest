@@ -35,7 +35,10 @@ type BuyAndHoldStrategy struct {
 }
 
 // CalculateSignal handles the single Event
-func (s *BuyAndHoldStrategy) CalculateSignal(e DataEventHandler, data DataHandler, p PortfolioHandler) (se SignalEvent, err error) {
+func (s *BuyAndHoldStrategy) CalculateSignal(e DataEventHandler, data DataHandler, p PortfolioHandler) (SignalEvent, error) {
+	// create Signal
+	se := &Signal{}
+
 	// type switch for event type
 	switch e := e.(type) {
 	case Bar:
@@ -43,11 +46,9 @@ func (s *BuyAndHoldStrategy) CalculateSignal(e DataEventHandler, data DataHandle
 		if _, ok := p.IsInvested(e.GetSymbol()); ok {
 			return se, fmt.Errorf("already invested in %v, no signal created,", e.GetSymbol())
 		}
-		// create Signal
-		se = &Signal{
-			Event:     Event{Timestamp: e.GetTime(), Symbol: e.GetSymbol()},
-			Direction: "long",
-		}
+		// fill Signal
+		se.Event = Event{Timestamp: e.GetTime(), Symbol: e.GetSymbol()}
+		se.Direction = "long"
 	}
 
 	return se, nil

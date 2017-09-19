@@ -49,22 +49,22 @@ func (d *Data) Stream() []DataEventHandler {
 
 // Next returns the first element of the data stream
 // deletes it from the stream and appends it to history
-func (d *Data) Next() (event DataEventHandler, ok bool) {
+func (d *Data) Next() (dh DataEventHandler, ok bool) {
 	// check for element in datastream
 	if len(d.stream) == 0 {
-		return event, false
+		return dh, false
 	}
 
-	event = d.stream[0]
+	dh = d.stream[0]
 	d.stream = d.stream[1:] // delete first element from stream
-	d.streamHistory = append(d.stream, event)
+	d.streamHistory = append(d.stream, dh)
 
 	// update list of current data events
-	d.updateLatest(event)
+	d.updateLatest(dh)
 	// update list of data events for single symbol
 	
-	d.updateList(event)
-	return event, true
+	d.updateList(dh)
+	return dh, true
 }
 
 // History returns the historic data stream

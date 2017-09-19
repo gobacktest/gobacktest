@@ -93,9 +93,9 @@ func (s Statistic) PrintResult() {
 }
 
 func (s Statistic) totalEquityReturn() float64 {
-	firstEquityPoint := s.firstEquityPoint()
+	firstEquityPoint, _ := s.firstEquityPoint()
 	firstEquity := decimal.NewFromFloat(firstEquityPoint.equity)
-	lastEquityPoint := s.lastEquityPoint()
+	lastEquityPoint, _ := s.lastEquityPoint()
 	lastEquity := decimal.NewFromFloat(lastEquityPoint.equity)
 
 	totalEquityReturn := lastEquity.Sub(firstEquity).Div(firstEquity)
@@ -103,16 +103,20 @@ func (s Statistic) totalEquityReturn() float64 {
 	return total
 }
 
-func (s Statistic) firstEquityPoint() (e equityPoint) {
-	if len(s.equity) > 0 {
-		e = s.equity[0]
+func (s Statistic) firstEquityPoint() (ep equityPoint, ok bool) {
+	if len(s.equity) <= 0 {
+		return ep, false
 	}
-	return
+	ep = s.equity[0]
+
+	return ep, true
 }
 
-func (s Statistic) lastEquityPoint() (e equityPoint) {
-	if len(s.equity) > 0 {
-		e = s.equity[len(s.equity)-1]
+func (s Statistic) lastEquityPoint() (ep equityPoint, ok bool) {
+	if len(s.equity) <= 0 {
+		return ep, false
 	}
-	return
+	ep = s.equity[len(s.equity)-1]
+
+	return ep, true
 }

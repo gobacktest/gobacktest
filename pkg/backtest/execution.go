@@ -18,27 +18,27 @@ func (e *Exchange) ExecuteOrder(order OrderEvent, data DataHandler) (FillEvent, 
 	// log.Printf("Exchange receives Order: \n%#v \n%#v\n", order, data)
 
 	// fetch latest known data event for the symbol
-	latest := data.Latest(order.Symbol())
+	latest := data.Latest(order.GetSymbol())
 
 	// simple implementation, creates a direct fill from the order
 	// based on the last known data price
-	f := &fill{
-		event:    event{timestamp: order.Timestamp(), symbol: order.Symbol()},
-		exchange: e.Symbol,
-		qty:      order.Qty(),
-		price:    latest.LatestPrice(), // last price from data event
+	f := &Fill{
+		Event:    Event{Timestamp: order.GetTime(), Symbol: order.GetSymbol()},
+		Exchange: e.Symbol,
+		Qty:      order.GetQty(),
+		Price:    latest.LatestPrice(), // last price from data event
 	}
 
-	switch order.Direction() {
+	switch order.GetDirection() {
 	case "buy":
-		f.direction = "BOT"
+		f.Direction = "BOT"
 	case "sell":
-		f.direction = "SLD"
+		f.Direction = "SLD"
 	}
 
-	f.commission = e.calculateCommission(float64(f.qty), f.price)
-	f.exchangeFee = e.calculateExchangeFee()
-	f.cost = e.calculateCost(f.commission, f.exchangeFee)
+	f.Commission = e.calculateCommission(float64(f.Qty), f.Price)
+	f.ExchangeFee = e.calculateExchangeFee()
+	f.Cost = e.calculateCost(f.Commission, f.ExchangeFee)
 
 	return f, nil
 }

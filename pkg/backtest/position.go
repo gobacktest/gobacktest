@@ -1,7 +1,6 @@
 package backtest
 
 import (
-	// "fmt"
 	"time"
 
 	"github.com/shopspring/decimal"
@@ -42,22 +41,22 @@ type position struct {
 
 // Create a new position based on a fill event
 func (p *position) Create(fill FillEvent) {
-	p.timestamp = fill.Timestamp()
-	p.symbol = fill.Symbol()
+	p.timestamp = fill.GetTime()
+	p.symbol = fill.GetSymbol()
 
 	p.update(fill)
 }
 
 // Update a position on a new fill event
 func (p *position) Update(fill FillEvent) {
-	p.timestamp = fill.Timestamp()
+	p.timestamp = fill.GetTime()
 
 	p.update(fill)
 }
 
 // UpdateValue updates the current market value of a position
-func (p *position) UpdateValue(data DataEvent) {
-	p.timestamp = data.Timestamp()
+func (p *position) UpdateValue(data DataEventHandler) {
+	p.timestamp = data.GetTime()
 
 	latest := data.LatestPrice()
 	p.updateValue(latest)
@@ -66,11 +65,11 @@ func (p *position) UpdateValue(data DataEvent) {
 // internal function to update a position on a new fill event
 func (p *position) update(fill FillEvent) {
 	// convert fill to internally used decimal numbers
-	fillQty := decimal.New(fill.Qty(), 0)
-	fillPrice := decimal.NewFromFloat(fill.Price())
-	fillCommission := decimal.NewFromFloat(fill.Commission())
-	fillExchangeFee := decimal.NewFromFloat(fill.ExchangeFee())
-	fillCost := decimal.NewFromFloat(fill.Cost())
+	fillQty := decimal.New(fill.GetQty(), 0)
+	fillPrice := decimal.NewFromFloat(fill.GetPrice())
+	fillCommission := decimal.NewFromFloat(fill.GetCommission())
+	fillExchangeFee := decimal.NewFromFloat(fill.GetExchangeFee())
+	fillCost := decimal.NewFromFloat(fill.GetCost())
 	fillNetValue := decimal.NewFromFloat(fill.NetValue())
 
 	// convert position to internally used decimal numbers
@@ -93,7 +92,7 @@ func (p *position) update(fill FillEvent) {
 	costBasis := decimal.NewFromFloat(p.costBasis)
 	realProfitLoss := decimal.NewFromFloat(p.realProfitLoss)
 
-	switch fill.Direction() {
+	switch fill.GetDirection() {
 	case "BOT":
 		if p.qty >= 0 { // position is long, adding to position
 			costBasis = costBasis.Add(fillNetValue)
@@ -173,7 +172,7 @@ func (p *position) update(fill FillEvent) {
 	p.costBasis, _ = costBasis.Round(DP).Float64()
 	p.realProfitLoss, _ = realProfitLoss.Round(DP).Float64()
 
-	p.updateValue(fill.Price())
+	p.updateValue(fill.GetPrice())
 }
 
 // internal function to updates the current market value and profit/loss of a position

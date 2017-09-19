@@ -4,287 +4,276 @@ import (
 	"time"
 )
 
-// Event declares the basic event interface
-type Event interface {
-	Timestamp() time.Time
-	Symbol() string
+// EventHandler declares the basic event interface
+type EventHandler interface {
+	IsEvent() bool
+	Timer
+	Symboler
+}
+
+// Timer declares the timer interface
+type Timer interface {
+	GetTime() time.Time
+}
+
+// Symboler declares the symboler interface
+type Symboler interface {
+	GetSymbol() string
 }
 
 // Event is the implementation of the basic event interface.
-type event struct {
-	timestamp time.Time
-	symbol    string
+type Event struct {
+	Timestamp time.Time
+	Symbol    string
 }
 
-// Timestamp returns the time property of an event.
-func (e event) Timestamp() time.Time {
-	return e.timestamp
+// IsEvent declares an event interface implementation.
+func (e Event) IsEvent() bool  {
+	return true
 }
 
-// Symbol returns the symbol property of an event.
-func (e event) Symbol() string {
-	return e.symbol
+// GetTime returns the timestamp of an event
+func (e Event) GetTime() time.Time  {
+	return e.Timestamp
 }
 
-// DataEvent declares a data event interface
-type DataEvent interface {
-	Event
+// GetSymbol returns the symbol string of the event
+func (e Event) GetSymbol() string  {
+	return e.Symbol
+}
+
+// DataEventHandler declares a data event interface
+type DataEventHandler interface {
+	EventHandler
+	IsDataEvent() bool
 	LatestPrice() float64
 }
 
-// dataEvent is the implementation of the basic DataEvent.
-type dataEvent struct {
+// DataEvent is the basic implementation of a data event handler.
+type DataEvent struct {
+	Metrics map[string]float64
+}
+
+// IsDataEvent declares a data event
+func (d DataEvent) IsDataEvent() bool {
+	return true
 }
 
 // BarEvent declares a bar event interface.
 type BarEvent interface {
-	DataEvent
-	Open() float64
-	High() float64
-	Low() float64
-	Close() float64
-	AdjClose() float64
-	Volume() int64
+	DataEventHandler
+	IsBar() bool
 }
 
-// barEvent declares an event for an OHLCV bar (Open, High, Low, Close, Volume).
+// Bar declares an event for an OHLCV bar (Open, High, Low, Close, Volume).
 type Bar struct {
-	event
-	dataEvent
-	openPrice     float64
-	highPrice     float64
-	lowPrice      float64
-	closePrice    float64
-	adjClosePrice float64
-	volume        int64
+	Event
+	DataEvent
+	Open     float64
+	High     float64
+	Low      float64
+	Close    float64
+	AdjClose float64
+	Volume   int64
 }
 
-func (b Bar) Open() float64 {
-	return b.openPrice
+// IsBar declares a Bar event
+func (b Bar) IsBar() bool  {
+	return true
 }
 
-func (b Bar) High() float64 {
-	return b.highPrice
-}
-
-func (b Bar) Low() float64 {
-	return b.lowPrice
-}
-
-func (b Bar) Close() float64 {
-	return b.closePrice
-}
-
-func (b Bar) AdjClose() float64 {
-	return b.adjClosePrice
-}
-
-func (b Bar) Volume() int64 {
-	return b.volume
-}
-
+// LatestPrice returns the close proce of the bar event.
 func (b Bar) LatestPrice() float64 {
-	return b.closePrice
+	return b.Close
 }
 
 // TickEvent declares a tick event interface.
 type TickEvent interface {
-	DataEvent
-	Bid() float64
-	Ask() float64
+	DataEventHandler
+	IsTick() bool
 }
 
 // Tick declares an tick event
 type Tick struct {
-	event
-	dataEvent
-	bidPrice float64
-	askPrice float64
+	Event
+	DataEvent
+	BidPrice float64
+	AskPrice float64
 }
 
+// IsTick declares a tick event
+func (t Tick) IsTick() bool {
+	return true
+}
+
+// LatestPrice returns the middle of Bid and Ask.
 func (t Tick) LatestPrice() float64 {
-	return (t.bidPrice + t.askPrice) / 2
+	return (t.BidPrice + t.AskPrice) / 2
 }
-
-func (t Tick) Bid() float64 {
-	return t.bidPrice
-}
-
-func (t Tick) Ask() float64 {
-	return t.askPrice
-}
-
-/***** BackTest Event Interfaces *****/
-
-// Directioner defines the direction interface
-type Directioner interface {
-	SetDirection(string)
-	Direction() string
-}
-
-// Qtyer defines the Quantity interface
-type Qtyer interface {
-	SetQty(int64)
-	Qty() int64
-}
-
-// Limiter defines the limit interface
-type Limiter interface {
-	SetLimit(float64)
-	Limit() float64
-}
-
-/***** Backtest event interfaces and concrete struct implementations *****/
 
 // SignalEvent declares the signal event interface.
 type SignalEvent interface {
-	Event
+	EventHandler
 	Directioner
 	IsSignal() bool
 }
 
-// signal declares a basic signal event
-type signal struct {
-	event
-	direction string // long or short
+// Signal declares a basic signal event
+type Signal struct {
+	Event
+	Direction string // long or short
 }
 
-func (s signal) IsSignal() bool {
+// IsSignal implements the Signal interface.
+func (s Signal) IsSignal() bool {
 	return true
 }
 
-func (s *signal) SetDirection(dir string) {
-	s.direction = dir
+// SetDirection sets the Directions field of a Signal
+func (s *Signal) SetDirection(st string) {
+	s.Direction = st
 }
 
-func (s signal) Direction() string {
-	return s.direction
+// GetDirection returns the Direction of a Signal
+func (s Signal) GetDirection() string  {
+	return s.Direction
 }
 
 // OrderEvent declares the order event interface.
 type OrderEvent interface {
-	Event
+	EventHandler
 	Directioner
-	Qtyer
+	Quantifier
 	IsOrder() bool
 }
 
-// orderEvent declares a basic order event
-type order struct {
-	event
-	direction string  // buy or sell
-	qty       int64   // quantity of the order
-	orderType string  // market or limit
-	limit     float64 // limit for the order
+// Directioner defines a direction interface
+type Directioner interface {
+	SetDirection(string)
+	GetDirection() string
 }
 
-func (o order) IsOrder() bool {
+// Quantifier defines a qty interface
+type Quantifier interface {
+	SetQty(int64)
+	GetQty() int64
+}
+
+// Order declares a basic order event
+type Order struct {
+	Event
+	Direction string  // buy or sell
+	Qty       int64   // quantity of the order
+	OrderType string  // market or limit
+	Limit     float64 // limit for the order
+}
+
+// IsOrder declares an order event.
+func (o Order) IsOrder() bool {
 	return true
 }
 
-func (o *order) SetDirection(dir string) {
-	o.direction = dir
+// SetDirection sets the Directions field of an Order
+func (o *Order) SetDirection(s string) {
+	o.Direction = s
 }
 
-func (o order) Direction() string {
-	return o.direction
+// GetDirection returns the Direction of an Order
+func (o Order) GetDirection() string  {
+	return o.Direction
 }
 
-func (o *order) SetQty(qty int64) {
-	o.qty = qty
+// SetQty sets the Qty field of an Order
+func (o *Order) SetQty(i int64) {
+	o.Qty = i
 }
 
-func (o order) Qty() int64 {
-	return o.qty
-}
-
-func (o *order) SetOrderType(ot string) {
-	o.orderType = ot
-}
-
-func (o order) OrderType() string {
-	return o.orderType
-}
-
-func (o *order) SetLimit(l float64) {
-	o.limit = l
-}
-
-func (o order) Limit() float64 {
-	return o.limit
+// GetQty returns the Qty field of an Order
+func (o Order) GetQty() int64  {
+	return o.Qty
 }
 
 // FillEvent declares the fill event interface.
 type FillEvent interface {
-	Event
+	EventHandler
 	Directioner
-	Qtyer
+	Quantifier
 	IsFill() bool
-	Price() float64
-	Commission() float64
-	ExchangeFee() float64
-	Cost() float64
+	GetPrice() float64
+	GetCommission() float64
+	GetExchangeFee() float64
+	GetCost() float64
 	Value() float64
 	NetValue() float64
 }
 
-// fillEvent declares a basic fill event
-type fill struct {
-	event
-	exchange    string // exchange symbol
-	direction   string // BOT for buy or SLD for sell
-	qty         int64
-	price       float64
-	commission  float64
-	exchangeFee float64
-	cost        float64 // the total cost of the filled order incl commission and fees
+// Fill declares a basic fill event
+type Fill struct {
+	Event
+	Exchange    string // exchange symbol
+	Direction   string // BOT for buy or SLD for sell
+	Qty         int64
+	Price       float64
+	Commission  float64
+	ExchangeFee float64
+	Cost        float64 // the total cost of the filled order incl commission and fees
 }
 
-func (f fill) IsFill() bool {
+// IsFill declares a fill event.
+func (f Fill) IsFill() bool {
 	return true
 }
 
-func (f *fill) SetDirection(dir string) {
-	f.direction = dir
+// SetDirection sets the Directions field of a Fill
+func (f *Fill) SetDirection(s string) {
+	f.Direction = s
 }
 
-func (f fill) Direction() string {
-	return f.direction
+// GetDirection returns the direction of a Fill
+func (f Fill) GetDirection() string  {
+	return f.Direction
 }
 
-func (f *fill) SetQty(qty int64) {
-	f.qty = qty
+// SetQty sets the Qty field of a Fill
+func (f *Fill) SetQty(i int64) {
+	f.Qty = i
 }
 
-func (f fill) Qty() int64 {
-	return f.qty
+// GetQty returns the qty field of a fill
+func (f Fill) GetQty() int64  {
+	return f.Qty
 }
 
-func (f fill) Price() float64 {
-	return f.price
+// GetPrice returns the Price field of a fill
+func (f Fill) GetPrice() float64  {
+	return f.Price
 }
 
-func (f fill) Commission() float64 {
-	return f.commission
+// GetCommission returns the Commision field of a fill.
+func (f Fill) GetCommission() float64 {
+	return f.Commission
 }
 
-func (f fill) ExchangeFee() float64 {
-	return f.exchangeFee
+// GetExchangeFee returns the ExchangeFee Field of a fill
+func (f Fill) GetExchangeFee() float64 {
+	return f.ExchangeFee
 }
 
-func (f fill) Cost() float64 {
-	return f.cost
+// GetCost returns the Cost field of a Fill
+func (f Fill) GetCost() float64 {
+	return f.Cost
 }
 
-func (f fill) Value() float64 {
-	return float64(f.qty) * f.price
+// Value returns the value without cost.
+func (f Fill) Value() float64 {
+	return float64(f.Qty) * f.Price
 }
 
-func (f fill) NetValue() float64 {
-	if f.direction == "BOT" {
-		return float64(f.qty)*f.price + f.cost
+// NetValue returns the net value including cost.
+func (f Fill) NetValue() float64 {
+	if f.Direction == "BOT" {
+		return float64(f.Qty)*f.Price + f.Cost
 	}
 	// SLD
-	return float64(f.qty)*f.price - f.cost
-
+	return float64(f.Qty)*f.Price - f.Cost
 }

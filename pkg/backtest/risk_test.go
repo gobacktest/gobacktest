@@ -12,16 +12,16 @@ func TestEvaluateOrder(t *testing.T) {
 	// orderEventTests is a table for testing parsing bar data into a BarEvent
 	var testCases = []struct {
 		order     OrderEvent          // OrderEvent input
-		data      DataEvent           // DataEvent input
+		data      DataEventHandler           // DataEvent input
 		positions map[string]position // the portfolio holdings
 		expOrder  OrderEvent          // expected FillEvent return
 		expErr    error               // expected error output
 	}{
 		{
-			&order{},
-			&bar{},
+			&Order{},
+			&Bar{},
 			map[string]position{},
-			&order{},
+			&Order{},
 			nil,
 		},
 	}

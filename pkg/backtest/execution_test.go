@@ -21,48 +21,48 @@ func TestExecuteOrder(t *testing.T) {
 		expErr  error       // expected error output
 	}{
 		{
-			&order{
-				event:     event{timestamp: exampleTime, symbol: "TEST.DE"},
-				direction: "buy", // buy or sell
-				qty:       10,
+			&Order{
+				Event:     Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
+				Direction: "buy", // buy or sell
+				Qty:       10,
 			},
 			&Data{
-				latest: map[string]DataEvent{
-					"TEST.DE": &bar{closePrice: 10},
+				latest: map[string]DataEventHandler{
+					"TEST.DE": &Bar{Close: 10},
 				},
 			},
-			&fill{
-				event:       event{timestamp: exampleTime, symbol: "TEST.DE"},
-				exchange:    "TEST",
-				direction:   "BOT", // BOT for buy or SLD for sell
-				qty:         10,
-				price:       10,
-				commission:  9.90,
-				exchangeFee: 1,
-				cost:        10.90,
+			&Fill{
+				Event:     Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
+				Exchange:    "TEST",
+				Direction:   "BOT", // BOT for buy or SLD for sell
+				Qty:         10,
+				Price:       10,
+				Commission:  9.90,
+				ExchangeFee: 1,
+				Cost:        10.90,
 			},
 			nil,
 		},
 		{
-			&order{
-				event:     event{timestamp: exampleTime, symbol: "TEST.DE"},
-				direction: "sell", // buy or sell
-				qty:       10,
+			&Order{
+				Event:     Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
+				Direction: "sell", // buy or sell
+				Qty:       10,
 			},
 			&Data{
-				latest: map[string]DataEvent{
-					"TEST.DE": &bar{closePrice: 10},
+				latest: map[string]DataEventHandler{
+					"TEST.DE": &Bar{Close: 10},
 				},
 			},
-			&fill{
-				event:       event{timestamp: exampleTime, symbol: "TEST.DE"},
-				exchange:    "TEST",
-				direction:   "SLD", // BOT for buy or SLD for sell
-				qty:         10,
-				price:       10,
-				commission:  9.90,
-				exchangeFee: 1,
-				cost:        10.90,
+			&Fill{
+				Event:     Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
+				Exchange:    "TEST",
+				Direction:   "SLD", // BOT for buy or SLD for sell
+				Qty:         10,
+				Price:       10,
+				Commission:  9.90,
+				ExchangeFee: 1,
+				Cost:        10.90,
 			},
 			nil,
 		},

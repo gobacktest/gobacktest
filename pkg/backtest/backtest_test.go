@@ -8,23 +8,27 @@ import (
 type testEvent struct {
 }
 
-func (t testEvent) Timestamp() time.Time {
+func (t testEvent) IsEvent() bool {
+	return true
+}
+
+func (t testEvent) GetTime() time.Time {
 	return time.Now()
 }
 
-func (t testEvent) Symbol() string {
+func (t testEvent) GetSymbol() string {
 	return "testEvent"
 }
 
 // queueTests is a table for testing the event queue
 var queueTests = []struct {
 	test     Test           // Test struct
-	expEvent Event // expected Event interface return
+	expEvent EventHandler // expected Event interface return
 	expBool  bool           // expected bool return
 }{
 	{Test{}, nil, false}, // Test.eventQueue is empty
 	{Test{
-		eventQueue: []Event{
+		eventQueue: []EventHandler{
 			testEvent{},
 		},
 	}, testEvent{}, true},

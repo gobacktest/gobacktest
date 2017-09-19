@@ -17,12 +17,12 @@ func TestCreate(t *testing.T) {
 		expPos *position // expected Position
 	}{
 		{"create with buy:",
-			&fill{
-				event:     event{timestamp: exampleTime, symbol: "TEST.DE"},
-				exchange:  "TEST",
-				direction: "BOT", // BOT for buy or SLD for sell
-				qty:       10, price: 10,
-				commission: 4, exchangeFee: 1, cost: 5,
+			&Fill{
+				Event:     Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
+				Exchange:  "TEST",
+				Direction: "BOT", // BOT for buy or SLD for sell
+				Qty:       10, Price: 10,
+				Commission: 4, ExchangeFee: 1, Cost: 5,
 			},
 			&position{
 				timestamp: exampleTime, symbol: "TEST.DE",
@@ -36,12 +36,12 @@ func TestCreate(t *testing.T) {
 			},
 		},
 		{"create with sell:",
-			&fill{
-				event:     event{timestamp: exampleTime, symbol: "TEST.DE"},
-				exchange:  "TEST",
-				direction: "SLD", // BOT for buy or SLD for sell
-				qty:       10, price: 10,
-				commission: 4, exchangeFee: 1, cost: 5,
+			&Fill{
+				Event:     Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
+				Exchange:  "TEST",
+				Direction: "SLD", // BOT for buy or SLD for sell
+				Qty:       10, Price: 10,
+				Commission: 4, ExchangeFee: 1, Cost: 5,
 			},
 			&position{
 				timestamp: exampleTime, symbol: "TEST.DE",
@@ -100,11 +100,11 @@ func TestUpdate(t *testing.T) {
 	}{
 		{"BOT position, buying stock:",
 			posBOT,
-			&fill{
-				event:    event{timestamp: exampleTime, symbol: "TEST.DE"},
-				exchange: "TEST", direction: "BOT", // BOT for buy or SLD for sell
-				qty: 15, price: 15,
-				commission: 6, exchangeFee: 1, cost: 7,
+			&Fill{
+				Event:    Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
+				Exchange: "TEST", Direction: "BOT", // BOT for buy or SLD for sell
+				Qty: 15, Price: 15,
+				Commission: 6, ExchangeFee: 1, Cost: 7,
 			},
 			&position{
 				timestamp: exampleTime, symbol: "TEST.DE",
@@ -119,11 +119,11 @@ func TestUpdate(t *testing.T) {
 		},
 		{"BOT position, selling stock:",
 			posBOT,
-			&fill{
-				event:    event{timestamp: exampleTime, symbol: "TEST.DE"},
-				exchange: "TEST", direction: "SLD", // BOT for buy or SLD for sell
-				qty: 6, price: 12,
-				commission: 4, exchangeFee: 1, cost: 5,
+			&Fill{
+				Event:    Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
+				Exchange: "TEST", Direction: "SLD", // BOT for buy or SLD for sell
+				Qty: 6, Price: 12,
+				Commission: 4, ExchangeFee: 1, Cost: 5,
 			},
 			&position{
 				timestamp: exampleTime, symbol: "TEST.DE",
@@ -138,11 +138,11 @@ func TestUpdate(t *testing.T) {
 		},
 		{"BOT position, selling, turning SLD position:",
 			posBOT,
-			&fill{
-				event:    event{timestamp: exampleTime, symbol: "TEST.DE"},
-				exchange: "TEST", direction: "SLD", // BOT for buy or SLD for sell
-				qty: 15, price: 5,
-				commission: 4, exchangeFee: 1, cost: 5,
+			&Fill{
+				Event:    Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
+				Exchange: "TEST", Direction: "SLD", // BOT for buy or SLD for sell
+				Qty: 15, Price: 5,
+				Commission: 4, ExchangeFee: 1, Cost: 5,
 			},
 			&position{
 				timestamp: exampleTime, symbol: "TEST.DE",
@@ -157,11 +157,11 @@ func TestUpdate(t *testing.T) {
 		},
 		{"BOT position, exit stock:",
 			posBOT,
-			&fill{
-				event:    event{timestamp: exampleTime, symbol: "TEST.DE"},
-				exchange: "TEST", direction: "SLD", // BOT for buy or SLD for sell
-				qty: 10, price: 12,
-				commission: 5, exchangeFee: 1, cost: 6,
+			&Fill{
+				Event:    Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
+				Exchange: "TEST", Direction: "SLD", // BOT for buy or SLD for sell
+				Qty: 10, Price: 12,
+				Commission: 5, ExchangeFee: 1, Cost: 6,
 			},
 			&position{
 				timestamp: exampleTime, symbol: "TEST.DE",
@@ -176,11 +176,11 @@ func TestUpdate(t *testing.T) {
 		},
 		{"SLD position, selling stock:",
 			posSLD,
-			&fill{
-				event:    event{timestamp: exampleTime, symbol: "TEST.DE"},
-				exchange: "TEST", direction: "SLD", // BOT for buy or SLD for sell
-				qty: 15, price: 15,
-				commission: 6, exchangeFee: 1, cost: 7,
+			&Fill{
+				Event:    Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
+				Exchange: "TEST", Direction: "SLD", // BOT for buy or SLD for sell
+				Qty: 15, Price: 15,
+				Commission: 6, ExchangeFee: 1, Cost: 7,
 			},
 			&position{
 				timestamp: exampleTime, symbol: "TEST.DE",
@@ -195,11 +195,11 @@ func TestUpdate(t *testing.T) {
 		},
 		{"SLD position, buying stock:",
 			posSLD,
-			&fill{
-				event:    event{timestamp: exampleTime, symbol: "TEST.DE"},
-				exchange: "TEST", direction: "BOT", // BOT for buy or SLD for sell
-				qty: 6, price: 12,
-				commission: 4, exchangeFee: 1, cost: 5,
+			&Fill{
+				Event:    Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
+				Exchange: "TEST", Direction: "BOT", // BOT for buy or SLD for sell
+				Qty: 6, Price: 12,
+				Commission: 4, ExchangeFee: 1, Cost: 5,
 			},
 			&position{
 				timestamp: exampleTime, symbol: "TEST.DE",
@@ -214,11 +214,11 @@ func TestUpdate(t *testing.T) {
 		},
 		{"SLD position, buying, turning BOT position:",
 			posSLD,
-			&fill{
-				event:    event{timestamp: exampleTime, symbol: "TEST.DE"},
-				exchange: "TEST", direction: "BOT", // BOT for buy or SLD for sell
-				qty: 15, price: 5,
-				commission: 4, exchangeFee: 1, cost: 5,
+			&Fill{
+				Event:    Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
+				Exchange: "TEST", Direction: "BOT", // BOT for buy or SLD for sell
+				Qty: 15, Price: 5,
+				Commission: 4, ExchangeFee: 1, Cost: 5,
 			},
 			&position{
 				timestamp: exampleTime, symbol: "TEST.DE",
@@ -233,11 +233,11 @@ func TestUpdate(t *testing.T) {
 		},
 		{"SLD position, exit stock:",
 			posSLD,
-			&fill{
-				event:    event{timestamp: exampleTime, symbol: "TEST.DE"},
-				exchange: "TEST", direction: "BOT", // BOT for buy or SLD for sell
-				qty: 10, price: 12,
-				commission: 5, exchangeFee: 1, cost: 6,
+			&Fill{
+				Event:    Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
+				Exchange: "TEST", Direction: "BOT", // BOT for buy or SLD for sell
+				Qty: 10, Price: 12,
+				Commission: 5, ExchangeFee: 1, Cost: 6,
 			},
 			&position{
 				timestamp: exampleTime, symbol: "TEST.DE",
@@ -355,23 +355,23 @@ func TestMultipleUpdate(t *testing.T) {
 		{
 			"1. multiple",
 			[]FillEvent{
-				&fill{
-					event:    event{timestamp: exampleTime, symbol: "TEST.DE"},
-					exchange: "TEST", direction: "BOT", // BOT for buy or SLD for sell
-					qty: 15, price: 15,
-					commission: 6, exchangeFee: 1, cost: 7,
+				&Fill{
+					Event:    Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
+					Exchange: "TEST", Direction: "BOT", // BOT for buy or SLD for sell
+					Qty: 15, Price: 15,
+					Commission: 6, ExchangeFee: 1, Cost: 7,
 				},
-				&fill{
-					event:    event{timestamp: exampleTime, symbol: "TEST.DE"},
-					exchange: "TEST", direction: "SLD", // BOT for buy or SLD for sell
-					qty: 18, price: 20,
-					commission: 8, exchangeFee: 1, cost: 9,
+				&Fill{
+					Event:    Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
+					Exchange: "TEST", Direction: "SLD", // BOT for buy or SLD for sell
+					Qty: 18, Price: 20,
+					Commission: 8, ExchangeFee: 1, Cost: 9,
 				},
-				&fill{
-					event:    event{timestamp: exampleTime, symbol: "TEST.DE"},
-					exchange: "TEST", direction: "BOT", // BOT for buy or SLD for sell
-					qty: 12, price: 18,
-					commission: 7, exchangeFee: 1, cost: 8,
+				&Fill{
+					Event:    Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
+					Exchange: "TEST", Direction: "BOT", // BOT for buy or SLD for sell
+					Qty: 12, Price: 18,
+					Commission: 7, ExchangeFee: 1, Cost: 8,
 				},
 			},
 			&position{
@@ -480,13 +480,13 @@ func TestUpdateValue(t *testing.T) {
 	}
 	// testCases is a table for testing updating a position
 	var testCases = []struct {
-		data   DataEvent
+		data   DataEventHandler
 		expPos *position // expected Position
 	}{
 		{
-			data: &bar{
-				event:      event{timestamp: exampleTime, symbol: "TEST.DE"},
-				closePrice: 99,
+			data: &Bar{
+				Event:      Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
+				Close: 99,
 			},
 			expPos: &position{
 				timestamp: exampleTime, symbol: "TEST.DE",
@@ -500,9 +500,9 @@ func TestUpdateValue(t *testing.T) {
 			},
 		},
 		{
-			data: &bar{
-				event:      event{timestamp: exampleTime, symbol: "TEST.DE"},
-				closePrice: 45,
+			data: &Bar{
+				Event:      Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
+				Close: 45,
 			},
 			expPos: &position{
 				timestamp: exampleTime, symbol: "TEST.DE",

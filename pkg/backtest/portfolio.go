@@ -33,7 +33,7 @@ type Investor interface {
 
 // Updater handles the updating of the portfolio on data events
 type Updater interface {
-	Update(DataEvent)
+	Update(DataEventHandler)
 }
 
 // Casher handles basic portolio info
@@ -77,19 +77,19 @@ func (p *Portfolio) OnSignal(signal SignalEvent, data DataHandler) (OrderEvent, 
 	orderType := "MKT" // default Market, should be set by risk manager
 	var limit float64
 
-	initialOrder := &order{
-		event: event{
-			timestamp: signal.Timestamp(),
-			symbol:    signal.Symbol(),
+	initialOrder := &Order{
+		Event: Event{
+			Timestamp: signal.GetTime(),
+			Symbol:    signal.GetSymbol(),
 		},
-		direction: signal.Direction(),
+		Direction: signal.GetDirection(),
 		// Qty should be set by PositionSizer
-		orderType: orderType,
-		limit:     limit,
+		OrderType: orderType,
+		Limit:     limit,
 	}
 
 	// fetch latest known price for the symbol
-	latest := data.Latest(signal.Symbol())
+	latest := data.Latest(signal.GetSymbol())
 
 	sizedOrder, err := p.sizeManager.SizeOrder(initialOrder, latest, p)
 	if err != nil {
@@ -112,23 +112,23 @@ func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (FillEvent, error) 
 	// fmt.Printf("holdings before: %+v\n", p.holdings)
 
 	// check if portfolio has already a holding of the symbol from this fill
-	if pos, ok := p.holdings[fill.Symbol()]; ok {
+	if pos, ok := p.holdings[fill.GetSymbol()]; ok {
 		// log.Printf("holding to this symbol exists: %+v \n", pos)
 		// update existing Position
 		pos.Update(fill)
-		p.holdings[fill.Symbol()] = pos
+		p.holdings[fill.GetSymbol()] = pos
 	} else {
 		// log.Println("No holding to this transaction")
 		// create new position
 		pos := position{}
 		pos.Create(fill)
-		p.holdings[fill.Symbol()] = pos
+		p.holdings[fill.GetSymbol()] = pos
 	}
 
 	// fmt.Printf("holdings after: %+v\n", p.holdings)
 
 	// update cash
-	if fill.Direction() == "BOT" {
+	if fill.GetDirection() == "BOT" {
 		p.cash = p.cash - fill.NetValue()
 	} else {
 		// direction is "SLD"
@@ -142,8 +142,8 @@ func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (FillEvent, error) 
 }
 
 // IsInvested checks if the portfolio has an open position on the given symbol
-func (p Portfolio) IsInvested(symbol string) (pos position, ok bool) {
-	pos, ok = p.holdings[symbol]
+func (p Portfolio) IsInvested(symbol string) (position, bool) {
+	pos, ok := p.holdings[symbol]
 	if ok && (pos.qty != 0) {
 		return pos, true
 	}
@@ -169,10 +169,10 @@ func (p Portfolio) IsShort(symbol string) (pos position, ok bool) {
 }
 
 // Update updates the holding on a data event
-func (p *Portfolio) Update(d DataEvent) {
-	if pos, ok := p.IsInvested(d.Symbol()); ok {
+func (p *Portfolio) Update(d DataEventHandler) {
+	if pos, ok := p.IsInvested(d.GetSymbol()); ok {
 		pos.UpdateValue(d)
-		p.holdings[d.Symbol()] = pos
+		p.holdings[d.GetSymbol()] = pos
 	}
 }
 

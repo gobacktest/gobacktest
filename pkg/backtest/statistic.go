@@ -12,13 +12,13 @@ type StatisticHandler interface {
 	EventTracker
 	TransactionTracker
 	StatisticPrinter
-	Update(DataEvent, PortfolioHandler)
+	Update(DataEventHandler, PortfolioHandler)
 }
 
 // EventTracker is responsible for all event tracking during a backtest
 type EventTracker interface {
-	TrackEvent(Event)
-	Events() []Event
+	TrackEvent(EventHandler)
+	Events() []EventHandler
 }
 
 // TransactionTracker is responsible for all transaction tracking during a backtest
@@ -34,7 +34,7 @@ type StatisticPrinter interface {
 
 // Statistic is a basic test statistic, which holds simple lists of historic events
 type Statistic struct {
-	eventHistory       []Event
+	eventHistory       []EventHandler
 	transactionHistory []FillEvent
 	equity             []equityPoint
 }
@@ -46,9 +46,9 @@ type equityPoint struct {
 }
 
 // Update updates the complete statistics to a given data event
-func (s *Statistic) Update(d DataEvent, p PortfolioHandler) {
+func (s *Statistic) Update(d DataEventHandler, p PortfolioHandler) {
 	e := equityPoint{}
-	e.timestamp = d.Timestamp()
+	e.timestamp = d.GetTime()
 	e.equity = p.Value()
 
 	if len(s.equity) > 0 {
@@ -62,12 +62,12 @@ func (s *Statistic) Update(d DataEvent, p PortfolioHandler) {
 }
 
 // TrackEvent tracks an event
-func (s *Statistic) TrackEvent(e Event) {
+func (s *Statistic) TrackEvent(e EventHandler) {
 	s.eventHistory = append(s.eventHistory, e)
 }
 
 // Events returns the complete events history
-func (s Statistic) Events() []Event {
+func (s Statistic) Events() []EventHandler {
 	return s.eventHistory
 }
 

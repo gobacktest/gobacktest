@@ -151,14 +151,14 @@ func createBarEventFromLine(line map[string]string, symbol string) (backtest.Bar
 	volume, _ := strconv.ParseInt(line["Volume"], 10, 64)
 
 	// create and populate new event
-	event := backtest.bar{
-		event:         event{timestamp: date, symbol: strings.ToUpper(symbol)},
-		openPrice:     openPrice,
-		highPrice:     highPrice,
-		lowPrice:      lowPrice,
-		closePrice:    closePrice,
-		adjClosePrice: adjClosePrice,
-		volume:        volume,
+	event := backtest.Bar{
+		Event:    backtest.Event{Timestamp: date, Symbol: strings.ToUpper(symbol)},
+		Open:     openPrice,
+		High:     highPrice,
+		Low:      lowPrice,
+		Close:    closePrice,
+		AdjClose: adjClosePrice,
+		Volume:   volume,
 	}
 
 	return event, nil

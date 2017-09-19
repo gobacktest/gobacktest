@@ -6,7 +6,7 @@ import (
 
 // StrategyHandler is a basic strategy interface
 type StrategyHandler interface {
-	CalculateSignal(DataEvent, DataHandler, PortfolioHandler) (SignalEvent, error)
+	CalculateSignal(DataEventHandler, DataHandler, PortfolioHandler) (SignalEvent, error)
 }
 
 // SimpleStrategy is a basic test strategy, which interprets every DataEvent as a signal to buy
@@ -14,15 +14,16 @@ type SimpleStrategy struct {
 }
 
 // CalculateSignal handles the single Event
-func (s *SimpleStrategy) CalculateSignal(e DataEvent, data DataHandler, p PortfolioHandler) (se SignalEvent, err error) {
+func (s *SimpleStrategy) CalculateSignal(e DataEventHandler, data DataHandler, p PortfolioHandler) (SignalEvent, error) {
+	// create Signal
+	se := &Signal{}
+	
 	// type switch for event type
 	switch e := e.(type) {
-	case bar:
-		// create Signal
-		se = &signal{
-			event:     event{timestamp: e.Timestamp(), symbol: e.Symbol()},
-			direction: "long",
-		}
+	case Bar:
+		// fill Signal
+		se.Event = Event{Timestamp: e.GetTime(), Symbol: e.GetSymbol()}
+		se.Direction = "long"
 	}
 
 	return se, nil
@@ -34,18 +35,18 @@ type BuyAndHoldStrategy struct {
 }
 
 // CalculateSignal handles the single Event
-func (s *BuyAndHoldStrategy) CalculateSignal(e DataEvent, data DataHandler, p PortfolioHandler) (se SignalEvent, err error) {
+func (s *BuyAndHoldStrategy) CalculateSignal(e DataEventHandler, data DataHandler, p PortfolioHandler) (se SignalEvent, err error) {
 	// type switch for event type
 	switch e := e.(type) {
-	case bar:
+	case Bar:
 		// check if already invested
-		if _, ok := p.IsInvested(e.Symbol()); ok {
-			return se, fmt.Errorf("already invested in %v, no signal created,", e.Symbol())
+		if _, ok := p.IsInvested(e.GetSymbol()); ok {
+			return se, fmt.Errorf("already invested in %v, no signal created,", e.GetSymbol())
 		}
 		// create Signal
-		se = &signal{
-			event:     event{timestamp: e.Timestamp(), symbol: e.Symbol()},
-			direction: "long",
+		se = &Signal{
+			Event:     Event{Timestamp: e.GetTime(), Symbol: e.GetSymbol()},
+			Direction: "long",
 		}
 	}
 

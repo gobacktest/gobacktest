@@ -13,7 +13,7 @@ type Test struct {
 	portfolio  PortfolioHandler
 	exchange   ExecutionHandler
 	statistic  StatisticHandler
-	eventQueue []Event
+	eventQueue []EventHandler
 }
 
 // New creates a default test backtest value for use.
@@ -90,7 +90,7 @@ func (t *Test) Run() error {
 }
 
 // nextEvent gets the next event from the events queue
-func (t *Test) nextEvent() (event Event, ok bool) {
+func (t *Test) nextEvent() (event EventHandler, ok bool) {
 	// if event queue empty return false
 	if len(t.eventQueue) == 0 {
 		return event, false
@@ -104,10 +104,10 @@ func (t *Test) nextEvent() (event Event, ok bool) {
 }
 
 // eventLoop
-func (t *Test) eventLoop(e Event) error {
+func (t *Test) eventLoop(e EventHandler) error {
 	// type check for event type
 	switch event := e.(type) {
-	case DataEvent:
+	case DataEventHandler:
 		// update portfolio to the last known price data
 		t.portfolio.Update(event)
 		// update statistics

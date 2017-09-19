@@ -12,76 +12,76 @@ func TestSizeOrder(t *testing.T) {
 		msg       string // test message
 		size      SizeHandler
 		order     OrderEvent       // OrderEvent input
-		data      DataEvent        // DataEvent input
+		data      DataEventHandler        // DataEvent input
 		portfolio PortfolioHandler // the portfolio holdings
 		expOrder  OrderEvent       // expected OrderEvent output
 		expErr    error            // expected error output
 	}{
 		{"Empty SizeManager without default values:",
 			&Size{},
-			&order{},
-			&bar{},
+			&Order{},
+			&Bar{},
 			&Portfolio{},
-			&order{},
+			&Order{},
 			errors.New("cannot size order: no defaulSize or defaultValue set"),
 		},
 		{"buy order:",
 			&Size{DefaultSize: 100, DefaultValue: 1000},
-			&order{direction: "long"},
-			&bar{},
+			&Order{Direction: "long"},
+			&Bar{},
 			&Portfolio{},
-			&order{qty: 100, direction: "buy"},
+			&Order{Qty: 100, Direction: "buy"},
 			nil,
 		},
 		{"sell order:",
 			&Size{DefaultSize: 100, DefaultValue: 1000},
-			&order{direction: "short"},
-			&bar{},
+			&Order{Direction: "short"},
+			&Bar{},
 			&Portfolio{},
-			&order{qty: 100, direction: "sell"},
+			&Order{Qty: 100, Direction: "sell"},
 			nil,
 		},
 		{"exit order but no position in portfolio:",
 			&Size{DefaultSize: 100, DefaultValue: 1000},
-			&order{direction: "exit"},
-			&bar{},
+			&Order{Direction: "exit"},
+			&Bar{},
 			&Portfolio{},
-			&order{direction: "exit"},
+			&Order{Direction: "exit"},
 			errors.New("cannot exit order: no position to symbol in portfolio,"),
 		},
 		{"exit order with long position in portfolio:",
 			&Size{DefaultSize: 100, DefaultValue: 1000},
-			&order{
-				event:     event{symbol: "TEST.DE"},
-				direction: "exit"},
-			&bar{},
+			&Order{
+				Event:     Event{Symbol: "TEST.DE"},
+				Direction: "exit"},
+			&Bar{},
 			&Portfolio{
 				holdings: map[string]position{
 					"TEST.DE": {qty: 15},
 				},
 			},
-			&order{
-				event:     event{symbol: "TEST.DE"},
-				direction: "sell",
-				qty:       15,
+			&Order{
+				Event:     Event{Symbol: "TEST.DE"},
+				Direction: "sell",
+				Qty:       15,
 			},
 			nil,
 		},
 		{"exit order with short position in portfolio:",
 			&Size{DefaultSize: 100, DefaultValue: 1000},
-			&order{
-				event:     event{symbol: "TEST.DE"},
-				direction: "exit"},
-			&bar{},
+			&Order{
+				Event:     Event{Symbol: "TEST.DE"},
+				Direction: "exit"},
+			&Bar{},
 			&Portfolio{
 				holdings: map[string]position{
 					"TEST.DE": {qty: -12},
 				},
 			},
-			&order{
-				event:     event{symbol: "TEST.DE"},
-				direction: "buy",
-				qty:       12,
+			&Order{
+				Event:     Event{Symbol: "TEST.DE"},
+				Direction: "buy",
+				Qty:       12,
 			},
 			nil,
 		},

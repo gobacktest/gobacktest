@@ -20,7 +20,7 @@ type BarEventFromSQLiteData struct {
 }
 
 // Load loads single data endpoints into a stream ordered by date (latest first).
-func (d *BarEventFromSQLiteData) Load(symbols []string) (err error) {
+func (d *BarEventFromSQLiteData) Load(symbols []string) error {
 	// check file location
 	if len(d.FileDir) == 0 {
 		return errors.New("no directory for data provided: ")
@@ -31,7 +31,7 @@ func (d *BarEventFromSQLiteData) Load(symbols []string) (err error) {
 
 	// read all files from directory
 	if len(symbols) == 0 {
-		files, err = fetchFilesFromDir(d.FileDir)
+		files, err := fetchFilesFromDir(d.FileDir)
 		if err != nil {
 			return err
 		}
@@ -62,12 +62,12 @@ func (d *BarEventFromSQLiteData) Load(symbols []string) (err error) {
 			if err != nil {
 				log.Println(err)
 			}
-			d.stream = append(d.stream, event)
+			d.Data.SetStream(append(d.Data.Stream(), event))
 		}
 	}
 
 	// sort data stream
-	d.sortStream()
+	d.Data.SortStream()
 
 	return nil
 }
@@ -116,14 +116,14 @@ func createBarEventFromEntry(line map[string]string, symbol string) (backtest.Ba
 	volume, _ := strconv.ParseInt(line["Volume"], 10, 64)
 
 	// create and populate new event
-	event := bar{
-		event:         event{timestamp: date, symbol: strings.ToUpper(symbol)},
-		openPrice:     openPrice,
-		highPrice:     highPrice,
-		lowPrice:      lowPrice,
-		closePrice:    closePrice,
-		adjClosePrice: adjClosePrice,
-		volume:        volume,
+	event := backtest.Bar{
+		Event:    backtest.Event{Timestamp: date, Symbol: strings.ToUpper(symbol)},
+		Open:     openPrice,
+		High:     highPrice,
+		Low:      lowPrice,
+		Close:    closePrice,
+		AdjClose: adjClosePrice,
+		Volume:   volume,
 	}
 
 	return event, nil

@@ -7,7 +7,7 @@ import (
 
 // SizeHandler is the basic interface for setting the size of an order
 type SizeHandler interface {
-	SizeOrder(OrderEvent, DataEvent, PortfolioHandler) (OrderEvent, error)
+	SizeOrder(OrderEvent, DataEventHandler, PortfolioHandler) (OrderEvent, error)
 }
 
 // Size is a basic size handler implementation
@@ -17,14 +17,14 @@ type Size struct {
 }
 
 // SizeOrder adjusts the size of an order
-func (s *Size) SizeOrder(order OrderEvent, data DataEvent, pf PortfolioHandler) (OrderEvent, error) {
+func (s *Size) SizeOrder(order OrderEvent, data DataEventHandler, pf PortfolioHandler) (OrderEvent, error) {
 	// no default set, no sizing possible, order rejected
 	if (s.DefaultSize == 0) || (s.DefaultValue == 0) {
 		return order, errors.New("cannot size order: no defaultSize or defaultValue set,")
 	}
 
 	// decide on order direction
-	switch order.Direction() {
+	switch order.GetDirection() {
 	case "long":
 		order.SetDirection("buy")
 		order.SetQty(s.setDefaultSize(data.LatestPrice()))
@@ -33,14 +33,14 @@ func (s *Size) SizeOrder(order OrderEvent, data DataEvent, pf PortfolioHandler) 
 		order.SetQty(s.setDefaultSize(data.LatestPrice()))
 	case "exit": // all shares should be sold or bought, depending on position
 		// poll postions
-		if _, ok := pf.IsInvested(order.Symbol()); !ok {
+		if _, ok := pf.IsInvested(order.GetSymbol()); !ok {
 			return order, errors.New("cannot exit order: no position to symbol in portfolio,")
 		}
-		if pos, ok := pf.IsLong(order.Symbol()); ok {
+		if pos, ok := pf.IsLong(order.GetSymbol()); ok {
 			order.SetDirection("sell")
 			order.SetQty(pos.qty)
 		}
-		if pos, ok := pf.IsShort(order.Symbol()); ok {
+		if pos, ok := pf.IsShort(order.GetSymbol()); ok {
 			order.SetDirection("buy")
 			order.SetQty(pos.qty * -1)
 		}

@@ -4,6 +4,8 @@ import (
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/dirkolbrich/gobacktest/pkg/backtest"
 )
 
 func TestCreateBarEventFromLine(t *testing.T) {
@@ -14,7 +16,7 @@ func TestCreateBarEventFromLine(t *testing.T) {
 	var testCases = []struct {
 		line     map[string]string // start input
 		symbol   string            // symbol input
-		expEvent BarEvent          // expected bar return
+		expEvent backtest.BarEvent          // expected bar return
 		expErr   error             // expected error output
 	}{
 		{
@@ -28,14 +30,14 @@ func TestCreateBarEventFromLine(t *testing.T) {
 			"Volume":    "100",
 			},
 			"TEST.DE",
-			bar{
-				event:         event{timestamp: exampleTime, symbol: "TEST.DE"},
-				openPrice:     float64(10),
-				highPrice:     float64(10),
-				lowPrice:      float64(10),
-				closePrice:    float64(10),
-				adjClosePrice: float64(10),
-				volume:        100,
+			backtest.Bar{
+				Event:    backtest.Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
+				Open:     float64(10),
+				High:     float64(10),
+				Low:      float64(10),
+				Close:    float64(10),
+				AdjClose: float64(10),
+				Volume:   100,
 			},
 			nil},
 		{
@@ -49,8 +51,8 @@ func TestCreateBarEventFromLine(t *testing.T) {
 			"Volume":    "null",
 			},
 			"TEST.DE",
-			bar{
-				event: event{timestamp: exampleTime, symbol: "TEST.DE"},
+			backtest.Bar{
+				Event: backtest.Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
 			}, // other values are nil
 			nil},
 	}

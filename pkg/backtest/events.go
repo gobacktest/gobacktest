@@ -2,6 +2,8 @@ package backtest
 
 import (
 	"time"
+
+	"github.com/shopspring/decimal"
 )
 
 // EventHandler declares the basic event interface
@@ -97,8 +99,8 @@ type TickEvent interface {
 type Tick struct {
 	Event
 	DataEvent
-	BidPrice float64
-	AskPrice float64
+	Bid float64
+	Ask float64
 }
 
 // IsTick declares a tick event
@@ -108,7 +110,11 @@ func (t Tick) IsTick() bool {
 
 // LatestPrice returns the middle of Bid and Ask.
 func (t Tick) LatestPrice() float64 {
-	return (t.BidPrice + t.AskPrice) / 2
+	bid := decimal.NewFromFloat(t.Bid)
+	ask := decimal.NewFromFloat(t.Ask)
+	diff := decimal.New(2, 0)
+	latest, _ := bid.Add(ask).Div(diff).Round(DP).Float64()
+	return latest
 }
 
 // SignalEvent declares the signal event interface.
@@ -266,14 +272,25 @@ func (f Fill) GetCost() float64 {
 
 // Value returns the value without cost.
 func (f Fill) Value() float64 {
-	return float64(f.Qty) * f.Price
+	qty := decimal.New(f.Qty, 0)
+	price := decimal.NewFromFloat(f.Price)
+	value, _ := qty.Mul(price).Round(DP).Float64()
+	return value
 }
 
 // NetValue returns the net value including cost.
 func (f Fill) NetValue() float64 {
+	qty := decimal.New(f.Qty, 0)
+	price := decimal.NewFromFloat(f.Price)
+	cost := decimal.NewFromFloat(f.Cost)
+
 	if f.Direction == "BOT" {
-		return float64(f.Qty)*f.Price + f.Cost
+		// qty * price + cost
+		netValue, _ := qty.Mul(price).Add(cost).Round(DP).Float64()
+		return netValue
 	}
 	// SLD
-	return float64(f.Qty)*f.Price - f.Cost
+	//qty * price - cost
+	netValue, _ := qty.Mul(price).Sub(cost).Round(DP).Float64()
+	return netValue
 }

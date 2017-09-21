@@ -16,18 +16,18 @@ func TestCreateBarEventFromLine(t *testing.T) {
 	var testCases = []struct {
 		line     map[string]string // start input
 		symbol   string            // symbol input
-		expEvent backtest.BarEvent          // expected bar return
+		expEvent backtest.BarEvent // expected bar return
 		expErr   error             // expected error output
 	}{
 		{
 			map[string]string{
-			"Date":      "2017-06-01",
-			"Open":      "10",
-			"High":      "10",
-			"Low":       "10",
-			"Close":     "10",
-			"Adj Close": "10",
-			"Volume":    "100",
+				"Date":      "2017-06-01",
+				"Open":      "10",
+				"High":      "10",
+				"Low":       "10",
+				"Close":     "10",
+				"Adj Close": "10",
+				"Volume":    "100",
 			},
 			"TEST.DE",
 			backtest.Bar{
@@ -42,13 +42,13 @@ func TestCreateBarEventFromLine(t *testing.T) {
 			nil},
 		{
 			map[string]string{
-			"Date":      "2017-06-01",
-			"Open":      "null", // field in csv ist marked null, means no data
-			"High":      "null",
-			"Low":       "null",
-			"Close":     "null",
-			"Adj Close": "null",
-			"Volume":    "null",
+				"Date":      "2017-06-01",
+				"Open":      "null", // field in csv ist marked null, means no data
+				"High":      "null",
+				"Low":       "null",
+				"Close":     "null",
+				"Adj Close": "null",
+				"Volume":    "null",
 			},
 			"TEST.DE",
 			backtest.Bar{

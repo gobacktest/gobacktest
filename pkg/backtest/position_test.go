@@ -485,7 +485,7 @@ func TestUpdateValue(t *testing.T) {
 	}{
 		{
 			data: &Bar{
-				Event:      Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
+				Event: Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
 				Close: 99,
 			},
 			expPos: &position{
@@ -501,7 +501,7 @@ func TestUpdateValue(t *testing.T) {
 		},
 		{
 			data: &Bar{
-				Event:      Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
+				Event: Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
 				Close: 45,
 			},
 			expPos: &position{

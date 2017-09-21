@@ -12,7 +12,7 @@ type Basic struct {
 func (s *Basic) CalculateSignal(e bt.DataEventHandler, data bt.DataHandler, p bt.PortfolioHandler) (bt.SignalEvent, error) {
 	// create Signal
 	se := &bt.Signal{}
-	
+
 	// type switch for event type
 	switch e := e.(type) {
 	case bt.Bar:

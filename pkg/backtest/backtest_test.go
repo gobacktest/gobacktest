@@ -22,9 +22,9 @@ func (t testEvent) GetSymbol() string {
 
 // queueTests is a table for testing the event queue
 var queueTests = []struct {
-	test     Test           // Test struct
+	test     Test         // Test struct
 	expEvent EventHandler // expected Event interface return
-	expBool  bool           // expected bool return
+	expBool  bool         // expected bool return
 }{
 	{Test{}, nil, false}, // Test.eventQueue is empty
 	{Test{

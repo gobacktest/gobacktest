@@ -14,7 +14,7 @@ import (
 	"github.com/dirkolbrich/gobacktest/pkg/backtest"
 )
 
-// BarEventFromCSVFileData is a data struct, which loads the market data from csv files.
+// BarEventFromCSVFile is a data struct, which loads the market data from csv files.
 // It expands the underlying data struct
 type BarEventFromCSVFile struct {
 	backtest.Data

@@ -38,7 +38,7 @@ func (d *Data) Load(s []string) error {
 }
 
 // SetStream sets the data stream
-func (d *Data) SetStream(stream []DataEventHandler)  {
+func (d *Data) SetStream(stream []DataEventHandler) {
 	d.stream = stream
 }
 
@@ -62,7 +62,7 @@ func (d *Data) Next() (dh DataEventHandler, ok bool) {
 	// update list of current data events
 	d.updateLatest(dh)
 	// update list of data events for single symbol
-	
+
 	d.updateList(dh)
 	return dh, true
 }

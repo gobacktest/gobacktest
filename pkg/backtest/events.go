@@ -28,17 +28,17 @@ type Event struct {
 }
 
 // IsEvent declares an event interface implementation.
-func (e Event) IsEvent() bool  {
+func (e Event) IsEvent() bool {
 	return true
 }
 
 // GetTime returns the timestamp of an event
-func (e Event) GetTime() time.Time  {
+func (e Event) GetTime() time.Time {
 	return e.Timestamp
 }
 
 // GetSymbol returns the symbol string of the event
-func (e Event) GetSymbol() string  {
+func (e Event) GetSymbol() string {
 	return e.Symbol
 }
 
@@ -78,7 +78,7 @@ type Bar struct {
 }
 
 // IsBar declares a Bar event
-func (b Bar) IsBar() bool  {
+func (b Bar) IsBar() bool {
 	return true
 }
 
@@ -135,7 +135,7 @@ func (s *Signal) SetDirection(st string) {
 }
 
 // GetDirection returns the Direction of a Signal
-func (s Signal) GetDirection() string  {
+func (s Signal) GetDirection() string {
 	return s.Direction
 }
 
@@ -179,7 +179,7 @@ func (o *Order) SetDirection(s string) {
 }
 
 // GetDirection returns the Direction of an Order
-func (o Order) GetDirection() string  {
+func (o Order) GetDirection() string {
 	return o.Direction
 }
 
@@ -189,7 +189,7 @@ func (o *Order) SetQty(i int64) {
 }
 
 // GetQty returns the Qty field of an Order
-func (o Order) GetQty() int64  {
+func (o Order) GetQty() int64 {
 	return o.Qty
 }
 
@@ -230,7 +230,7 @@ func (f *Fill) SetDirection(s string) {
 }
 
 // GetDirection returns the direction of a Fill
-func (f Fill) GetDirection() string  {
+func (f Fill) GetDirection() string {
 	return f.Direction
 }
 
@@ -240,16 +240,16 @@ func (f *Fill) SetQty(i int64) {
 }
 
 // GetQty returns the qty field of a fill
-func (f Fill) GetQty() int64  {
+func (f Fill) GetQty() int64 {
 	return f.Qty
 }
 
 // GetPrice returns the Price field of a fill
-func (f Fill) GetPrice() float64  {
+func (f Fill) GetPrice() float64 {
 	return f.Price
 }
 
-// GetCommission returns the Commision field of a fill.
+// GetCommission returns the Commission field of a fill.
 func (f Fill) GetCommission() float64 {
 	return f.Commission
 }

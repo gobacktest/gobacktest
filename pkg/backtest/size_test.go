@@ -12,7 +12,7 @@ func TestSizeOrder(t *testing.T) {
 		msg       string // test message
 		size      SizeHandler
 		order     OrderEvent       // OrderEvent input
-		data      DataEventHandler        // DataEvent input
+		data      DataEventHandler // DataEvent input
 		portfolio PortfolioHandler // the portfolio holdings
 		expOrder  OrderEvent       // expected OrderEvent output
 		expErr    error            // expected error output

@@ -10,8 +10,8 @@ type Risk struct {
 }
 
 // EvaluateOrder handles the risk of an order, refines or cancel it
-func (r *Risk) EvaluateOrder(order OrderEvent, data DataEventHandler, positions map[string]position) (o OrderEvent, err error) {
+func (r *Risk) EvaluateOrder(order OrderEvent, data DataEventHandler, positions map[string]position) (OrderEvent, error) {
 	// simple implementation, just gives the received order back
 	// no risk management
-	return o, nil
+	return order, nil
 }

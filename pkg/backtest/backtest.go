@@ -5,6 +5,10 @@ import (
 	"log"
 )
 
+// DP sets the the precision of rounded floating numbers
+// used after calculations to format
+const DP = 4 // DP
+
 // Test is a basic back test struct
 type Test struct {
 	symbols    []string

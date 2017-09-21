@@ -24,6 +24,7 @@ package main
 import (
 	"github.com/dirkolbrich/gobacktest/pkg/backtest"
 	"github.com/dirkolbrich/gobacktest/pkg/data"
+	"github.com/dirkolbrich/gobacktest/pkg/strategy"
 )
 
 func main() {
@@ -39,7 +40,7 @@ func main() {
 	data.Load(symbols)
 	test.SetData(data)
 
-	// set portfolio with initial cash and default size and risk manager
+	// set the portfolio with initial cash and a default size and risk manager
 	portfolio := &backtest.Portfolio{}
 	portfolio.SetInitialCash(10000)
 	
@@ -52,14 +53,14 @@ func main() {
 	test.SetPortfolio(portfolio)
 
 	// create a strategy provider and load it into the backtest
-	strategy := &backtest.SimpleStrategy{}
+	strategy := &strategy.Basic{}
 	test.SetStrategy(strategy)
 
 	// create an execution provider and load it into the backtest
 	exchange := &backtest.Exchange{}
 	test.SetExchange(exchange)
 
-	// choose a statisitc and load into the backtest
+	// choose a statistic and load into the backtest
 	statistic := &backtest.Statistic{}
 	test.SetStatistic(statistic)
 

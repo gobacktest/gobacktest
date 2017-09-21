@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/dirkolbrich/gobacktest/pkg/backtest"
 	"github.com/dirkolbrich/gobacktest/pkg/data"
+	"github.com/dirkolbrich/gobacktest/pkg/strategy"
 )
 
 func main() {
@@ -31,7 +32,7 @@ func main() {
 	test.SetPortfolio(portfolio)
 
 	// create strategy provider and load into the backtest
-	strategy := &backtest.SimpleStrategy{}
+	strategy := &strategy.Basic{}
 	test.SetStrategy(strategy)
 
 	// create execution provider and load into the backtest

@@ -8,12 +8,14 @@
 	.st2{fill:#009640;stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
 	.st3{fill:none;stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
 	.st4{fill:#E30613;stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
-	.st5{font-family:'MyriadPro-Regular';}
+	.st5{font-family:'ArialMT';}
 	.st6{font-size:10px;}
 	.st7{fill:none;stroke:#009FE3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st8{fill:none;stroke:#BF006D;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st9{fill:none;stroke:#BC5E99;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
 </style>
-<path class="st0" d="M164.4,96.4l-11.3,11.3l-11.3-8.5l-11.3,19.8l-11.3,2.8l-11.3,5.7l-11.3-8.5L85,107.7l-11.3,17l-11.3,5.7V102
-	l11.3-5.7L85,82.2l11.3,11.3l11.3,14.2l11.3-14.2l11.3-5.7l11.3-11.3l11.3,5.7l11.3-2.8V96.4z"/>
+<path class="st0" d="M164.4,96.4l-11.3,11.3l-11.3-8.5L130.5,119l-11.3,2.8l-11.3,5.7L96.6,119L85,107.7l-11.3,17l-11.3,5.7V102
+	l11.3-5.7L85,82.2l11.3,11.3l11.3,14.2l11.3-14.2l11.3-5.7l11.3-11.3l11.3,5.7l11.3-2.8v17H164.4z"/>
 <line class="st1" x1="56.7" y1="28.3" x2="56.7" y2="283.5"/>
 <line class="st1" x1="28.3" y1="170.1" x2="226.8" y2="170.1"/>
 <g>
@@ -74,4 +76,6 @@
 <text transform="matrix(1 0 0 1 34.016 87.8741)" class="st5 st6">15</text>
 <polyline class="st7" points="62.4,113.4 73.7,102 85,96.4 96.4,113.4 107.7,119.1 119.1,104.9 130.4,96.4 141.7,82.2 153.1,93.5 
 	164.4,85 "/>
+<polyline class="st8" points="85,104.9 96.3,104.9 107.8,110.5 119,113.4 130.4,107.7 141.7,93.5 153,90.7 164.4,85 "/>
+<polyline class="st9" points="107.6,109 119.1,106.9 130.4,105.4 141.8,100.6 153.1,99.2 164.1,92.1 "/>
 </svg>

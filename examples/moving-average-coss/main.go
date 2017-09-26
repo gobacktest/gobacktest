@@ -8,7 +8,7 @@ import (
 
 func main() {
 	// define symbols
-	var symbols = []string{"SZU.DE"}
+	var symbols = []string{"SDF.DE"}
 
 	// initiate new backtester and load symbols
 	test := backtest.New()

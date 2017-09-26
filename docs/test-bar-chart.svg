@@ -1,81 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 21.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 1190.6 841.9" style="enable-background:new 0 0 1190.6 841.9;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill:#88CBE1;}
-	.st1{fill:none;stroke:#000000;stroke-miterlimit:10;}
-	.st2{fill:#009640;stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
-	.st3{fill:none;stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
-	.st4{fill:#E30613;stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
-	.st5{font-family:'ArialMT';}
-	.st6{font-size:10px;}
-	.st7{fill:none;stroke:#009FE3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
-	.st8{fill:none;stroke:#BF006D;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
-	.st9{fill:none;stroke:#BC5E99;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st0{fill:none;stroke:#000000;stroke-miterlimit:10;}
+	.st1{fill:none;stroke:#B2B2B2;stroke-width:0.5;stroke-miterlimit:10;}
+	.st2{font-family:'ArialMT';}
+	.st3{font-size:10px;}
+	.st4{fill:#88CBE1;}
+	.st5{fill:#009640;stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st6{fill:none;stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st7{fill:#E30613;stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st8{fill:none;stroke:#009FE3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st9{fill:none;stroke:#BF006D;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st10{fill:none;stroke:#BC5E99;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
 </style>
-<path class="st0" d="M164.4,96.4l-11.3,11.3l-11.3-8.5L130.5,119l-11.3,2.8l-11.3,5.7L96.6,119L85,107.7l-11.3,17l-11.3,5.7V102
-	l11.3-5.7L85,82.2l11.3,11.3l11.3,14.2l11.3-14.2l11.3-5.7l11.3-11.3l11.3,5.7l11.3-2.8v17H164.4z"/>
-<line class="st1" x1="56.7" y1="28.3" x2="56.7" y2="283.5"/>
-<line class="st1" x1="28.3" y1="170.1" x2="226.8" y2="170.1"/>
-<g>
-	<rect x="59.5" y="113.4" class="st2" width="5.7" height="11.3"/>
-	<line class="st3" x1="62.4" y1="102" x2="62.4" y2="113.4"/>
-	<line class="st3" x1="62.4" y1="124.7" x2="62.4" y2="130.4"/>
+<g id="diagram">
+	<g>
+		<line class="st0" x1="56.7" y1="19.8" x2="56.7" y2="275"/>
+		<line class="st0" x1="28.3" y1="161.6" x2="311.8" y2="161.6"/>
+		<line class="st1" x1="28.3" y1="133.2" x2="311.8" y2="133.2"/>
+		<line class="st1" x1="113.4" y1="300.5" x2="113.4" y2="17"/>
+		<line class="st1" x1="170.1" y1="294.8" x2="170.1" y2="11.3"/>
+		<line class="st1" x1="226.8" y1="292" x2="226.8" y2="8.5"/>
+		<line class="st1" x1="283.5" y1="292" x2="283.5" y2="8.5"/>
+		<line class="st1" x1="28.3" y1="104.9" x2="311.8" y2="104.9"/>
+		<line class="st1" x1="28.3" y1="76.5" x2="311.8" y2="76.5"/>
+		<line class="st0" x1="48.2" y1="104.9" x2="56.7" y2="104.9"/>
+		<line class="st0" x1="51" y1="133.2" x2="56.7" y2="133.2"/>
+		<text transform="matrix(1 0 0 1 34.0623 107.6906)" class="st2 st3">10</text>
+		<text transform="matrix(1 0 0 1 34.0625 136.0371)" class="st2 st3">5</text>
+		<line class="st0" x1="51" y1="76.5" x2="56.7" y2="76.5"/>
+		<text transform="matrix(1 0 0 1 34.0625 79.3441)" class="st2 st3">15</text>
+		<line class="st1" x1="28.3" y1="48.3" x2="311.8" y2="48.3"/>
+		<line class="st0" x1="51" y1="48.2" x2="56.7" y2="48.2"/>
+		<text transform="matrix(1 0 0 1 34.0625 51.0721)" class="st2 st3">20</text>
+	</g>
 </g>
-<g>
-	<rect x="138.9" y="82.2" class="st2" width="5.7" height="11.3"/>
-	<line class="st3" x1="141.7" y1="76.5" x2="141.7" y2="82.2"/>
-	<line class="st3" x1="141.7" y1="93.5" x2="141.7" y2="99.2"/>
+<g id="range">
+	<g>
+		<polygon class="st4" points="164.1,70.9 152.8,73.7 141.5,68 130.2,79.3 118.9,85 107.6,99.2 96.3,85 85,73.7 73.7,87.8 
+			62.4,93.5 62.4,121.9 73.7,116.2 85,99.2 96.6,110.5 107.9,119 119.2,113.3 130.5,110.5 141.8,90.7 153.1,99.2 164.4,87.9 
+			164.1,87.9 		"/>
+		<polygon class="st4" points="254.9,51.1 243.8,36.9 232.4,59.5 221.1,73.7 209.8,87.9 198.4,76.5 187.1,53.9 175.7,59.5 
+			164.5,70.9 164.4,87.9 175.7,76.5 187.1,73.7 198.4,90.7 209.8,99.2 221.1,93.6 232.4,76.5 243.8,62.4 255.1,68 266.5,56.7 
+			277.7,51 277.8,34 266.5,45.4 		"/>
+	</g>
 </g>
-<g>
-	<rect x="116.2" y="104.9" class="st2" width="5.7" height="11.3"/>
-	<line class="st3" x1="119.1" y1="93.5" x2="119.1" y2="104.9"/>
-	<line class="st3" x1="119.1" y1="116.2" x2="119.1" y2="121.9"/>
+<g id="bar">
+	<g>
+		<rect x="59.5" y="104.9" class="st5" width="5.7" height="11.3"/>
+		<line class="st6" x1="62.4" y1="93.5" x2="62.4" y2="104.9"/>
+		<line class="st6" x1="62.4" y1="116.2" x2="62.4" y2="121.9"/>
+	</g>
+	<g>
+		<rect x="138.9" y="73.7" class="st5" width="5.7" height="11.3"/>
+		<line class="st6" x1="141.7" y1="68" x2="141.7" y2="73.7"/>
+		<line class="st6" x1="141.7" y1="85" x2="141.7" y2="90.7"/>
+	</g>
+	<g>
+		<rect x="116.2" y="96.4" class="st5" width="5.7" height="11.3"/>
+		<line class="st6" x1="119.1" y1="85" x2="119.1" y2="96.4"/>
+		<line class="st6" x1="119.1" y1="107.7" x2="119.1" y2="113.4"/>
+	</g>
+	<g>
+		<rect x="70.9" y="93.5" class="st5" width="5.7" height="17"/>
+		<line class="st6" x1="73.7" y1="87.9" x2="73.7" y2="93.5"/>
+		<line class="st6" x1="73.7" y1="110.6" x2="73.7" y2="116.2"/>
+	</g>
+	<g>
+		<rect x="127.6" y="87.9" class="st5" width="5.7" height="17"/>
+		<line class="st6" x1="130.4" y1="79.4" x2="130.4" y2="87.9"/>
+		<line class="st6" x1="130.4" y1="104.9" x2="130.4" y2="110.6"/>
+	</g>
+	<g>
+		<rect x="172.9" y="65.2" class="st5" width="5.7" height="8.5"/>
+		<line class="st6" x1="175.7" y1="59.5" x2="175.7" y2="65.2"/>
+		<line class="st6" x1="175.7" y1="73.7" x2="175.7" y2="76.5"/>
+	</g>
+	<g>
+		<rect x="229.6" y="68" class="st5" width="5.7" height="5.7"/>
+		<line class="st6" x1="232.4" y1="59.5" x2="232.4" y2="68"/>
+		<line class="st6" x1="232.4" y1="73.7" x2="232.4" y2="76.5"/>
+	</g>
+	<g>
+		<rect x="240.9" y="45.4" class="st5" width="5.7" height="8.5"/>
+		<line class="st6" x1="243.7" y1="36.9" x2="243.7" y2="45.4"/>
+		<line class="st6" x1="243.8" y1="53.9" x2="243.8" y2="62.4"/>
+	</g>
+	<g>
+		<rect x="82.2" y="87.9" class="st5" width="5.7" height="5.7"/>
+		<line class="st6" x1="85" y1="73.7" x2="85" y2="87.9"/>
+		<line class="st6" x1="85" y1="93.5" x2="85" y2="99.2"/>
+	</g>
+	<g>
+		<rect x="161.6" y="76.5" class="st5" width="5.7" height="5.7"/>
+		<line class="st6" x1="164.4" y1="70.9" x2="164.4" y2="76.5"/>
+		<line class="st6" x1="164.4" y1="82.2" x2="164.4" y2="87.9"/>
+	</g>
+	<g>
+		<rect x="184.3" y="59.5" class="st5" width="5.7" height="8.6"/>
+		<line class="st6" x1="187.1" y1="53.9" x2="187.1" y2="59.5"/>
+		<line class="st6" x1="187.1" y1="68" x2="187.1" y2="73.7"/>
+	</g>
+	<g>
+		<rect x="218.2" y="79.4" class="st5" width="5.7" height="8.5"/>
+		<line class="st6" x1="221.1" y1="73.7" x2="221.1" y2="79.3"/>
+		<line class="st6" x1="221" y1="87.8" x2="221" y2="93.5"/>
+	</g>
+	<g>
+		<rect x="263.6" y="48.1" class="st5" width="5.7" height="5.7"/>
+		<line class="st6" x1="266.4" y1="45.4" x2="266.4" y2="48.1"/>
+		<line class="st6" x1="266.4" y1="53.8" x2="266.4" y2="56.7"/>
+	</g>
+	<g>
+		<rect x="274.9" y="42.5" class="st5" width="5.7" height="5.7"/>
+		<line class="st6" x1="277.8" y1="34" x2="277.7" y2="42.5"/>
+		<line class="st6" x1="277.7" y1="48.2" x2="277.7" y2="51"/>
+	</g>
+	<g>
+		<rect x="93.5" y="90.7" class="st7" width="5.7" height="14.2"/>
+		<line class="st6" x1="96.4" y1="85" x2="96.4" y2="90.7"/>
+		<line class="st6" x1="96.4" y1="104.9" x2="96.4" y2="110.6"/>
+	</g>
+	<g>
+		<rect x="104.9" y="104.9" class="st7" width="5.7" height="5.7"/>
+		<line class="st6" x1="107.7" y1="99.2" x2="107.7" y2="104.9"/>
+		<line class="st6" x1="107.7" y1="110.6" x2="107.7" y2="119.1"/>
+	</g>
+	<g>
+		<rect x="195.6" y="76.5" class="st7" width="5.7" height="11.4"/>
+		<line class="st6" x1="198.4" y1="87.9" x2="198.4" y2="90.7"/>
+	</g>
+	<g>
+		<rect x="252.3" y="53.9" class="st7" width="5.7" height="2.9"/>
+		<line class="st6" x1="255.1" y1="51" x2="255.1" y2="53.9"/>
+		<line class="st6" x1="255.1" y1="56.7" x2="255.1" y2="68"/>
+	</g>
+	<g>
+		<rect x="207" y="90.7" class="st7" width="5.7" height="2.8"/>
+		<line class="st6" x1="209.8" y1="87.9" x2="209.8" y2="90.7"/>
+		<line class="st6" x1="209.8" y1="93.6" x2="209.8" y2="99.2"/>
+	</g>
+	<g>
+		<rect x="150.2" y="79.4" class="st7" width="5.7" height="5.7"/>
+		<line class="st6" x1="153.1" y1="73.7" x2="153.1" y2="79.4"/>
+		<line class="st6" x1="153.1" y1="85" x2="153.1" y2="99.2"/>
+	</g>
 </g>
-<g>
-	<rect x="70.9" y="102" class="st2" width="5.7" height="17"/>
-	<line class="st3" x1="73.7" y1="96.4" x2="73.7" y2="102"/>
-	<line class="st3" x1="73.7" y1="119.1" x2="73.7" y2="124.7"/>
+<g id="chart">
+	<polyline class="st8" points="277.7,42.5 266.5,48.2 255.2,56.7 243.8,45.4 232.4,68 221.1,79.4 209.8,90.7 198.4,87.9 187.1,59.6 
+		175.8,65.2 164.5,76.6 164.4,76.5 153.1,85 141.7,73.7 130.4,87.9 119.1,96.4 107.7,110.6 96.4,104.9 85,87.9 73.7,93.5 
+		62.4,104.9 	"/>
 </g>
-<g>
-	<rect x="127.6" y="96.4" class="st2" width="5.7" height="17"/>
-	<line class="st3" x1="130.4" y1="87.9" x2="130.4" y2="96.4"/>
-	<line class="st3" x1="130.4" y1="113.4" x2="130.4" y2="119.1"/>
+<g id="sma">
+	<polyline class="st9" points="107.7,100.4 119.1,98.7 130.4,97.5 141.7,94.7 153.1,90.7 164.4,83.9 175.8,77.7 187.1,72 
+		198.4,74.9 209.8,76.6 221.1,77.1 232.4,77.7 243.8,74.9 255.1,66.4 266.5,59.5 277.8,52.2 	"/>
+	<polyline class="st10" points="164.4,92.1 175.8,88.2 187.1,84.8 198.4,84.8 209.8,83.6 221.1,80.5 232.4,77.7 243.8,73.4 
+		255.1,71.7 266.5,68.1 277.8,64.7 	"/>
 </g>
-<g>
-	<rect x="82.2" y="96.4" class="st2" width="5.7" height="5.7"/>
-	<line class="st3" x1="85" y1="82.2" x2="85" y2="96.4"/>
-	<line class="st3" x1="85" y1="102" x2="85" y2="107.7"/>
-</g>
-<g>
-	<rect x="161.6" y="85" class="st2" width="5.7" height="5.7"/>
-	<line class="st3" x1="164.4" y1="79.4" x2="164.4" y2="85"/>
-	<line class="st3" x1="164.4" y1="90.7" x2="164.4" y2="96.4"/>
-</g>
-<g>
-	<rect x="93.5" y="99.2" class="st4" width="5.7" height="14.2"/>
-	<line class="st3" x1="96.4" y1="93.5" x2="96.4" y2="99.2"/>
-	<line class="st3" x1="96.4" y1="113.4" x2="96.4" y2="119.1"/>
-</g>
-<g>
-	<rect x="104.9" y="113.4" class="st4" width="5.7" height="5.7"/>
-	<line class="st3" x1="107.7" y1="107.7" x2="107.7" y2="113.4"/>
-	<line class="st3" x1="107.7" y1="119.1" x2="107.7" y2="127.6"/>
-</g>
-<g>
-	<rect x="150.2" y="87.9" class="st4" width="5.7" height="5.7"/>
-	<line class="st3" x1="153.1" y1="82.2" x2="153.1" y2="87.9"/>
-	<line class="st3" x1="153.1" y1="93.5" x2="153.1" y2="107.7"/>
-</g>
-<line class="st1" x1="48.2" y1="113.4" x2="56.7" y2="113.4"/>
-<line class="st1" x1="51" y1="141.7" x2="56.7" y2="141.7"/>
-<text transform="matrix(1 0 0 1 34.0158 116.2206)" class="st5 st6">10</text>
-<text transform="matrix(1 0 0 1 34.016 144.5671)" class="st5 st6">5</text>
-<line class="st1" x1="51" y1="85" x2="56.7" y2="85"/>
-<text transform="matrix(1 0 0 1 34.016 87.8741)" class="st5 st6">15</text>
-<polyline class="st7" points="62.4,113.4 73.7,102 85,96.4 96.4,113.4 107.7,119.1 119.1,104.9 130.4,96.4 141.7,82.2 153.1,93.5 
-	164.4,85 "/>
-<polyline class="st8" points="85,104.9 96.3,104.9 107.8,110.5 119,113.4 130.4,107.7 141.7,93.5 153,90.7 164.4,85 "/>
-<polyline class="st9" points="107.6,109 119.1,106.9 130.4,105.4 141.8,100.6 153.1,99.2 164.1,92.1 "/>
 </svg>

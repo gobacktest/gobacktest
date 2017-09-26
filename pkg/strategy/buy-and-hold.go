@@ -18,7 +18,7 @@ func (s *BuyAndHold) CalculateSignal(e bt.DataEventHandler, data bt.DataHandler,
 
 	// type switch for event type
 	switch e := e.(type) {
-	case bt.Bar:
+	case *bt.Bar:
 		// check if already invested
 		if _, ok := p.IsInvested(e.GetSymbol()); ok {
 			return se, fmt.Errorf("already invested in %v, no signal created,", e.GetSymbol())

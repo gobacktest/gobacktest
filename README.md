@@ -10,7 +10,7 @@ _You can read along and follow the development of this project. And if you like,
 
 ---
 
-# gobacktest - Fundamental stock analysis backtesting 
+# gobacktest - Fundamental stock analysis backtesting
 
 My attempt to create a event-driven backtesting framework to test stock trading strategies based on fundamental analysis. Preferably this package will be the core of a backend service exposed via a REST API.
 
@@ -22,66 +22,64 @@ Example tests are in the `/examples` folder.
 package main
 
 import (
-	"github.com/dirkolbrich/gobacktest/pkg/backtest"
-	"github.com/dirkolbrich/gobacktest/pkg/data"
-	"github.com/dirkolbrich/gobacktest/pkg/strategy"
+    "github.com/dirkolbrich/gobacktest/pkg/backtest"
+    "github.com/dirkolbrich/gobacktest/pkg/data"
+    "github.com/dirkolbrich/gobacktest/pkg/strategy"
 )
 
 func main() {
-	// we need a new blanc backtester
-	test := backtest.New()
+    // we need a new blanc backtester
+    test := backtest.New()
 
-	// define the symbols to be tested and load them into the backtest
-	symbols := []string{"TEST.DE"}
-	test.SetSymbols(symbols)
+    // define the symbols to be tested and load them into the backtest
+    symbols := []string{"TEST.DE"}
+    test.SetSymbols(symbols)
 
-	// create a data provider and load the data into the backtest
-	data := &data.BarEventFromCSVFile{FileDir: "../testdata/test/"}
-	data.Load(symbols)
-	test.SetData(data)
+    // create a data provider and load the data into the backtest
+    data := &data.BarEventFromCSVFile{FileDir: "../testdata/test/"}
+    data.Load(symbols)
+    test.SetData(data)
 
-	// set the portfolio with initial cash and a default size and risk manager
-	portfolio := &backtest.Portfolio{}
-	portfolio.SetInitialCash(10000)
-	
-	sizeManager := &backtest.Size{DefaultSize: 100, DefaultValue: 1000}
-	portfolio.SetSizeManager(sizeManager)
+    // set the portfolio with initial cash and a default size and risk manager
+    portfolio := &backtest.Portfolio{}
+    portfolio.SetInitialCash(10000)
 
-	riskManager := &backtest.Risk{}
-	portfolio.SetRiskManager(riskManager)
+    sizeManager := &backtest.Size{DefaultSize: 100, DefaultValue: 1000}
+    portfolio.SetSizeManager(sizeManager)
 
-	test.SetPortfolio(portfolio)
+    riskManager := &backtest.Risk{}
+    portfolio.SetRiskManager(riskManager)
 
-	// create a strategy provider and load it into the backtest
-	strategy := &strategy.Basic{}
-	test.SetStrategy(strategy)
+    test.SetPortfolio(portfolio)
 
-	// create an execution provider and load it into the backtest
-	exchange := &backtest.Exchange{}
-	test.SetExchange(exchange)
+    // create a strategy provider and load it into the backtest
+    strategy := &strategy.Basic{}
+    test.SetStrategy(strategy)
 
-	// choose a statistic and load into the backtest
-	statistic := &backtest.Statistic{}
-	test.SetStatistic(statistic)
+    // create an execution provider and load it into the backtest
+    exchange := &backtest.Exchange{}
+    test.SetExchange(exchange)
 
-	// run the backtest
-	test.Run()
+    // choose a statistic and load into the backtest
+    statistic := &backtest.Statistic{}
+    test.SetStatistic(statistic)
+
+    // run the backtest
+    test.Run()
 }
 ```
 
----
 ## Dependencies
 
 The internal calculations use the [github.com/shopspring/decimal](https://github.com/shopspring/decimal) package for arbitrary-precision fixed-point decimals.
 
 Make sure to install it into your `$GOPATH` with
 
-	go get github.com/shopspring/decimal
----
+    go get github.com/shopspring/decimal
 
 ## Basic components
 
-These are the basic components of an event-driven framework. 
+These are the basic components of an event-driven framework.
 
 1. BackTester - general test case, bundles the follwing elements into a single test
 2. DataHandler - interface to a set of data, e.g historical quotes, fundamental data etc.
@@ -91,36 +89,36 @@ These are the basic components of an event-driven framework.
 5. ExecutionHandler - sends orders to the broker and receives the “fills” or signals that the stock has been bought or sold
 6. EventHandler - the different types of events, which travel through this system - data event, signal event, order event and fill event
 
----
 ## Infrastructure example
 
 An overviev of the infrastructure of a complete backtesting and trading environment. Taken from the production roadmap of [QuantRocket](https://www.quantrocket.com/#product-roadmap).
 
 - General
-    + API gateway
-    + configuration loader
-    + logging service
-    + cron service
+  + API gateway
+  + configuration loader
+  + logging service
+  + cron service
 - Data
-    + database backup and download service
-    + securities master services
-    + historical market data service
-    + fundamental data service
-    + earnings data service
-    + dividend data service
-    + real-time market data service
-    + exchange calendar service
+  + database backup and download service
+  + securities master services
+  + historical market data service
+  + fundamental data service
+  + earnings data service
+  + dividend data service
+  + real-time market data service
+  + exchange calendar service
 - Strategy
-    + performance analysis service - tearsheet
+  + performance analysis service - tearsheet
 - Portfolio
-    + account and portfolio service
-    + risk management service
+  + account and portfolio service
+  + risk management service
 - Execution
-    + trading platform gateway service
-    + order management and trade ledger service
-    + backtesting and trading engine
+  + trading platform gateway service
+  + order management and trade ledger service
+  + backtesting and trading engine
 
 ---
+
 ## Resources
 
 ### Articles
@@ -140,6 +138,5 @@ These links to articles are a good starting point to understand the intentions a
 
 ### General information on Quantitative Finance
 
- - [Quantocracy](http://quantocracy.com) - forum for quant news
- - [QuantStart](https://www.quantstart.com) - articels and tutorials about quant finance
-
+- [Quantocracy](http://quantocracy.com) - forum for quant news
+- [QuantStart](https://www.quantstart.com) - articels and tutorials about quant finance

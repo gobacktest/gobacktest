@@ -64,6 +64,7 @@ func (d *BarEventFromCSVFile) Load(symbols []string) (err error) {
 			if err != nil {
 				log.Println(err)
 			}
+			// append event to data stream
 			d.Data.SetStream(append(d.Data.Stream(), event))
 		}
 	}
@@ -151,14 +152,15 @@ func createBarEventFromLine(line map[string]string, symbol string) (bar backtest
 	volume, _ := strconv.ParseInt(line["Volume"], 10, 64)
 
 	// create and populate new event
-	bar = backtest.Bar{
-		Event:    backtest.Event{Timestamp: date, Symbol: strings.ToUpper(symbol)},
-		Open:     openPrice,
-		High:     highPrice,
-		Low:      lowPrice,
-		Close:    closePrice,
-		AdjClose: adjClosePrice,
-		Volume:   volume,
+	bar = &backtest.Bar{
+		Event:     backtest.Event{Timestamp: date, Symbol: strings.ToUpper(symbol)},
+		DataEvent: backtest.DataEvent{Metrics: make(map[string]float64)},
+		Open:      openPrice,
+		High:      highPrice,
+		Low:       lowPrice,
+		Close:     closePrice,
+		AdjClose:  adjClosePrice,
+		Volume:    volume,
 	}
 
 	return bar, nil

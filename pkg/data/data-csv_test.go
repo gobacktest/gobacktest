@@ -30,14 +30,15 @@ func TestCreateBarEventFromLine(t *testing.T) {
 				"Volume":    "100",
 			},
 			"TEST.DE",
-			backtest.Bar{
-				Event:    backtest.Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
-				Open:     float64(10),
-				High:     float64(10),
-				Low:      float64(10),
-				Close:    float64(10),
-				AdjClose: float64(10),
-				Volume:   100,
+			&backtest.Bar{
+				Event:     backtest.Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
+				DataEvent: backtest.DataEvent{Metrics: make(map[string]float64)},
+				Open:      float64(10),
+				High:      float64(10),
+				Low:       float64(10),
+				Close:     float64(10),
+				AdjClose:  float64(10),
+				Volume:    100,
 			},
 			nil},
 		{
@@ -51,8 +52,9 @@ func TestCreateBarEventFromLine(t *testing.T) {
 				"Volume":    "null",
 			},
 			"TEST.DE",
-			backtest.Bar{
-				Event: backtest.Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
+			&backtest.Bar{
+				Event:     backtest.Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
+				DataEvent: backtest.DataEvent{Metrics: make(map[string]float64)},
 			}, // other values are nil
 			nil},
 	}

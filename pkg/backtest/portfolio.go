@@ -71,7 +71,7 @@ func (p *Portfolio) SetRiskManager(risk RiskHandler) {
 
 // OnSignal handles an incomming signal event
 func (p *Portfolio) OnSignal(signal SignalEvent, data DataHandler) (OrderEvent, error) {
-	// log.Printf("Portfolio receives Signal: %#v \n", s)
+	// fmt.Printf("Portfolio receives Signal: %#v \n", signal)
 
 	// set order type
 	orderType := "MKT" // default Market, should be set by risk manager

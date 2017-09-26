@@ -1,6 +1,9 @@
 package backtest
 
-import "github.com/dirkolbrich/gobacktest/pkg/utils"
+import (
+	// "fmt"
+	"github.com/dirkolbrich/gobacktest/pkg/utils"
+)
 
 // ExecutionHandler is the basic interface for executing orders
 type ExecutionHandler interface {
@@ -15,8 +18,6 @@ type Exchange struct {
 
 // ExecuteOrder executes an order event
 func (e *Exchange) ExecuteOrder(order OrderEvent, data DataHandler) (FillEvent, error) {
-	// log.Printf("Exchange receives Order: \n%#v \n%#v\n", order, data)
-
 	// fetch latest known data event for the symbol
 	latest := data.Latest(order.GetSymbol())
 

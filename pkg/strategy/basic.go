@@ -15,7 +15,7 @@ func (s *Basic) CalculateSignal(e bt.DataEventHandler, data bt.DataHandler, p bt
 
 	// type switch for event type
 	switch e := e.(type) {
-	case bt.Bar:
+	case *bt.Bar:
 		// fill Signal
 		se.Event = bt.Event{Timestamp: e.GetTime(), Symbol: e.GetSymbol()}
 		se.Direction = "long"

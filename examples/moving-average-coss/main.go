@@ -8,14 +8,14 @@ import (
 
 func main() {
 	// define symbols
-	var symbols = []string{"TEST.DE"}
+	var symbols = []string{"SZU.DE"}
 
 	// initiate new backtester and load symbols
 	test := backtest.New()
 	test.SetSymbols(symbols)
 
 	// create data provider and load data into the backtest
-	data := &data.BarEventFromCSVFile{FileDir: "../testdata/test/"}
+	data := &data.BarEventFromCSVFile{FileDir: "../testdata/bar/"}
 	data.Load(symbols)
 	test.SetData(data)
 
@@ -23,7 +23,7 @@ func main() {
 	portfolio := &backtest.Portfolio{}
 	portfolio.SetInitialCash(10000)
 
-	sizeManager := &backtest.Size{DefaultSize: 100, DefaultValue: 1000}
+	sizeManager := &backtest.Size{DefaultSize: 200, DefaultValue: 2500}
 	portfolio.SetSizeManager(sizeManager)
 
 	riskManager := &backtest.Risk{}
@@ -32,11 +32,11 @@ func main() {
 	test.SetPortfolio(portfolio)
 
 	// create strategy provider and load into the backtest
-	strategy := &strategy.MovingAverageCross{ShortWindow: 3, LongWindow: 5}
+	strategy := &strategy.MovingAverageCross{ShortWindow: 50, LongWindow: 200}
 	test.SetStrategy(strategy)
 
 	// create execution provider and load into the backtest
-	exchange := &backtest.Exchange{Symbol: "TEST", ExchangeFee: 1.00}
+	exchange := &backtest.Exchange{Symbol: "XTRA", ExchangeFee: 1.00}
 	test.SetExchange(exchange)
 
 	// choose a statistic and load into the backtest

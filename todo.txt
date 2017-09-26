@@ -1,8 +1,9 @@
-calculate metrics on new data points, e.g. SMA200, SMA50
 set timestamp in events to actual time of the running backtest
 implement statistics, tearsheet etc.
 implement compliance, logging of actions
+benchmark for statistics
 
+x 2017-09-26 calculate metrics on new data points, e.g. SMA200, SMA50
 x 2017-09-18 change package structure
 x 2017-09-14 implement basic statistics
 x 2017-09-11 update portfolio value by latest data set

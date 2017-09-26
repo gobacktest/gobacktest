@@ -85,7 +85,11 @@ func (s Statistic) Transactions() []FillEvent {
 func (s Statistic) PrintResult() {
 	fmt.Println("Printing backtest results:")
 	fmt.Printf("Counted %d total events.\n", len(s.Events()))
-	fmt.Printf("Counted %d total transactions.\n", len(s.Transactions()))
+	fmt.Printf("Counted %d total transactions:\n", len(s.Transactions()))
+
+	for k, v := range s.Transactions() {
+		fmt.Printf("%d. Transaction: %v Action: %s Price: %f Qty: %d\n", k+1, v.GetTime().Format("2006-01-02"), v.GetDirection(), v.GetPrice(), v.GetQty())
+	}
 	// for _, e := range s.equity {
 	// 	fmt.Printf("equity: %#v\n", e)
 	// }

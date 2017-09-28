@@ -55,6 +55,11 @@ func (t *Test) SetStatistic(statistic StatisticHandler) {
 	t.statistic = statistic
 }
 
+// Stats returns the statistic handler of the backtest
+func (t *Test) Stats() StatisticHandler {
+	return t.statistic
+}
+
 // Run starts the test.
 func (t *Test) Run() error {
 	log.Println("Running backtest:")
@@ -87,8 +92,6 @@ func (t *Test) Run() error {
 		// event in queue found, add to event history
 		t.statistic.TrackEvent(event)
 	}
-
-	t.statistic.PrintResult()
 
 	return nil
 }

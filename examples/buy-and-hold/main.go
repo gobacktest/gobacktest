@@ -46,4 +46,6 @@ func main() {
 	// run the backtest
 	test.Run()
 
+	// print the result of the test
+	test.Stats().PrintResult()
 }

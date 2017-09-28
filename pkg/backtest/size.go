@@ -7,7 +7,7 @@ import (
 
 // SizeHandler is the basic interface for setting the size of an order
 type SizeHandler interface {
-	SizeOrder(OrderEvent, DataEventHandler, PortfolioHandler) (OrderEvent, error)
+	SizeOrder(OrderEvent, DataEventHandler, PortfolioHandler) (*Order, error)
 }
 
 // Size is a basic size handler implementation
@@ -17,36 +17,39 @@ type Size struct {
 }
 
 // SizeOrder adjusts the size of an order
-func (s *Size) SizeOrder(order OrderEvent, data DataEventHandler, pf PortfolioHandler) (OrderEvent, error) {
+func (s *Size) SizeOrder(order OrderEvent, data DataEventHandler, pf PortfolioHandler) (*Order, error) {
+	// assert interface to concrete Type
+	o := order.(*Order)
 	// no default set, no sizing possible, order rejected
 	if (s.DefaultSize == 0) || (s.DefaultValue == 0) {
-		return order, errors.New("cannot size order: no defaultSize or defaultValue set,")
+		return o, errors.New("cannot size order: no defaultSize or defaultValue set,")
 	}
 
 	// decide on order direction
-	switch order.GetDirection() {
+	switch o.GetDirection() {
 	case "long":
-		order.SetDirection("buy")
-		order.SetQty(s.setDefaultSize(data.LatestPrice()))
+		o.SetDirection("buy")
+		o.SetQty(s.setDefaultSize(data.LatestPrice()))
 	case "short":
-		order.SetDirection("sell")
-		order.SetQty(s.setDefaultSize(data.LatestPrice()))
+		o.SetDirection("sell")
+		o.SetQty(s.setDefaultSize(data.LatestPrice()))
 	case "exit": // all shares should be sold or bought, depending on position
 		// poll postions
-		if _, ok := pf.IsInvested(order.GetSymbol()); !ok {
-			return order, errors.New("cannot exit order: no position to symbol in portfolio,")
+		if _, ok := pf.IsInvested(o.GetSymbol()); !ok {
+
+			return o, errors.New("cannot exit order: no position to symbol in portfolio,")
 		}
-		if pos, ok := pf.IsLong(order.GetSymbol()); ok {
-			order.SetDirection("sell")
-			order.SetQty(pos.qty)
+		if pos, ok := pf.IsLong(o.GetSymbol()); ok {
+			o.SetDirection("sell")
+			o.SetQty(pos.qty)
 		}
-		if pos, ok := pf.IsShort(order.GetSymbol()); ok {
-			order.SetDirection("buy")
-			order.SetQty(pos.qty * -1)
+		if pos, ok := pf.IsShort(o.GetSymbol()); ok {
+			o.SetDirection("buy")
+			o.SetQty(pos.qty * -1)
 		}
 	}
 
-	return order, nil
+	return o, nil
 }
 
 func (s *Size) setDefaultSize(price float64) int64 {

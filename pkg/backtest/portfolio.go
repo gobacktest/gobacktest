@@ -16,12 +16,12 @@ type PortfolioHandler interface {
 
 // OnSignaler as an intercafe for the OnSignal method
 type OnSignaler interface {
-	OnSignal(SignalEvent, DataHandler) (OrderEvent, error)
+	OnSignal(SignalEvent, DataHandler) (*Order, error)
 }
 
 // OnFiller as an intercafe for the OnFill method
 type OnFiller interface {
-	OnFill(FillEvent, DataHandler) (FillEvent, error)
+	OnFill(FillEvent, DataHandler) (*Fill, error)
 }
 
 // Investor is an inteface to check if a portfolio has a position of a symbol
@@ -70,7 +70,7 @@ func (p *Portfolio) SetRiskManager(risk RiskHandler) {
 }
 
 // OnSignal handles an incomming signal event
-func (p *Portfolio) OnSignal(signal SignalEvent, data DataHandler) (OrderEvent, error) {
+func (p *Portfolio) OnSignal(signal SignalEvent, data DataHandler) (*Order, error) {
 	// fmt.Printf("Portfolio receives Signal: %#v \n", signal)
 
 	// set order type
@@ -103,7 +103,7 @@ func (p *Portfolio) OnSignal(signal SignalEvent, data DataHandler) (OrderEvent, 
 }
 
 // OnFill handles an incomming fill event
-func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (FillEvent, error) {
+func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (*Fill, error) {
 	// Check for nil map, else initialise the map
 	if p.holdings == nil {
 		p.holdings = make(map[string]position)
@@ -138,7 +138,8 @@ func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (FillEvent, error) 
 	// add fill to transactions
 	p.transactions = append(p.transactions, fill)
 
-	return fill, nil
+	f := fill.(*Fill)
+	return f, nil
 }
 
 // IsInvested checks if the portfolio has an open position on the given symbol

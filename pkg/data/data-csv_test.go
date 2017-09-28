@@ -2,6 +2,7 @@ package data
 
 import (
 	"reflect"
+	"strconv"
 	"testing"
 	"time"
 
@@ -52,18 +53,18 @@ func TestCreateBarEventFromLine(t *testing.T) {
 				"Volume":    "null",
 			},
 			"TEST.DE",
-			&backtest.Bar{
-				Event:     backtest.Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
-				DataEvent: backtest.DataEvent{Metrics: make(map[string]float64)},
-			}, // other values are nil
-			nil},
+			(*backtest.Bar)(nil), //
+			//errors.New("strconv.ParseFloat: parsing \"null\": invalid syntax"),
+			&strconv.NumError{},
+		},
 	}
 
 	for _, tc := range testCases {
 		event, err := createBarEventFromLine(tc.line, tc.symbol)
+		// if !reflect.DeepEqual(event, tc.expEvent) {
 		if !reflect.DeepEqual(event, tc.expEvent) || (reflect.TypeOf(err) != reflect.TypeOf(tc.expErr)) {
-			t.Logf("createBarEventFromLine(%v, %v): \nexpected %#v %v, \nactual   %#v %v",
-				tc.line, tc.symbol, tc.expEvent, tc.expErr, event, err)
+			t.Errorf("createBarEventFromLine(%v, %v): \nexpected %T %p %#v %v\nactual   %T %p %#v %v",
+				tc.line, tc.symbol, tc.expEvent, tc.expEvent, tc.expEvent, tc.expErr, event, event, event, err)
 		}
 	}
 }

@@ -71,7 +71,6 @@ func (d *BarEventFromCSVFile) Load(symbols []string) (err error) {
 			d.Data.SetStream(append(d.Data.Stream(), event))
 		}
 	}
-
 	// sort data stream
 	d.Data.SortStream()
 
@@ -144,7 +143,7 @@ func readCSVFile(path string) (lines []map[string]string, err error) {
 }
 
 // createBarEventFromLine takes a key/value map and a string and builds a bar struct
-func createBarEventFromLine(line map[string]string, symbol string) (bar backtest.BarEvent, err error) {
+func createBarEventFromLine(line map[string]string, symbol string) (bar *backtest.Bar, err error) {
 	// parse each string in line to corresponding record value
 	date, err := time.Parse("2006-01-02", line["Date"])
 	if err != nil {

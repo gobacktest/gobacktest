@@ -50,11 +50,11 @@ func (s *MovingAverageCross) CalculateSignal(e bt.DataEventHandler, data bt.Data
 			se.Direction = "long"
 		}
 
-		if (smaShort < smaLong) && !invested {
+		if (smaShort <= smaLong) && !invested {
 			return se, fmt.Errorf("sell signal but not invested in %v, no signal created,", e.GetSymbol())
 		}
 
-		if (smaShort < smaLong) && invested {
+		if (smaShort <= smaLong) && invested {
 			// sell signal, populate the signal event
 			se.Event = bt.Event{Timestamp: e.GetTime(), Symbol: e.GetSymbol()}
 			se.Direction = "exit"

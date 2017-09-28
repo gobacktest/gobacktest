@@ -8,6 +8,7 @@ import (
 type DataHandler interface {
 	DataLoader
 	DataStreamer
+	Reseter
 }
 
 // DataLoader is the interface loading the data into the data stream
@@ -37,6 +38,14 @@ func (d *Data) Load(s []string) error {
 	return nil
 }
 
+// Reset implements the Reseter interface and rests the data struct to a clean state with loaded data points
+func (d *Data) Reset() {
+	d.latest = nil
+	d.list = nil
+	d.stream = d.streamHistory
+	d.streamHistory = nil
+}
+
 // SetStream sets the data stream
 func (d *Data) SetStream(stream []DataEventHandler) {
 	d.stream = stream
@@ -57,7 +66,7 @@ func (d *Data) Next() (dh DataEventHandler, ok bool) {
 
 	dh = d.stream[0]
 	d.stream = d.stream[1:] // delete first element from stream
-	d.streamHistory = append(d.stream, dh)
+	d.streamHistory = append(d.streamHistory, dh)
 
 	// update list of current data events
 	d.updateLatest(dh)

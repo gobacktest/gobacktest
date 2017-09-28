@@ -12,6 +12,7 @@ type StatisticHandler interface {
 	EventTracker
 	TransactionTracker
 	StatisticPrinter
+	Reseter
 	Update(DataEventHandler, PortfolioHandler)
 }
 
@@ -79,6 +80,13 @@ func (s *Statistic) TrackTransaction(f FillEvent) {
 // Transactions returns the complete events history
 func (s Statistic) Transactions() []FillEvent {
 	return s.transactionHistory
+}
+
+// Reset the statistic to a clean state
+func (s *Statistic) Reset() {
+	s.eventHistory = nil
+	s.transactionHistory = nil
+	s.equity = nil
 }
 
 // PrintResult prints the backtest statistics to the screen

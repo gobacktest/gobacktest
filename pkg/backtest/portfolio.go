@@ -12,6 +12,7 @@ type PortfolioHandler interface {
 	Updater
 	Casher
 	Valuer
+	Reseter
 }
 
 // OnSignaler as an intercafe for the OnSignal method
@@ -67,6 +68,13 @@ func (p *Portfolio) SetSizeManager(size SizeHandler) {
 // SetRiskManager sets the risk manager to be used with the portfolio
 func (p *Portfolio) SetRiskManager(risk RiskHandler) {
 	p.riskManager = risk
+}
+
+// Reset the portfolio into a clean state with set initial cash.
+func (p *Portfolio) Reset() {
+	p.cash = 0
+	p.holdings = nil
+	p.transactions = nil
 }
 
 // OnSignal handles an incomming signal event

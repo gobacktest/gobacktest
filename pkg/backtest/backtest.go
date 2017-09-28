@@ -55,6 +55,15 @@ func (t *Test) SetStatistic(statistic StatisticHandler) {
 	t.statistic = statistic
 }
 
+// Reset rests the backtest into a clean state with loaded data
+func (t *Test) Reset() {
+	t.eventQueue = nil
+	t.data.Reset()
+	t.portfolio.Reset()
+	t.statistic.Reset()
+	return
+}
+
 // Stats returns the statistic handler of the backtest
 func (t *Test) Stats() StatisticHandler {
 	return t.statistic
@@ -148,4 +157,9 @@ func (t *Test) eventLoop(e EventHandler) error {
 	}
 
 	return nil
+}
+
+// Reseter provides a resting interface.
+type Reseter interface {
+	Reset()
 }

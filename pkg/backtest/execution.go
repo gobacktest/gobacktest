@@ -7,7 +7,7 @@ import (
 
 // ExecutionHandler is the basic interface for executing orders
 type ExecutionHandler interface {
-	ExecuteOrder(OrderEvent, DataHandler) (FillEvent, error)
+	ExecuteOrder(OrderEvent, DataHandler) (*Fill, error)
 }
 
 // Exchange is a basic execution handler implementation
@@ -17,7 +17,7 @@ type Exchange struct {
 }
 
 // ExecuteOrder executes an order event
-func (e *Exchange) ExecuteOrder(order OrderEvent, data DataHandler) (FillEvent, error) {
+func (e *Exchange) ExecuteOrder(order OrderEvent, data DataHandler) (*Fill, error) {
 	// fetch latest known data event for the symbol
 	latest := data.Latest(order.GetSymbol())
 

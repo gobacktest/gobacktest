@@ -1,6 +1,7 @@
 package backtest
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -13,7 +14,8 @@ type StatisticHandler interface {
 	TransactionTracker
 	StatisticPrinter
 	Reseter
-	Update(DataEventHandler, PortfolioHandler)
+	StatisticUpdater
+	Resulter
 }
 
 // EventTracker is responsible for all event tracking during a backtest
@@ -31,6 +33,16 @@ type TransactionTracker interface {
 // StatisticPrinter handles printing of the statistics to screen
 type StatisticPrinter interface {
 	PrintResult()
+}
+
+// StatisticUpdater handles the updateing of the statistics
+type StatisticUpdater interface {
+	Update(DataEventHandler, PortfolioHandler)
+}
+
+// Resulter bundles all methods which return the results of the backtest
+type Resulter interface {
+	TotalEquityReturn() (float64, error)
 }
 
 // Statistic is a basic test statistic, which holds simple lists of historic events
@@ -93,26 +105,30 @@ func (s *Statistic) Reset() {
 func (s Statistic) PrintResult() {
 	fmt.Println("Printing backtest results:")
 	fmt.Printf("Counted %d total events.\n", len(s.Events()))
-	fmt.Printf("Counted %d total transactions:\n", len(s.Transactions()))
 
+	fmt.Printf("Counted %d total transactions:\n", len(s.Transactions()))
 	for k, v := range s.Transactions() {
 		fmt.Printf("%d. Transaction: %v Action: %s Price: %f Qty: %d\n", k+1, v.GetTime().Format("2006-01-02"), v.GetDirection(), v.GetPrice(), v.GetQty())
 	}
-	// for _, e := range s.equity {
-	// 	fmt.Printf("equity: %#v\n", e)
-	// }
-	fmt.Printf("Total equity return %v%%.\n", s.totalEquityReturn()*100)
 }
 
-func (s Statistic) totalEquityReturn() float64 {
-	firstEquityPoint, _ := s.firstEquityPoint()
+// TotalEquityReturn calculates the the total return on the first and last equity point
+func (s Statistic) TotalEquityReturn() (r float64, err error) {
+	firstEquityPoint, ok := s.firstEquityPoint()
+	if !ok {
+		return r, errors.New("could not calculate totalEquityReturn, no equity points found")
+	}
 	firstEquity := decimal.NewFromFloat(firstEquityPoint.equity)
+
 	lastEquityPoint, _ := s.lastEquityPoint()
+	// if !ok {
+	// 	return r, errors.New("could not calculate totalEquityReturn, no last equity point")
+	// }
 	lastEquity := decimal.NewFromFloat(lastEquityPoint.equity)
 
 	totalEquityReturn := lastEquity.Sub(firstEquity).Div(firstEquity)
 	total, _ := totalEquityReturn.Round(4).Float64()
-	return total
+	return total, nil
 }
 
 // returns the first equityPoint

@@ -115,6 +115,7 @@ func (s Statistic) totalEquityReturn() float64 {
 	return total
 }
 
+// returns the first equityPoint
 func (s Statistic) firstEquityPoint() (ep equityPoint, ok bool) {
 	if len(s.equity) <= 0 {
 		return ep, false
@@ -124,6 +125,7 @@ func (s Statistic) firstEquityPoint() (ep equityPoint, ok bool) {
 	return ep, true
 }
 
+// returns the last equityPoint
 func (s Statistic) lastEquityPoint() (ep equityPoint, ok bool) {
 	if len(s.equity) <= 0 {
 		return ep, false

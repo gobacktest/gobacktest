@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func TestCreate(t *testing.T) {
+func TestCreatePosition(t *testing.T) {
 	// set the example time string in format yyyy-mm-dd
 	var exampleTime, _ = time.Parse("2006-01-02", "2017-06-01")
 
@@ -66,7 +66,7 @@ func TestCreate(t *testing.T) {
 	}
 }
 
-func TestUpdate(t *testing.T) {
+func TestUpdatePosition(t *testing.T) {
 	// set the example time string in format yyyy-mm-dd
 	var exampleTime, _ = time.Parse("2006-01-02", "2017-06-01")
 
@@ -331,7 +331,7 @@ func TestUpdate(t *testing.T) {
 	}
 }
 
-func TestMultipleUpdate(t *testing.T) {
+func TestMultipleUpdatePosition(t *testing.T) {
 	// set the example time string in format yyyy-mm-dd
 	var exampleTime, _ = time.Parse("2006-01-02", "2017-06-01")
 
@@ -464,7 +464,7 @@ func TestMultipleUpdate(t *testing.T) {
 	}
 }
 
-func TestUpdateValue(t *testing.T) {
+func TestUpdatePositionValue(t *testing.T) {
 	// set the example time string in format yyyy-mm-dd
 	var exampleTime, _ = time.Parse("2006-01-02", "2017-06-01")
 	// initialize new Position ready for use

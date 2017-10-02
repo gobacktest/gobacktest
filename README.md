@@ -4,15 +4,13 @@
 [![Coverage Status](https://img.shields.io/coveralls/dirkolbrich/gobacktest/master.svg?style=flat-square)](https://coveralls.io/github/dirkolbrich/gobacktest?branch=master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/dirkolbrich/gobacktest?style=flat-square)](https://goreportcard.com/report/github.com/dirkolbrich/gobacktest)
 
-_**Heads up:** This is a framework in development, with only limited basic functionality. A lot of the features are still missing._
-
-_You can read along and follow the development of this project. And if you like, give me some tips or discussion points for improvement._
+_**Heads up:** This is a framework in development, with only basic functionality._
 
 ---
 
 # gobacktest - Fundamental stock analysis backtesting
 
-My attempt to create a event-driven backtesting framework to test stock trading strategies based on fundamental analysis. Preferably this package will be the core of a backend service exposed via a REST API.
+An event-driven backtesting framework to test stock trading strategies based on fundamental analysis. Preferably this package will be the core of a backend service exposed via a REST API.
 
 ## Usage
 
@@ -66,6 +64,9 @@ func main() {
 
     // run the backtest
     test.Run()
+
+    // print the result of the test
+    test.Stats().TotalEquityReturn()
 }
 ```
 
@@ -81,13 +82,16 @@ Make sure to install it into your `$GOPATH` with
 
 These are the basic components of an event-driven framework.
 
-1. BackTester - general test case, bundles the follwing elements into a single test
-2. DataHandler - interface to a set of data, e.g historical quotes, fundamental data etc.
-3. StrategyHandler - generates a buy/sell signal based on the data
-4. PortfolioHandler - generates orders and manages profit & loss
+1. BackTester - general test case, bundles the following elements into a single test
+2. EventHandler - the different types of events, which travel through this system - data event, signal event, order event and fill event
+3. DataHandler - interface to a set of data, e.g historical quotes, fundamental data, dividends etc.
+4. StrategyHandler - generates a buy/sell signal based on the data
+5. PortfolioHandler - generates orders and manages profit & loss
+    + (SizeHandler) - manages the size of an order
     + (RiskHandler) - manages the risk allocation of a portfolio
-5. ExecutionHandler - sends orders to the broker and receives the “fills” or signals that the stock has been bought or sold
-6. EventHandler - the different types of events, which travel through this system - data event, signal event, order event and fill event
+6. ExecutionHandler - sends orders to the broker and receives the “fills” or signals that the stock has been bought or sold
+7. StatisticHandler - tracks all events during the backtests and calculates useful statistics like equity return, drawdown or sharp ratio etc., could be used to replay the complete backtest for later reference
+   + (ComplianceHandler) - tracks and documents all trades to the portfolio for compliance reasons
 
 ## Infrastructure example
 

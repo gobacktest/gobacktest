@@ -1,10 +1,6 @@
 // Package backtest provides a simple stock backtesting framework.
 package backtest
 
-import (
-	"log"
-)
-
 // DP sets the the precision of rounded floating numbers
 // used after calculations to format
 const DP = 4 // DP
@@ -71,9 +67,6 @@ func (t *Test) Stats() StatisticHandler {
 
 // Run starts the test.
 func (t *Test) Run() error {
-	log.Println("Running backtest:")
-	log.Printf("Counting %v data events. \n", len(t.data.Stream()))
-
 	// before first run, set portfolio cash
 	t.portfolio.SetCash(t.portfolio.InitialCash())
 

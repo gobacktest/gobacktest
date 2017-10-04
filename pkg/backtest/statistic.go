@@ -43,6 +43,7 @@ type StatisticUpdater interface {
 // Resulter bundles all methods which return the results of the backtest
 type Resulter interface {
 	TotalEquityReturn() (float64, error)
+	MaxDrawDown() float64
 }
 
 // Statistic is a basic test statistic, which holds simple lists of historic events
@@ -50,26 +51,42 @@ type Statistic struct {
 	eventHistory       []EventHandler
 	transactionHistory []FillEvent
 	equity             []equityPoint
+	high               equityPoint
+	low                equityPoint
 }
 
 type equityPoint struct {
 	timestamp    time.Time
 	equity       float64
 	equityReturn float64
+	drawdown     float64
 }
 
-// Update updates the complete statistics to a given data event
+// Update the complete statistics to a given data event.
 func (s *Statistic) Update(d DataEventHandler, p PortfolioHandler) {
+	// create new equity point based on current data timestamp and portfolio value
 	e := equityPoint{}
 	e.timestamp = d.GetTime()
 	e.equity = p.Value()
 
+	// calc equity return for current equity point
 	if len(s.equity) > 0 {
-		lastEquity := decimal.NewFromFloat(s.equity[len(s.equity)-1].equity)
-		equity := decimal.NewFromFloat(e.equity)
-		equityReturn := equity.Sub(lastEquity).Div(lastEquity)
-		e.equityReturn, _ = equityReturn.Round(4).Float64()
+		e = s.calcEquityReturn(e)
 	}
+
+	// calc drawdown for current equity point
+	if len(s.equity) > 0 {
+		e = s.calcDrawdown(e)
+	}
+
+	// set high and low equity point
+	if e.equity >= s.high.equity {
+		s.high = e
+	}
+	if e.equity <= s.low.equity {
+		s.low = e
+	}
+
 	// append new quity point
 	s.equity = append(s.equity, e)
 }
@@ -127,8 +144,40 @@ func (s Statistic) TotalEquityReturn() (r float64, err error) {
 	lastEquity := decimal.NewFromFloat(lastEquityPoint.equity)
 
 	totalEquityReturn := lastEquity.Sub(firstEquity).Div(firstEquity)
-	total, _ := totalEquityReturn.Round(4).Float64()
+	total, _ := totalEquityReturn.Round(DP).Float64()
 	return total, nil
+}
+
+// MaxDrawdown returns the maximum draw down value in percent.
+func (s Statistic) MaxDrawdown() float64 {
+	_, ep := s.maxDrawdownPoint()
+	return ep.drawdown
+}
+
+// MaxDrawdownTime returns the time of the maximum draw down value.
+func (s Statistic) MaxDrawdownTime() time.Time {
+	_, ep := s.maxDrawdownPoint()
+	return ep.timestamp
+}
+
+// MaxDrawdownDuration returns the maximum draw down value in percent
+func (s Statistic) MaxDrawdownDuration() (d time.Duration) {
+	i, ep := s.maxDrawdownPoint()
+
+	if len(s.equity) == 0 {
+		return d
+	}
+
+	// walk the equity slice up to find a higher equity point
+	maxPoint := equityPoint{}
+	for index := i; index >= 0; index-- {
+		if s.equity[index].equity > maxPoint.equity {
+			maxPoint = s.equity[index]
+		}
+	}
+
+	d = ep.timestamp.Sub(maxPoint.timestamp)
+	return d
 }
 
 // returns the first equityPoint
@@ -149,4 +198,68 @@ func (s Statistic) lastEquityPoint() (ep equityPoint, ok bool) {
 	ep = s.equity[len(s.equity)-1]
 
 	return ep, true
+}
+
+// calculates the equity return of an equity point relativ to the last equity point
+func (s Statistic) calcEquityReturn(e equityPoint) equityPoint {
+	last, ok := s.lastEquityPoint()
+	// no equity point before the current
+	if !ok {
+		e.equityReturn = 0
+		return e
+	}
+
+	lastEquity := decimal.NewFromFloat(last.equity)
+	currentEquity := decimal.NewFromFloat(e.equity)
+
+	// last equity point has 0 equity
+	if lastEquity.Equal(decimal.Zero) {
+		e.equityReturn = 1
+		return e
+	}
+
+	equityReturn := currentEquity.Sub(lastEquity).Div(lastEquity)
+	e.equityReturn, _ = equityReturn.Round(DP).Float64()
+
+	return e
+}
+
+// calculates the drawdown of an equity point relativ to the latest high of the statistic handler
+func (s Statistic) calcDrawdown(e equityPoint) equityPoint {
+	if s.high.equity == 0 {
+		e.drawdown = 0
+		return e
+	}
+
+	lastHigh := decimal.NewFromFloat(s.high.equity)
+	equity := decimal.NewFromFloat(e.equity)
+
+	if equity.GreaterThanOrEqual(lastHigh) {
+		e.drawdown = 0
+		return e
+	}
+
+	drawdown := equity.Sub(lastHigh).Div(lastHigh)
+	e.drawdown, _ = drawdown.Round(DP).Float64()
+
+	return e
+}
+
+// returns the equity point with the maximum drawdown
+func (s Statistic) maxDrawdownPoint() (i int, ep equityPoint) {
+	if len(s.equity) == 0 {
+		return 0, ep
+	}
+
+	var maxDrawdown = 0.0
+	var index = 0
+
+	for i, ep := range s.equity {
+		if ep.drawdown < maxDrawdown {
+			maxDrawdown = ep.drawdown
+			index = i
+		}
+	}
+
+	return index, s.equity[index]
 }

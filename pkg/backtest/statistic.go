@@ -43,7 +43,7 @@ type StatisticUpdater interface {
 // Resulter bundles all methods which return the results of the backtest
 type Resulter interface {
 	TotalEquityReturn() (float64, error)
-	MaxDrawDown() float64
+	MaxDrawdown() float64
 }
 
 // Statistic is a basic test statistic, which holds simple lists of historic events

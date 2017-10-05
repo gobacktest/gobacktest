@@ -44,6 +44,8 @@ type StatisticUpdater interface {
 type Resulter interface {
 	TotalEquityReturn() (float64, error)
 	MaxDrawdown() float64
+	MaxDrawdownTime() time.Time
+	MaxDrawdownDuration() time.Duration
 }
 
 // Statistic is a basic test statistic, which holds simple lists of historic events
@@ -116,6 +118,8 @@ func (s *Statistic) Reset() {
 	s.eventHistory = nil
 	s.transactionHistory = nil
 	s.equity = nil
+	s.high = equityPoint{}
+	s.low = equityPoint{}
 }
 
 // PrintResult prints the backtest statistics to the screen

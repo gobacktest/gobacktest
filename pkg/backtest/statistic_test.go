@@ -7,6 +7,198 @@ import (
 	"time"
 )
 
+func TestTrackEvent(t *testing.T) {
+	var testCases = []struct {
+		msg     string
+		stat    Statistic
+		event   EventHandler
+		expStat Statistic
+	}{
+		{"testing simple event",
+			Statistic{},
+			&Bar{Close: 10},
+			Statistic{
+				eventHistory: []EventHandler{
+					&Bar{Close: 10},
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc.stat.TrackEvent(tc.event)
+		if !reflect.DeepEqual(tc.stat, tc.expStat) {
+			t.Errorf("%v TrackEvent(): \nexpected %#v, \nactual   %#v",
+				tc.msg, tc.expStat, tc.stat)
+		}
+	}
+}
+
+func TestEvents(t *testing.T) {
+	var testCases = []struct {
+		msg       string
+		stat      Statistic
+		expEvents []EventHandler
+	}{
+		{"testing single event",
+			Statistic{
+				eventHistory: []EventHandler{
+					&Bar{Close: 10},
+				},
+			},
+			[]EventHandler{
+				&Bar{Close: 10},
+			},
+		},
+		{"testing multiple events",
+			Statistic{
+				eventHistory: []EventHandler{
+					&Bar{Close: 10},
+					&Bar{Close: 11},
+					&Bar{Close: 9},
+				},
+			},
+			[]EventHandler{
+				&Bar{Close: 10},
+				&Bar{Close: 11},
+				&Bar{Close: 9},
+			},
+		},
+		{"testing nil events",
+			Statistic{},
+			nil,
+		},
+	}
+
+	for _, tc := range testCases {
+		events := tc.stat.Events()
+		if !reflect.DeepEqual(events, tc.expEvents) {
+			t.Errorf("%v Events(): \nexpected %#v, \nactual   %#v",
+				tc.msg, tc.expEvents, events)
+		}
+	}
+}
+
+func TestTrackTransaction(t *testing.T) {
+	var testCases = []struct {
+		msg     string
+		stat    Statistic
+		fill    FillEvent
+		expStat Statistic
+	}{
+		{"testing simple fill",
+			Statistic{},
+			&Fill{Direction: "BOT", Qty: 100},
+			Statistic{
+				transactionHistory: []FillEvent{
+					&Fill{Direction: "BOT", Qty: 100},
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc.stat.TrackTransaction(tc.fill)
+		if !reflect.DeepEqual(tc.stat, tc.expStat) {
+			t.Errorf("%v TrackTransaction(): \nexpected %#v, \nactual   %#v",
+				tc.msg, tc.expStat, tc.stat)
+		}
+	}
+}
+
+func TestTransactions(t *testing.T) {
+	var testCases = []struct {
+		msg             string
+		stat            Statistic
+		expTransactions []FillEvent
+	}{
+		{"testing single fill",
+			Statistic{
+				transactionHistory: []FillEvent{
+					&Fill{Direction: "BOT", Qty: 100},
+				},
+			},
+			[]FillEvent{
+				&Fill{Direction: "BOT", Qty: 100},
+			},
+		},
+		{"testing multiple fill events",
+			Statistic{
+				transactionHistory: []FillEvent{
+					&Fill{Direction: "BOT", Qty: 100},
+					&Fill{Direction: "SLD", Qty: 100},
+					&Fill{Direction: "BOT", Qty: 50},
+				},
+			},
+			[]FillEvent{
+				&Fill{Direction: "BOT", Qty: 100},
+				&Fill{Direction: "SLD", Qty: 100},
+				&Fill{Direction: "BOT", Qty: 50},
+			},
+		},
+		{"testing nil fill Events",
+			Statistic{},
+			nil,
+		},
+	}
+
+	for _, tc := range testCases {
+		transactions := tc.stat.Transactions()
+		if !reflect.DeepEqual(transactions, tc.expTransactions) {
+			t.Errorf("%v Transactions(): \nexpected %#v, \nactual   %#v",
+				tc.msg, tc.expTransactions, transactions)
+		}
+	}
+}
+
+func TestResetStatistic(t *testing.T) {
+	var testCases = []struct {
+		msg     string
+		stat    Statistic
+		expStat Statistic
+	}{
+		{"testing full statistic",
+			Statistic{
+				eventHistory: []EventHandler{
+					&Bar{Close: 10},
+					&Bar{Close: 15},
+					&Signal{Direction: "long"},
+					&Order{Direction: "BOT"},
+					&Fill{Qty: 100},
+				},
+				transactionHistory: []FillEvent{
+					&Fill{Qty: 100},
+				},
+				equity: []equityPoint{
+					{equity: 100},
+					{equity: 90},
+				},
+				high: equityPoint{equity: 100},
+				low:  equityPoint{equity: 90},
+			},
+			Statistic{},
+		},
+		{"testing empty statistic",
+			Statistic{
+				eventHistory:       []EventHandler{},
+				transactionHistory: []FillEvent{},
+				equity:             []equityPoint{},
+				high:               equityPoint{},
+				low:                equityPoint{},
+			},
+			Statistic{},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc.stat.Reset()
+		if !reflect.DeepEqual(tc.stat, tc.expStat) {
+			t.Errorf("%v Reset(): \nexpected %#v, \nactual   %#v",
+				tc.msg, tc.expStat, tc.stat)
+		}
+	}
+}
+
 func TestTotalEquityReturn(t *testing.T) {
 	// set up test cases for getting first equity point
 	var testCases = []struct {

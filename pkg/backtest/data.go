@@ -33,7 +33,9 @@ type Data struct {
 	streamHistory []DataEventHandler
 }
 
-// Load loads data endpoints into a stream
+// Load loads data endpoints into a stream.
+// This method satisfies the DataLoeder interface, but should be overwritten
+// by the specific data loading implamentation.
 func (d *Data) Load(s []string) error {
 	return nil
 }
@@ -86,29 +88,9 @@ func (d *Data) Latest(symbol string) DataEventHandler {
 	return d.latest[symbol]
 }
 
-// updateLatest puts the last current data event to the current list.
-func (d *Data) updateLatest(event DataEventHandler) {
-	// check for nil map, else initialise the map
-	if d.latest == nil {
-		d.latest = make(map[string]DataEventHandler)
-	}
-
-	d.latest[event.GetSymbol()] = event
-}
-
 // List returns the data event list for a symbol.
 func (d *Data) List(symbol string) []DataEventHandler {
 	return d.list[symbol]
-}
-
-// updateList appends an event to the data list.
-func (d *Data) updateList(event DataEventHandler) {
-	// Check for nil map, else initialise the map
-	if d.list == nil {
-		d.list = make(map[string][]DataEventHandler)
-	}
-
-	d.list[event.GetSymbol()] = append(d.list[event.GetSymbol()], event)
 }
 
 // SortStream sorts the dataStream
@@ -124,4 +106,24 @@ func (d *Data) SortStream() {
 		// else sort by date
 		return b1.GetTime().Before(b2.GetTime())
 	})
+}
+
+// updateLatest puts the last current data event to the current list.
+func (d *Data) updateLatest(event DataEventHandler) {
+	// check for nil map, else initialise the map
+	if d.latest == nil {
+		d.latest = make(map[string]DataEventHandler)
+	}
+
+	d.latest[event.GetSymbol()] = event
+}
+
+// updateList appends an event to the data list.
+func (d *Data) updateList(event DataEventHandler) {
+	// Check for nil map, else initialise the map
+	if d.list == nil {
+		d.list = make(map[string][]DataEventHandler)
+	}
+
+	d.list[event.GetSymbol()] = append(d.list[event.GetSymbol()], event)
 }

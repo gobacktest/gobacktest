@@ -117,23 +117,17 @@ func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (*Fill, error) {
 		p.holdings = make(map[string]position)
 	}
 
-	// fmt.Printf("holdings before: %+v\n", p.holdings)
-
 	// check if portfolio has already a holding of the symbol from this fill
 	if pos, ok := p.holdings[fill.GetSymbol()]; ok {
-		// log.Printf("holding to this symbol exists: %+v \n", pos)
 		// update existing Position
 		pos.Update(fill)
 		p.holdings[fill.GetSymbol()] = pos
 	} else {
-		// log.Println("No holding to this transaction")
 		// create new position
 		pos := position{}
 		pos.Create(fill)
 		p.holdings[fill.GetSymbol()] = pos
 	}
-
-	// fmt.Printf("holdings after: %+v\n", p.holdings)
 
 	// update cash
 	if fill.GetDirection() == "BOT" {
@@ -205,7 +199,7 @@ func (p Portfolio) Cash() float64 {
 	return p.cash
 }
 
-// Value return the current vlue of the portfolio
+// Value return the current total value of the portfolio
 func (p Portfolio) Value() float64 {
 	holdingValue := decimal.NewFromFloat(0)
 	for _, pos := range p.holdings {

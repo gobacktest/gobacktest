@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/shopspring/decimal"
+	"gonum.org/v1/gonum/stat"
 )
 
 // StatisticHandler is a basic statistic interface
@@ -46,6 +47,8 @@ type Resulter interface {
 	MaxDrawdown() float64
 	MaxDrawdownTime() time.Time
 	MaxDrawdownDuration() time.Duration
+	SharpRatio(float64) float64
+	SortinoRatio(float64) float64
 }
 
 // Statistic is a basic test statistic, which holds simple lists of historic events
@@ -182,6 +185,41 @@ func (s Statistic) MaxDrawdownDuration() (d time.Duration) {
 
 	d = ep.timestamp.Sub(maxPoint.timestamp)
 	return d
+}
+
+// SharpRatio returns the Sharp ratio compared to a risk free benchmark return.
+func (s *Statistic) SharpRatio(riskfree float64) float64 {
+	var equityReturns = make([]float64, len(s.equity))
+
+	for i, v := range s.equity {
+		equityReturns[i] = v.equityReturn
+	}
+	mean, stddev := stat.MeanStdDev(equityReturns, nil)
+
+	sharp := (mean - riskfree) / stddev
+	return sharp
+}
+
+// SortinoRatio returns the Sortino ratio compared to a risk free benchmark return.
+func (s *Statistic) SortinoRatio(riskfree float64) float64 {
+	var equityReturns = make([]float64, len(s.equity))
+
+	for i, v := range s.equity {
+		equityReturns[i] = v.equityReturn
+	}
+	mean := stat.Mean(equityReturns, nil)
+
+	// sortino uses the stddev of only the negativ returns
+	var negReturns = []float64{}
+	for _, v := range equityReturns {
+		if v < 0 {
+			negReturns = append(negReturns, v)
+		}
+	}
+	stdDev := stat.StdDev(negReturns, nil)
+
+	sortino := (mean - riskfree) / stdDev
+	return sortino
 }
 
 // returns the first equityPoint

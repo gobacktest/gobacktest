@@ -539,3 +539,71 @@ func TestMaxDrawdown(t *testing.T) {
 		}
 	}
 }
+
+func TestSharpRatio(t *testing.T) {
+	var testCases = []struct {
+		msg      string
+		stat     Statistic
+		riskfree float64
+		expSharp float64
+	}{
+		{"testing simple positiv sharp ratio",
+			Statistic{
+				equity: []equityPoint{
+					{equityReturn: 1},
+					{equityReturn: 2},
+					{equityReturn: 3},
+				},
+			},
+			0,
+			2},
+		{"testing simple zero sharp ratio",
+			Statistic{
+				equity: []equityPoint{
+					{equityReturn: -1},
+					{equityReturn: 0},
+					{equityReturn: 1},
+				},
+			},
+			0,
+			0},
+	}
+
+	for _, tc := range testCases {
+		sharp := tc.stat.SharpRatio(tc.riskfree)
+		if sharp != tc.expSharp {
+			t.Errorf("%v SharpRatio(%v): \nexpected %#v, \nactual   %#v",
+				tc.msg, tc.riskfree, tc.expSharp, sharp)
+		}
+	}
+}
+
+func TestSortinoRatio(t *testing.T) {
+	var testCases = []struct {
+		msg        string
+		stat       Statistic
+		riskfree   float64
+		expSortino float64
+	}{
+		{"testing simple sortino ratio",
+			Statistic{
+				equity: []equityPoint{
+					{equityReturn: -3},
+					{equityReturn: -2},
+					{equityReturn: -1},
+					{equityReturn: 0},
+					{equityReturn: 1},
+				},
+			},
+			0,
+			-1},
+	}
+
+	for _, tc := range testCases {
+		sortino := tc.stat.SortinoRatio(tc.riskfree)
+		if sortino != tc.expSortino {
+			t.Errorf("%v SortinoRatio(%v): \nexpected %#v, \nactual   %#v",
+				tc.msg, tc.riskfree, tc.expSortino, sortino)
+		}
+	}
+}

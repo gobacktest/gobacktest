@@ -56,7 +56,7 @@ func TestSizeOrder(t *testing.T) {
 				Direction: "exit"},
 			&Bar{},
 			&Portfolio{
-				holdings: map[string]position{
+				holdings: map[string]Position{
 					"TEST.DE": {qty: 15},
 				},
 			},
@@ -74,7 +74,7 @@ func TestSizeOrder(t *testing.T) {
 				Direction: "exit"},
 			&Bar{},
 			&Portfolio{
-				holdings: map[string]position{
+				holdings: map[string]Position{
 					"TEST.DE": {qty: -12},
 				},
 			},

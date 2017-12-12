@@ -13,14 +13,14 @@ func TestEvaluateOrder(t *testing.T) {
 	var testCases = []struct {
 		order     OrderEvent          // OrderEvent input
 		data      DataEventHandler    // DataEvent input
-		positions map[string]position // the portfolio holdings
+		positions map[string]Position // the portfolio holdings
 		expOrder  OrderEvent          // expected FillEvent return
 		expErr    error               // expected error output
 	}{
 		{
 			&Order{},
 			&Bar{},
-			map[string]position{},
+			map[string]Position{},
 			&Order{},
 			nil,
 		},

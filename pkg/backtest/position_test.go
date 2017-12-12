@@ -14,7 +14,7 @@ func TestCreatePosition(t *testing.T) {
 	var testCases = []struct {
 		msg    string    // error message
 		fill   FillEvent // input
-		expPos *position // expected Position
+		expPos *Position // expected Position
 	}{
 		{"create with buy:",
 			&Fill{
@@ -24,7 +24,7 @@ func TestCreatePosition(t *testing.T) {
 				Qty:       10, Price: 10,
 				Commission: 4, ExchangeFee: 1, Cost: 5,
 			},
-			&position{
+			&Position{
 				timestamp: exampleTime, symbol: "TEST.DE",
 				qty: 10, qtyBOT: 10, qtySLD: 0,
 				avgPrice: 10, avgPriceNet: 10.5, avgPriceBOT: 10, avgPriceSLD: 0,
@@ -43,7 +43,7 @@ func TestCreatePosition(t *testing.T) {
 				Qty:       10, Price: 10,
 				Commission: 4, ExchangeFee: 1, Cost: 5,
 			},
-			&position{
+			&Position{
 				timestamp: exampleTime, symbol: "TEST.DE",
 				qty: -10, qtyBOT: 0, qtySLD: 10,
 				avgPrice: 10, avgPriceNet: 9.5, avgPriceBOT: 0, avgPriceSLD: 10,
@@ -58,7 +58,7 @@ func TestCreatePosition(t *testing.T) {
 
 	for _, tc := range testCases {
 		// initialize new Position ready for use
-		var p = new(position)
+		var p = new(Position)
 		p.Create(tc.fill)
 		if !reflect.DeepEqual(p, tc.expPos) {
 			t.Errorf("%v\nCreate(%v): \nexpected %p %#v, \nactual   %p %#v", tc.msg, tc.fill, tc.expPos, tc.expPos, p, p)
@@ -70,7 +70,7 @@ func TestUpdatePosition(t *testing.T) {
 	// set the example time string in format yyyy-mm-dd
 	var exampleTime, _ = time.Parse("2006-01-02", "2017-06-01")
 
-	var posBOT = &position{
+	var posBOT = &Position{
 		timestamp: exampleTime, symbol: "TEST.DE",
 		qty: 10, qtyBOT: 10, qtySLD: 0,
 		avgPrice: 10, avgPriceNet: 10.5, avgPriceBOT: 10, avgPriceSLD: 0,
@@ -80,7 +80,7 @@ func TestUpdatePosition(t *testing.T) {
 		commission: 4, exchangeFee: 1, cost: 5, costBasis: 105,
 		realProfitLoss: 0, unrealProfitLoss: -5, totalProfitLoss: -5,
 	}
-	var posSLD = &position{
+	var posSLD = &Position{
 		timestamp: exampleTime, symbol: "TEST.DE",
 		qty: -10, qtyBOT: 0, qtySLD: 10,
 		avgPrice: 10, avgPriceNet: 9.5, avgPriceBOT: 0, avgPriceSLD: 10,
@@ -94,9 +94,9 @@ func TestUpdatePosition(t *testing.T) {
 	// testCases is a table for testing updating a position
 	var testCases = []struct {
 		msg    string    // error string
-		pos    *position // base position
+		pos    *Position // base position
 		fill   FillEvent // input
-		expPos *position // expected Position
+		expPos *Position // expected Position
 	}{
 		{"BOT position, buying stock:",
 			posBOT,
@@ -106,7 +106,7 @@ func TestUpdatePosition(t *testing.T) {
 				Qty: 15, Price: 15,
 				Commission: 6, ExchangeFee: 1, Cost: 7,
 			},
-			&position{
+			&Position{
 				timestamp: exampleTime, symbol: "TEST.DE",
 				qty: 25, qtyBOT: 25, qtySLD: 0,
 				avgPrice: 13, avgPriceNet: 13.48, avgPriceBOT: 13, avgPriceSLD: 0,
@@ -125,7 +125,7 @@ func TestUpdatePosition(t *testing.T) {
 				Qty: 6, Price: 12,
 				Commission: 4, ExchangeFee: 1, Cost: 5,
 			},
-			&position{
+			&Position{
 				timestamp: exampleTime, symbol: "TEST.DE",
 				qty: 4, qtyBOT: 10, qtySLD: 6,
 				avgPrice: 10.75, avgPriceNet: 10.75, avgPriceBOT: 10, avgPriceSLD: 12,
@@ -144,7 +144,7 @@ func TestUpdatePosition(t *testing.T) {
 				Qty: 15, Price: 5,
 				Commission: 4, ExchangeFee: 1, Cost: 5,
 			},
-			&position{
+			&Position{
 				timestamp: exampleTime, symbol: "TEST.DE",
 				qty: -5, qtyBOT: 10, qtySLD: 15,
 				avgPrice: 7, avgPriceNet: 7, avgPriceBOT: 10, avgPriceSLD: 5,
@@ -163,7 +163,7 @@ func TestUpdatePosition(t *testing.T) {
 				Qty: 10, Price: 12,
 				Commission: 5, ExchangeFee: 1, Cost: 6,
 			},
-			&position{
+			&Position{
 				timestamp: exampleTime, symbol: "TEST.DE",
 				qty: 0, qtyBOT: 10, qtySLD: 10,
 				avgPrice: 11, avgPriceNet: 10.95, avgPriceBOT: 10, avgPriceSLD: 12,
@@ -182,7 +182,7 @@ func TestUpdatePosition(t *testing.T) {
 				Qty: 15, Price: 15,
 				Commission: 6, ExchangeFee: 1, Cost: 7,
 			},
-			&position{
+			&Position{
 				timestamp: exampleTime, symbol: "TEST.DE",
 				qty: -25, qtyBOT: 0, qtySLD: 25,
 				avgPrice: 13, avgPriceNet: 12.52, avgPriceBOT: 0, avgPriceSLD: 13,
@@ -201,7 +201,7 @@ func TestUpdatePosition(t *testing.T) {
 				Qty: 6, Price: 12,
 				Commission: 4, ExchangeFee: 1, Cost: 5,
 			},
-			&position{
+			&Position{
 				timestamp: exampleTime, symbol: "TEST.DE",
 				qty: -4, qtyBOT: 6, qtySLD: 10,
 				avgPrice: 10.75, avgPriceNet: 10.75, avgPriceBOT: 12, avgPriceSLD: 10,
@@ -220,7 +220,7 @@ func TestUpdatePosition(t *testing.T) {
 				Qty: 15, Price: 5,
 				Commission: 4, ExchangeFee: 1, Cost: 5,
 			},
-			&position{
+			&Position{
 				timestamp: exampleTime, symbol: "TEST.DE",
 				qty: 5, qtyBOT: 15, qtySLD: 10,
 				avgPrice: 7, avgPriceNet: 7, avgPriceBOT: 5, avgPriceSLD: 10,
@@ -239,7 +239,7 @@ func TestUpdatePosition(t *testing.T) {
 				Qty: 10, Price: 12,
 				Commission: 5, ExchangeFee: 1, Cost: 6,
 			},
-			&position{
+			&Position{
 				timestamp: exampleTime, symbol: "TEST.DE",
 				qty: 0, qtyBOT: 10, qtySLD: 10,
 				avgPrice: 11, avgPriceNet: 11.05, avgPriceBOT: 12, avgPriceSLD: 10,
@@ -254,7 +254,7 @@ func TestUpdatePosition(t *testing.T) {
 
 	for _, tc := range testCases {
 		// initialize new Position and copy pointer to struct from testcases
-		p := &position{}
+		p := &Position{}
 		*p = *tc.pos
 		p.Update(tc.fill)
 		// Check single values of position
@@ -335,7 +335,7 @@ func TestMultipleUpdatePosition(t *testing.T) {
 	// set the example time string in format yyyy-mm-dd
 	var exampleTime, _ = time.Parse("2006-01-02", "2017-06-01")
 
-	var p = &position{
+	var p = &Position{
 		timestamp: exampleTime, symbol: "TEST.DE",
 		qty: 10, qtyBOT: 10, qtySLD: 0,
 		avgPrice: 10, avgPriceNet: 10.5, avgPriceBOT: 10, avgPriceSLD: 0,
@@ -350,7 +350,7 @@ func TestMultipleUpdatePosition(t *testing.T) {
 	var testCases = []struct {
 		msg     string
 		updates []FillEvent
-		expPos  *position // expected Position
+		expPos  *Position // expected Position
 	}{
 		{
 			"1. multiple",
@@ -374,7 +374,7 @@ func TestMultipleUpdatePosition(t *testing.T) {
 					Commission: 7, ExchangeFee: 1, Cost: 8,
 				},
 			},
-			&position{
+			&Position{
 				timestamp: exampleTime, symbol: "TEST.DE",
 				qty: 19, qtyBOT: 37, qtySLD: 18,
 				avgPrice: 17.2374, avgPriceNet: 17.6842, avgPriceBOT: 14.6216, avgPriceSLD: 20,
@@ -468,7 +468,7 @@ func TestUpdatePositionValue(t *testing.T) {
 	// set the example time string in format yyyy-mm-dd
 	var exampleTime, _ = time.Parse("2006-01-02", "2017-06-01")
 	// initialize new Position ready for use
-	var p = &position{
+	var p = &Position{
 		timestamp: exampleTime, symbol: "TEST.DE",
 		qty: 10, qtyBOT: 10, qtySLD: 0,
 		avgPrice: 10, avgPriceNet: 10.5, avgPriceBOT: 10, avgPriceSLD: 0,
@@ -481,14 +481,14 @@ func TestUpdatePositionValue(t *testing.T) {
 	// testCases is a table for testing updating a position
 	var testCases = []struct {
 		data   DataEventHandler
-		expPos *position // expected Position
+		expPos *Position // expected Position
 	}{
 		{
 			data: &Bar{
 				Event: Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
 				Close: 99,
 			},
-			expPos: &position{
+			expPos: &Position{
 				timestamp: exampleTime, symbol: "TEST.DE",
 				qty: 10, qtyBOT: 10, qtySLD: 0,
 				avgPrice: 10, avgPriceNet: 10.5, avgPriceBOT: 10, avgPriceSLD: 0,
@@ -504,7 +504,7 @@ func TestUpdatePositionValue(t *testing.T) {
 				Event: Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
 				Close: 45,
 			},
-			expPos: &position{
+			expPos: &Position{
 				timestamp: exampleTime, symbol: "TEST.DE",
 				qty: 10, qtyBOT: 10, qtySLD: 0,
 				avgPrice: 10, avgPriceNet: 10.5, avgPriceBOT: 10, avgPriceSLD: 0,

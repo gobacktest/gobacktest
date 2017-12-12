@@ -27,9 +27,9 @@ type OnFiller interface {
 
 // Investor is an inteface to check if a portfolio has a position of a symbol
 type Investor interface {
-	IsInvested(string) (position, bool)
-	IsLong(string) (position, bool)
-	IsShort(string) (position, bool)
+	IsInvested(string) (Position, bool)
+	IsLong(string) (Position, bool)
+	IsShort(string) (Position, bool)
 }
 
 // Updater handles the updating of the portfolio on data events
@@ -54,7 +54,7 @@ type Valuer interface {
 type Portfolio struct {
 	initialCash  float64
 	cash         float64
-	holdings     map[string]position
+	holdings     map[string]Position
 	transactions []FillEvent
 	sizeManager  SizeHandler
 	riskManager  RiskHandler
@@ -114,7 +114,7 @@ func (p *Portfolio) OnSignal(signal SignalEvent, data DataHandler) (*Order, erro
 func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (*Fill, error) {
 	// Check for nil map, else initialise the map
 	if p.holdings == nil {
-		p.holdings = make(map[string]position)
+		p.holdings = make(map[string]Position)
 	}
 
 	// check if portfolio has already a holding of the symbol from this fill
@@ -124,7 +124,7 @@ func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (*Fill, error) {
 		p.holdings[fill.GetSymbol()] = pos
 	} else {
 		// create new position
-		pos := position{}
+		pos := Position{}
 		pos.Create(fill)
 		p.holdings[fill.GetSymbol()] = pos
 	}
@@ -145,7 +145,7 @@ func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (*Fill, error) {
 }
 
 // IsInvested checks if the portfolio has an open position on the given symbol
-func (p Portfolio) IsInvested(symbol string) (pos position, ok bool) {
+func (p Portfolio) IsInvested(symbol string) (pos Position, ok bool) {
 	pos, ok = p.holdings[symbol]
 	if ok && (pos.qty != 0) {
 		return pos, true
@@ -154,7 +154,7 @@ func (p Portfolio) IsInvested(symbol string) (pos position, ok bool) {
 }
 
 // IsLong checks if the portfolio has an open long position on the given symbol
-func (p Portfolio) IsLong(symbol string) (pos position, ok bool) {
+func (p Portfolio) IsLong(symbol string) (pos Position, ok bool) {
 	pos, ok = p.holdings[symbol]
 	if ok && (pos.qty > 0) {
 		return pos, true
@@ -163,7 +163,7 @@ func (p Portfolio) IsLong(symbol string) (pos position, ok bool) {
 }
 
 // IsShort checks if the portfolio has an open short position on the given symbol
-func (p Portfolio) IsShort(symbol string) (pos position, ok bool) {
+func (p Portfolio) IsShort(symbol string) (pos Position, ok bool) {
 	pos, ok = p.holdings[symbol]
 	if ok && (pos.qty < 0) {
 		return pos, true

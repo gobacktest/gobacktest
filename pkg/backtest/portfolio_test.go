@@ -16,7 +16,7 @@ func TestResetPortfolio(t *testing.T) {
 			&Portfolio{
 				initialCash: 100000,
 				cash:        100000,
-				holdings: map[string]position{
+				holdings: map[string]Position{
 					"TEST.DE": {qty: 100},
 					"BAS.DE":  {qty: 90},
 				},
@@ -37,7 +37,7 @@ func TestResetPortfolio(t *testing.T) {
 			&Portfolio{
 				initialCash:  0,
 				cash:         0,
-				holdings:     map[string]position{},
+				holdings:     map[string]Position{},
 				transactions: []FillEvent{},
 				sizeManager:  &Size{},
 				riskManager:  &Risk{},
@@ -117,7 +117,7 @@ func TestOnFill(t *testing.T) {
 			Cost:      10,
 		},
 	}
-	var holdingCases = map[string]position{
+	var holdingCases = map[string]Position{
 		"BOT": {
 			timestamp:        timestamp,
 			symbol:           "TEST.DE",
@@ -193,7 +193,7 @@ func TestOnFill(t *testing.T) {
 				cash:        8990,
 				sizeManager: size,
 				riskManager: risk,
-				holdings: map[string]position{
+				holdings: map[string]Position{
 					"TEST.DE": {
 						timestamp:        timestamp,
 						symbol:           "TEST.DE",
@@ -231,7 +231,7 @@ func TestOnFill(t *testing.T) {
 				cash:        8990,
 				sizeManager: size,
 				riskManager: risk,
-				holdings: map[string]position{
+				holdings: map[string]Position{
 					"TEST.DE": holdingCases["BOT"],
 				},
 				transactions: []FillEvent{
@@ -244,7 +244,7 @@ func TestOnFill(t *testing.T) {
 				cash:        7980,
 				sizeManager: size,
 				riskManager: risk,
-				holdings: map[string]position{
+				holdings: map[string]Position{
 					"TEST.DE": {
 						timestamp:        timestamp,
 						symbol:           "TEST.DE",
@@ -283,7 +283,7 @@ func TestOnFill(t *testing.T) {
 				cash:        8990,
 				sizeManager: size,
 				riskManager: risk,
-				holdings: map[string]position{
+				holdings: map[string]Position{
 					"TEST.DE": holdingCases["BOT"],
 				},
 				transactions: []FillEvent{
@@ -296,7 +296,7 @@ func TestOnFill(t *testing.T) {
 				cash:        9980,
 				sizeManager: size,
 				riskManager: risk,
-				holdings: map[string]position{
+				holdings: map[string]Position{
 					"TEST.DE": {
 						timestamp:        timestamp,
 						symbol:           "TEST.DE",
@@ -342,7 +342,7 @@ func TestOnFill(t *testing.T) {
 				cash:        10990,
 				sizeManager: size,
 				riskManager: risk,
-				holdings: map[string]position{
+				holdings: map[string]Position{
 					"TEST.DE": {
 						timestamp:        timestamp,
 						symbol:           "TEST.DE",
@@ -380,7 +380,7 @@ func TestOnFill(t *testing.T) {
 				cash:        10990,
 				sizeManager: size,
 				riskManager: risk,
-				holdings: map[string]position{
+				holdings: map[string]Position{
 					"TEST.DE": holdingCases["SLD"],
 				},
 				transactions: []FillEvent{
@@ -393,7 +393,7 @@ func TestOnFill(t *testing.T) {
 				cash:        11980,
 				sizeManager: size,
 				riskManager: risk,
-				holdings: map[string]position{
+				holdings: map[string]Position{
 					"TEST.DE": {
 						timestamp:        timestamp,
 						symbol:           "TEST.DE",
@@ -432,7 +432,7 @@ func TestOnFill(t *testing.T) {
 				cash:        10990,
 				sizeManager: size,
 				riskManager: risk,
-				holdings: map[string]position{
+				holdings: map[string]Position{
 					"TEST.DE": holdingCases["SLD"],
 				},
 				transactions: []FillEvent{
@@ -445,7 +445,7 @@ func TestOnFill(t *testing.T) {
 				cash:        9980,
 				sizeManager: size,
 				riskManager: risk,
-				holdings: map[string]position{
+				holdings: map[string]Position{
 					"TEST.DE": {
 						timestamp:        timestamp,
 						symbol:           "TEST.DE",
@@ -498,43 +498,43 @@ func TestIsInvested(t *testing.T) {
 		msg       string    // error message
 		symbol    string    // input string
 		portfolio Portfolio // input portfolio
-		expPos    position  // expected position return
+		expPos    Position  // expected position return
 		expOk     bool      // expected bool return
 	}{
 		{"Portfolio is empty:",
 			"TEST.DE",
 			Portfolio{},
-			position{},
+			Position{},
 			false,
 		},
 		{"Portfolio should be invested with long:",
 			"TEST.DE",
 			Portfolio{
-				holdings: map[string]position{
+				holdings: map[string]Position{
 					"TEST.DE": {qty: 10},
 				},
 			},
-			position{},
+			Position{},
 			true,
 		},
 		{"Portfolio should be invested with short:",
 			"TEST.DE",
 			Portfolio{
-				holdings: map[string]position{
+				holdings: map[string]Position{
 					"TEST.DE": {qty: -10},
 				},
 			},
-			position{},
+			Position{},
 			true,
 		},
 		{"Portfolio should not be invested:",
 			"TEST.DE",
 			Portfolio{
-				holdings: map[string]position{
+				holdings: map[string]Position{
 					"TEST.DE": {qty: 0},
 				},
 			},
-			position{},
+			Position{},
 			false,
 		},
 	}
@@ -553,43 +553,43 @@ func TestIsLong(t *testing.T) {
 		msg       string    // error message
 		symbol    string    // input string
 		portfolio Portfolio // input portfolio
-		expPos    position  // expected position return
+		expPos    Position  // expected position return
 		expOk     bool      // expected bool return
 	}{
 		{"Portfolio is empty:",
 			"TEST.DE",
 			Portfolio{},
-			position{},
+			Position{},
 			false,
 		},
 		{"Portfolio should be long:",
 			"TEST.DE",
 			Portfolio{
-				holdings: map[string]position{
+				holdings: map[string]Position{
 					"TEST.DE": {qty: 10},
 				},
 			},
-			position{},
+			Position{},
 			true,
 		},
 		{"Portfolio is short:",
 			"TEST.DE",
 			Portfolio{
-				holdings: map[string]position{
+				holdings: map[string]Position{
 					"TEST.DE": {qty: -10},
 				},
 			},
-			position{},
+			Position{},
 			false,
 		},
 		{"Portfolio is not invested:",
 			"TEST.DE",
 			Portfolio{
-				holdings: map[string]position{
+				holdings: map[string]Position{
 					"TEST.DE": {qty: 0},
 				},
 			},
-			position{},
+			Position{},
 			false,
 		},
 	}
@@ -608,43 +608,43 @@ func TestIsShort(t *testing.T) {
 		msg       string    // error message
 		symbol    string    // input string
 		portfolio Portfolio // input portfolio
-		expPos    position  // expected position return
+		expPos    Position  // expected position return
 		expOk     bool      // expected bool return
 	}{
 		{"Portfolio is empty:",
 			"TEST.DE",
 			Portfolio{},
-			position{},
+			Position{},
 			false,
 		},
 		{"Portfolio is long:",
 			"TEST.DE",
 			Portfolio{
-				holdings: map[string]position{
+				holdings: map[string]Position{
 					"TEST.DE": {qty: 10},
 				},
 			},
-			position{},
+			Position{},
 			false,
 		},
 		{"Portfolio should be short:",
 			"TEST.DE",
 			Portfolio{
-				holdings: map[string]position{
+				holdings: map[string]Position{
 					"TEST.DE": {qty: -10},
 				},
 			},
-			position{},
+			Position{},
 			true,
 		},
 		{"Portfolio is not invested:",
 			"TEST.DE",
 			Portfolio{
-				holdings: map[string]position{
+				holdings: map[string]Position{
 					"TEST.DE": {qty: 0},
 				},
 			},
-			position{},
+			Position{},
 			false,
 		},
 	}
@@ -666,7 +666,7 @@ func TestPortfolioValue(t *testing.T) {
 		{"testing value of positiv holdings",
 			&Portfolio{
 				cash: 10000,
-				holdings: map[string]position{
+				holdings: map[string]Position{
 					"TEST.DE": {qty: 100, marketValue: 200},
 					"BAS.DE":  {qty: 100, marketValue: 300},
 					"APPL":    {qty: 100, marketValue: 500},
@@ -677,7 +677,7 @@ func TestPortfolioValue(t *testing.T) {
 		{"testing value of negativ holdings",
 			&Portfolio{
 				cash: 10000,
-				holdings: map[string]position{
+				holdings: map[string]Position{
 					"TEST.DE": {qty: 100, marketValue: -200},
 					"BAS.DE":  {qty: 100, marketValue: -300},
 					"APPL":    {qty: 100, marketValue: -500},
@@ -688,7 +688,7 @@ func TestPortfolioValue(t *testing.T) {
 		{"testing value of mixed holdings",
 			&Portfolio{
 				cash: 10000,
-				holdings: map[string]position{
+				holdings: map[string]Position{
 					"TEST.DE": {qty: 100, marketValue: 200},
 					"BAS.DE":  {qty: 100, marketValue: -300},
 					"APPL":    {qty: 100, marketValue: 500},

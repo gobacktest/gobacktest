@@ -7,7 +7,7 @@ import (
 )
 
 // Position represents the holdings position
-type position struct {
+type Position struct {
 	timestamp   time.Time
 	symbol      string
 	qty         int64   // current qty of the position, positive on BOT position, negativ on SLD position
@@ -36,7 +36,7 @@ type position struct {
 }
 
 // Create a new position based on a fill event
-func (p *position) Create(fill FillEvent) {
+func (p *Position) Create(fill FillEvent) {
 	p.timestamp = fill.GetTime()
 	p.symbol = fill.GetSymbol()
 
@@ -44,14 +44,14 @@ func (p *position) Create(fill FillEvent) {
 }
 
 // Update a position on a new fill event
-func (p *position) Update(fill FillEvent) {
+func (p *Position) Update(fill FillEvent) {
 	p.timestamp = fill.GetTime()
 
 	p.update(fill)
 }
 
 // UpdateValue updates the current market value of a position
-func (p *position) UpdateValue(data DataEventHandler) {
+func (p *Position) UpdateValue(data DataEventHandler) {
 	p.timestamp = data.GetTime()
 
 	latest := data.LatestPrice()
@@ -59,7 +59,7 @@ func (p *position) UpdateValue(data DataEventHandler) {
 }
 
 // internal function to update a position on a new fill event
-func (p *position) update(fill FillEvent) {
+func (p *Position) update(fill FillEvent) {
 	// convert fill to internally used decimal numbers
 	fillQty := decimal.New(fill.GetQty(), 0)
 	fillPrice := decimal.NewFromFloat(fill.GetPrice())
@@ -172,7 +172,7 @@ func (p *position) update(fill FillEvent) {
 }
 
 // internal function to updates the current market value and profit/loss of a position
-func (p *position) updateValue(l float64) {
+func (p *Position) updateValue(l float64) {
 	// convert to internally used decimal numbers
 	latest := decimal.NewFromFloat(l)
 	qty := decimal.New(p.qty, 0)

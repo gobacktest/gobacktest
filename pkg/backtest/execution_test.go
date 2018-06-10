@@ -11,7 +11,11 @@ func TestExecuteOrder(t *testing.T) {
 	var exampleTime, _ = time.Parse("2006-01-02", "2017-06-01")
 
 	// set ExecutionHandler with symbol
-	var e = &Exchange{Symbol: "TEST", ExchangeFee: 1.00}
+	var e = &Exchange{
+		Symbol:      "TEST",
+		Commission:  &FixedCommission{Commission: 0},
+		ExchangeFee: 1.00,
+	}
 
 	// orderEventTests is a table for testing parsing bar data into a BarEvent
 	var testCases = []struct {
@@ -37,9 +41,9 @@ func TestExecuteOrder(t *testing.T) {
 				Direction:   "BOT", // BOT for buy or SLD for sell
 				Qty:         10,
 				Price:       10,
-				Commission:  9.90,
+				Commission:  0,
 				ExchangeFee: 1,
-				Cost:        10.90,
+				Cost:        1,
 			},
 			nil,
 		},
@@ -60,9 +64,9 @@ func TestExecuteOrder(t *testing.T) {
 				Direction:   "SLD", // BOT for buy or SLD for sell
 				Qty:         10,
 				Price:       10,
-				Commission:  9.90,
+				Commission:  0,
 				ExchangeFee: 1,
-				Cost:        10.90,
+				Cost:        1,
 			},
 			nil,
 		},

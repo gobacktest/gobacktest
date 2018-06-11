@@ -13,7 +13,7 @@ type ExecutionHandler interface {
 type Exchange struct {
 	Symbol      string
 	Commission  CommissionHandler
-	ExchangeFee float64
+	ExchangeFee ExchangeFeeHandler
 }
 
 // ExecuteOrder executes an order event
@@ -43,15 +43,15 @@ func (e *Exchange) ExecuteOrder(order OrderEvent, data DataHandler) (*Fill, erro
 	}
 	f.Commission = commission
 
-	f.ExchangeFee = e.calculateExchangeFee()
-	f.Cost = e.calculateCost(commission, f.ExchangeFee)
+	exchangeFee, err := e.ExchangeFee.Fee()
+	if err != nil {
+		return f, err
+	}
+	f.ExchangeFee = exchangeFee
+
+	f.Cost = e.calculateCost(commission, exchangeFee)
 
 	return f, nil
-}
-
-// calculateExchangeFee() calculates the exchange fee for a stock trade
-func (e *Exchange) calculateExchangeFee() float64 {
-	return e.ExchangeFee
 }
 
 // calculateCost() calculates the total cost for a stock trade

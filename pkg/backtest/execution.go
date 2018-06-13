@@ -16,6 +16,15 @@ type Exchange struct {
 	ExchangeFee ExchangeFeeHandler
 }
 
+// NewExchange creates a default exchange with sensible defaults ready for use.
+func NewExchange() *Exchange {
+	return &Exchange{
+		Symbol:      "TEST",
+		Commission:  &FixedCommission{Commission: 0},
+		ExchangeFee: &FixedExchangeFee{ExchangeFee: 0},
+	}
+}
+
 // ExecuteOrder executes an order event
 func (e *Exchange) ExecuteOrder(order OrderEvent, data DataHandler) (*Fill, error) {
 	// fetch latest known data event for the symbol

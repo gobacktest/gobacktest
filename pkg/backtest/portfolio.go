@@ -60,6 +60,15 @@ type Portfolio struct {
 	riskManager  RiskHandler
 }
 
+// NewPortfolio creates a default portfolio with sensible defaults ready for use.
+func NewPortfolio() *Portfolio {
+	return &Portfolio{
+		initialCash: 100000,
+		sizeManager: &Size{DefaultSize: 100, DefaultValue: 1000},
+		riskManager: &Risk{},
+	}
+}
+
 // SetSizeManager sets the size manager to be used with the portfolio
 func (p *Portfolio) SetSizeManager(size SizeHandler) {
 	p.sizeManager = size

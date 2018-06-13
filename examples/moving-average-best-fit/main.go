@@ -29,40 +29,17 @@ func main() {
 		}
 	}
 
-	// define symbols
-	var symbols = []string{"TEST.DE"}
-	// initiate new backtester and load symbols
+	// initiate new backtester
 	test := backtest.New()
+
+	// define and load symbols
+	symbols := []string{"TEST.DE"}
 	test.SetSymbols(symbols)
 
 	// create data provider and load data into the backtest
 	data := &data.BarEventFromCSVFile{FileDir: "../testdata/test/"}
 	data.Load(symbols)
 	test.SetData(data)
-
-	// set portfolio with initial cash and default size and risk manager
-	portfolio := &backtest.Portfolio{}
-	portfolio.SetInitialCash(5000)
-
-	sizeManager := &backtest.Size{DefaultSize: 200, DefaultValue: 5000}
-	portfolio.SetSizeManager(sizeManager)
-
-	riskManager := &backtest.Risk{}
-	portfolio.SetRiskManager(riskManager)
-
-	test.SetPortfolio(portfolio)
-
-	// create execution provider and load into the backtest
-	exchange := &backtest.Exchange{
-		Symbol:      "TEST",
-		Commission:  &backtest.FixedCommission{Commission: 0},
-		ExchangeFee: &backtest.FixedExchangeFee{ExchangeFee: 0},
-	}
-	test.SetExchange(exchange)
-
-	// choose a statistic and load into the backtest
-	statistic := &backtest.Statistic{}
-	test.SetStatistic(statistic)
 
 	startTest := time.Now()
 	// iterate over every field in the matrix

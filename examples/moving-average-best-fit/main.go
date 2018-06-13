@@ -53,7 +53,11 @@ func main() {
 	test.SetPortfolio(portfolio)
 
 	// create execution provider and load into the backtest
-	exchange := &backtest.Exchange{Symbol: "XTRA", ExchangeFee: 1.00}
+	exchange := &backtest.Exchange{
+		Symbol:      "TEST",
+		Commission:  &backtest.FixedCommission{Commission: 0},
+		ExchangeFee: &backtest.FixedExchangeFee{ExchangeFee: 0},
+	}
 	test.SetExchange(exchange)
 
 	// choose a statistic and load into the backtest

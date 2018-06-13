@@ -7,11 +7,11 @@ import (
 )
 
 func main() {
-	// define symbols
-	var symbols = []string{"TEST.DE"}
-
-	// initiate new backtester and load symbols
+	// initiate new backtester
 	test := backtest.New()
+
+	// define and load symbols
+	symbols := []string{"TEST.DE"}
 	test.SetSymbols(symbols)
 
 	// create data provider and load data into the backtest
@@ -19,32 +19,9 @@ func main() {
 	data.Load(symbols)
 	test.SetData(data)
 
-	// set portfolio with initial cash and default size and risk manager
-	portfolio := &backtest.Portfolio{}
-	portfolio.SetInitialCash(10000)
-
-	sizeManager := &backtest.Size{DefaultSize: 100, DefaultValue: 1000}
-	portfolio.SetSizeManager(sizeManager)
-
-	riskManager := &backtest.Risk{}
-	portfolio.SetRiskManager(riskManager)
-
-	test.SetPortfolio(portfolio)
-
 	// create strategy provider and load into the backtest
 	strategy := &strategy.BuyAndHold{}
 	test.SetStrategy(strategy)
-
-	// create execution provider and load into the backtest
-	exchange := &backtest.Exchange{Symbol: "TEST",
-		Commission:  &backtest.FixedCommission{Commission: 0},
-		ExchangeFee: &backtest.FixedExchangeFee{ExchangeFee: 0},
-	}
-	test.SetExchange(exchange)
-
-	// choose a statistic and load into the backtest
-	statistic := &backtest.Statistic{}
-	test.SetStatistic(statistic)
 
 	// run the backtest
 	test.Run()

@@ -16,9 +16,21 @@ type Test struct {
 	eventQueue []EventHandler
 }
 
-// New creates a default test backtest value for use.
+// New creates a default test backtest with sensible defaults ready for use.
 func New() *Test {
-	return &Test{}
+	return &Test{
+		portfolio: &Portfolio{
+			initialCash: 100000,
+			sizeManager: &Size{DefaultSize: 100, DefaultValue: 1000},
+			riskManager: &Risk{},
+		},
+		exchange: &Exchange{
+			Symbol:      "TEST",
+			Commission:  &FixedCommission{Commission: 0},
+			ExchangeFee: &FixedExchangeFee{ExchangeFee: 0},
+		},
+		statistic: &Statistic{},
+	}
 }
 
 // SetSymbols sets the symbols to include into the test

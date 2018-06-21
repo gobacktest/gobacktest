@@ -30,13 +30,15 @@ func TestNewAsset(t *testing.T) {
 
 func TestAssetChildren(t *testing.T) {
 	var testCases = []struct {
-		msg       string
-		asset     Asset
-		expReturn []NodeHandler
+		msg   string
+		asset Asset
+		exp   []NodeHandler
+		expOk bool
 	}{
 		{"basic test with nil children:",
 			Asset{},
 			[]NodeHandler{},
+			false,
 		},
 		{"basic test with one children:",
 			Asset{
@@ -47,6 +49,7 @@ func TestAssetChildren(t *testing.T) {
 				},
 			},
 			[]NodeHandler{},
+			false,
 		},
 		{"basic test with multiple children:",
 			Asset{
@@ -58,14 +61,15 @@ func TestAssetChildren(t *testing.T) {
 				},
 			},
 			[]NodeHandler{},
+			false,
 		},
 	}
 
 	for _, tc := range testCases {
-		children := tc.asset.Children()
-		if !reflect.DeepEqual(children, tc.expReturn) {
-			t.Errorf("%v Children(): \nexpected %#v, \nactual %#v",
-				tc.msg, tc.expReturn, children)
+		children, ok := tc.asset.Children()
+		if !reflect.DeepEqual(children, tc.exp) || (ok != tc.expOk) {
+			t.Errorf("%v Children(): \nexpected %#v, %v, \nactual  %#v, %v",
+				tc.msg, tc.exp, tc.expOk, children, ok)
 		}
 	}
 }

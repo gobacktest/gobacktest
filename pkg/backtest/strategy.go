@@ -32,8 +32,9 @@ func (s Strategy) Run() {
 	s.algos.Run()
 
 	// check for children and run their algos
-	for _, child := range s.Children() {
-		child.Run()
+	if children, ok := s.Children(); ok {
+		for _, child := range children {
+			child.Run()
+		}
 	}
-
 }

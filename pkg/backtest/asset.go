@@ -13,12 +13,12 @@ func NewAsset(name string) *Asset {
 	return a
 }
 
-// Children returns an empty slice, an Asset is not allowed to have children.
-func (a Asset) Children() []NodeHandler {
-	return []NodeHandler{}
+// Children returns an empty slice and false, an Asset is not allowed to have children.
+func (a Asset) Children() ([]NodeHandler, bool) {
+	return []NodeHandler{}, false
 }
 
-// SetChildren does nothing, as an Asset ist not allowed to have children.
+// SetChildren return itself without change, as an Asset ist not allowed to have children.
 func (a *Asset) SetChildren(c ...NodeHandler) NodeHandler {
 	return a
 }

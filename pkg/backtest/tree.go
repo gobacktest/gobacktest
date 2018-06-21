@@ -4,9 +4,9 @@ package backtest
 type NodeHandler interface {
 	Name() string
 	SetName(string) NodeHandler
-	Parent() NodeHandler
+	Parent() (NodeHandler, bool)
 	SetParent(NodeHandler) NodeHandler
-	Children() []NodeHandler
+	Children() ([]NodeHandler, bool)
 	SetChildren(...NodeHandler) NodeHandler
 	IsRoot() bool
 	IsChild() bool
@@ -33,8 +33,11 @@ func (n *Node) SetName(s string) NodeHandler {
 }
 
 // Parent return the parent of this Node
-func (n Node) Parent() NodeHandler {
-	return n.parent
+func (n Node) Parent() (NodeHandler, bool) {
+	if n.parent == nil {
+		return &Node{}, false
+	}
+	return n.parent, true
 }
 
 // SetParent sets the parent of this Node
@@ -44,8 +47,11 @@ func (n *Node) SetParent(p NodeHandler) NodeHandler {
 }
 
 // Children returns the children of this Node
-func (n Node) Children() []NodeHandler {
-	return n.children
+func (n Node) Children() ([]NodeHandler, bool) {
+	if n.children == nil {
+		return []NodeHandler{}, false
+	}
+	return n.children, true
 }
 
 // SetChildren sets the Children of this Node

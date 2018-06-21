@@ -28,3 +28,41 @@ func TestNewStrategy(t *testing.T) {
 		}
 	}
 }
+
+func TestStrategySingleSetAlgo(t *testing.T) {
+	testStrategy := &Strategy{
+		algos: AlgoStack{
+			stack: []AlgoHandler{
+				&TrueAlgo{},
+			},
+		},
+	}
+	strategy := &Strategy{}
+	strategy = strategy.SetAlgo(&TrueAlgo{})
+
+	if !reflect.DeepEqual(strategy, testStrategy) {
+		t.Errorf("set single algo SetAlgo(): \nexpected %#v, \nactual %#v", testStrategy, strategy)
+	}
+}
+
+func TestStrategyMultipleSetAlgo(t *testing.T) {
+	testStrategy := &Strategy{
+		algos: AlgoStack{
+			stack: []AlgoHandler{
+				&TrueAlgo{},
+				&TrueAlgo{},
+				&FalseAlgo{},
+			},
+		},
+	}
+	strategy := &Strategy{}
+	strategy = strategy.SetAlgo(
+		&TrueAlgo{},
+		&TrueAlgo{},
+		&FalseAlgo{},
+	)
+
+	if !reflect.DeepEqual(strategy, testStrategy) {
+		t.Errorf("set single algo SetAlgo(): \nexpected %#v, \nactual %#v", testStrategy, strategy)
+	}
+}

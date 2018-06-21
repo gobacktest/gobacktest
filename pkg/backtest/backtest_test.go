@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// setup mock for an event
 type testEvent struct {
 }
 

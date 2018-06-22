@@ -4,19 +4,19 @@ import (
 	"sort"
 )
 
-// DataHandler is the combined data interface
+// DataHandler is the combined data interface.
 type DataHandler interface {
 	DataLoader
 	DataStreamer
 	Reseter
 }
 
-// DataLoader is the interface loading the data into the data stream
+// DataLoader interface definse how to load data into the data stream.
 type DataLoader interface {
 	Load([]string) error
 }
 
-// DataStreamer is the interface returning the data streams
+// DataStreamer is the interface defining data streams functionality.
 type DataStreamer interface {
 	Next() (DataEventHandler, bool)
 	Stream() []DataEventHandler
@@ -25,7 +25,7 @@ type DataStreamer interface {
 	List(string) []DataEventHandler
 }
 
-// Data is a basic data struct
+// Data is a basic data struct.
 type Data struct {
 	latest        map[string]DataEventHandler
 	list          map[string][]DataEventHandler
@@ -34,13 +34,13 @@ type Data struct {
 }
 
 // Load loads data endpoints into a stream.
-// This method satisfies the DataLoeder interface, but should be overwritten
-// by the specific data loading implamentation.
+// This method satisfies the DataLoader interface, but should be overwritten
+// by the specific data loading implementation.
 func (d *Data) Load(s []string) error {
 	return nil
 }
 
-// Reset implements the Reseter interface and rests the data struct to a clean state with loaded data points
+// Reset implements the Reseter interface and resets the data struct to a clean state with loaded data points.
 func (d *Data) Reset() {
 	d.latest = nil
 	d.list = nil
@@ -48,18 +48,18 @@ func (d *Data) Reset() {
 	d.streamHistory = nil
 }
 
-// SetStream sets the data stream
+// SetStream sets the data stream.
 func (d *Data) SetStream(stream []DataEventHandler) {
 	d.stream = stream
 }
 
-// Stream returns the data stream
+// Stream returns the data stream.
 func (d *Data) Stream() []DataEventHandler {
 	return d.stream
 }
 
-// Next returns the first element of the data stream
-// deletes it from the stream and appends it to history
+// Next returns the first element of the data stream,
+// deletes it from the stream and appends it to history.
 func (d *Data) Next() (dh DataEventHandler, ok bool) {
 	// check for element in datastream
 	if len(d.stream) == 0 {
@@ -78,7 +78,7 @@ func (d *Data) Next() (dh DataEventHandler, ok bool) {
 	return dh, true
 }
 
-// History returns the historic data stream
+// History returns the historic data stream.
 func (d *Data) History() []DataEventHandler {
 	return d.streamHistory
 }
@@ -93,7 +93,7 @@ func (d *Data) List(symbol string) []DataEventHandler {
 	return d.list[symbol]
 }
 
-// SortStream sorts the dataStream
+// SortStream sorts the dataStream.
 func (d *Data) SortStream() {
 	sort.Slice(d.stream, func(i, j int) bool {
 		b1 := d.stream[i]

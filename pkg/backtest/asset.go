@@ -10,6 +10,7 @@ type Asset struct {
 func NewAsset(name string) *Asset {
 	var a = &Asset{}
 	a.SetName(name)
+	a.SetRoot(false)
 	return a
 }
 

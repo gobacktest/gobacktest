@@ -14,7 +14,7 @@ func TestNewAsset(t *testing.T) {
 		{"setup new asset:",
 			"test",
 			&Asset{
-				Node{name: "test"},
+				Node{name: "test", root: false},
 			},
 		},
 	}

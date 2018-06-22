@@ -14,7 +14,7 @@ func TestNewStrategy(t *testing.T) {
 		{"setup new strategy:",
 			"test",
 			&Strategy{
-				Node{name: "test"},
+				Node{name: "test", root: true},
 				AlgoStack{},
 			},
 		},

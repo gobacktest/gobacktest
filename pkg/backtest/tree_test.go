@@ -26,61 +26,64 @@ func TestNodeName(t *testing.T) {
 	}
 }
 
-func TestNodeParent(t *testing.T) {
+func TestNodeRoot(t *testing.T) {
 	var testCases = []struct {
-		msg   string
-		node  *Node
-		exp   *Node
-		expOk bool
+		msg  string
+		node *Node
+		exp  bool
 	}{
-		{"test getting parent of node:",
-			&Node{
-				name:   "test",
-				parent: &Node{name: "parent"},
-			},
-			&Node{name: "parent"},
+		{"test root node:",
+			&Node{name: "test", root: true},
 			true,
 		},
-		{"test getting parent of root node:",
-			&Node{
-				name: "test",
-			},
-			&Node{},
+		{"test child node:",
+			&Node{name: "test", root: false},
 			false,
 		},
 	}
 
 	for _, tc := range testCases {
-		parent, ok := tc.node.Parent()
-		if !reflect.DeepEqual(parent, tc.exp) || (ok != tc.expOk) {
-			t.Errorf("%v Parent(): \nexpected %#v, %v, \nactual   %#v, %v",
-				tc.msg, tc.exp, tc.expOk, parent, ok)
+		ok := tc.node.Root()
+		if ok != tc.exp {
+			t.Errorf("%v Root(): \nexpected %v, \nactual %v",
+				tc.msg, tc.exp, ok)
 		}
 	}
 }
-
-func TestNodeSetParent(t *testing.T) {
+func TestNodeSetRoot(t *testing.T) {
 	var testCases = []struct {
-		msg    string
-		node   *Node
-		parent *Node
-		exp    *Node
+		msg  string
+		node *Node
+		root bool
+		exp  *Node
 	}{
-		{"test setting parent of node:",
-			&Node{name: "test"},
-			&Node{name: "parent"},
-			&Node{
-				name:   "test",
-				parent: &Node{name: "parent"},
-			},
+		{"test set root true on non root:",
+			&Node{name: "test", root: false},
+			true,
+			&Node{name: "test", root: true},
+		},
+		{"test set root true on root:",
+			&Node{name: "test", root: true},
+			true,
+			&Node{name: "test", root: true},
+		},
+		{"test set root false on root:",
+			&Node{name: "test", root: true},
+			false,
+			&Node{name: "test", root: false},
+		},
+		{"test set root false on non root:",
+			&Node{name: "test", root: false},
+			false,
+			&Node{name: "test", root: false},
 		},
 	}
 
 	for _, tc := range testCases {
-		node := tc.node.SetParent(tc.parent)
-		if !reflect.DeepEqual(node, tc.exp) {
-			t.Errorf("%v SetParent(): \nexpected %#v, \nactual   %#v",
-				tc.msg, tc.exp, node)
+		tc.node.SetRoot(tc.root)
+		if !reflect.DeepEqual(tc.node, tc.exp) {
+			t.Errorf("%v SetRoot(%v): \nexpected %#v, \nactual   %#v",
+				tc.msg, tc.root, tc.exp, tc.node)
 		}
 	}
 }
@@ -92,12 +95,12 @@ func TestNodeChildren(t *testing.T) {
 		exp   []NodeHandler
 		expOk bool
 	}{
-		{"basic test with nil children:",
+		{"test with nil children:",
 			&Node{},
 			[]NodeHandler{},
 			false,
 		},
-		{"basic test with one children:",
+		{"test with one children:",
 			&Node{
 				children: []NodeHandler{
 					&Asset{},
@@ -108,7 +111,7 @@ func TestNodeChildren(t *testing.T) {
 			},
 			true,
 		},
-		{"basic test with multiple children:",
+		{"test with multiple children:",
 			&Node{
 				children: []NodeHandler{
 					&Strategy{},
@@ -129,5 +132,50 @@ func TestNodeChildren(t *testing.T) {
 			t.Errorf("%v Children(): \nexpected %#v, %v, \nactual  %#v, %v",
 				tc.msg, tc.exp, tc.expOk, children, ok)
 		}
+	}
+}
+
+func TestNodeSingleSetChildren(t *testing.T) {
+	expNode := &Node{
+		name: "test",
+		root: true,
+		children: []NodeHandler{
+			&Node{
+				name: "child",
+				root: false,
+			},
+		},
+	}
+	node := &Node{name: "test", root: true}
+	child := &Node{name: "child", root: true}
+	testNode := node.SetChildren(child)
+
+	if !reflect.DeepEqual(testNode, expNode) {
+		t.Errorf("set single child on node SetChildren(): \nexpected %#v, \nactual %#v", expNode, node)
+	}
+}
+
+func TestNodeMultipleSetChildren(t *testing.T) {
+	expNode := &Node{
+		name: "test",
+		root: true,
+		children: []NodeHandler{
+			&Node{
+				name: "child1",
+				root: false,
+			},
+			&Node{
+				name: "child2",
+				root: false,
+			},
+		},
+	}
+	node := &Node{name: "test", root: true}
+	child1 := &Node{name: "child1", root: true}
+	child2 := &Node{name: "child2", root: true}
+	testNode := node.SetChildren(child1, child2)
+
+	if !reflect.DeepEqual(testNode, expNode) {
+		t.Errorf("set single child on node SetChildren(): \nexpected %#v, \nactual %#v", expNode, node)
 	}
 }

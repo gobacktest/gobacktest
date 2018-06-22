@@ -9,12 +9,15 @@ type StrategyHandler interface {
 type Strategy struct {
 	Node
 	algos AlgoStack
+	// data      *DataHandler
+	// portfolio *PortfolioHandler
 }
 
 // NewStrategy return a new strategy node ready to use
 func NewStrategy(name string) *Strategy {
 	var s = &Strategy{}
 	s.SetName(name)
+	s.SetRoot(true)
 	return s
 }
 

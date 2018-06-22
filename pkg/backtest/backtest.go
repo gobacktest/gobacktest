@@ -88,7 +88,7 @@ func (t *Test) Run() error {
 		if !ok {
 			// poll data stream
 			data, ok := t.data.Next()
-			// no  data event, exit event loop
+			// no more data, exit event loop
 			if !ok {
 				break
 			}

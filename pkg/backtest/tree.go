@@ -4,49 +4,43 @@ package backtest
 type NodeHandler interface {
 	Name() string
 	SetName(string) NodeHandler
-	Parent() (NodeHandler, bool)
-	SetParent(NodeHandler) NodeHandler
+	Root() bool
+	SetRoot(bool)
 	Children() ([]NodeHandler, bool)
 	SetChildren(...NodeHandler) NodeHandler
-	IsRoot() bool
-	IsChild() bool
 	Run()
 }
 
 // Node implements NodeHandler. It represents the base information of each tree node.
 // This is the main building block of the tree.
 type Node struct {
+	root     bool
 	name     string
-	parent   NodeHandler
 	children []NodeHandler
 }
 
-// Name returns the name of Node
+// Name returns the name of Node.
 func (n Node) Name() string {
 	return n.name
 }
 
-// SetName sets the name of Node
+// SetName sets the name of Node.
 func (n *Node) SetName(s string) NodeHandler {
 	n.name = s
 	return n
 }
 
-// Parent return the parent of this Node
-func (n Node) Parent() (NodeHandler, bool) {
-	if n.parent == nil {
-		return &Node{}, false
-	}
-	return n.parent, true
+// Root checks if this Node is a root node.
+func (n Node) Root() bool {
+	return n.root
 }
 
-// SetParent sets the parent of this Node
-func (n *Node) SetParent(p NodeHandler) NodeHandler {
-	n.parent = p
-	return n
+// SetRoot sets the root status of this Node.
+func (n *Node) SetRoot(b bool) {
+	n.root = b
 }
 
-// Children returns the children of this Node
+// Children returns the children of this Node.
 func (n Node) Children() ([]NodeHandler, bool) {
 	if n.children == nil {
 		return []NodeHandler{}, false
@@ -54,30 +48,14 @@ func (n Node) Children() ([]NodeHandler, bool) {
 	return n.children, true
 }
 
-// SetChildren sets the Children of this Node
+// SetChildren sets the Children of this Node.
 func (n *Node) SetChildren(children ...NodeHandler) NodeHandler {
 	for _, child := range children {
-		child.SetParent(n)
+		child.SetRoot(false)
 	}
 	n.children = children
 	return n
 }
 
-// IsRoot checks if this Node is a root node
-func (n Node) IsRoot() bool {
-	if n.parent != nil {
-		return false
-	}
-	return true
-}
-
-// IsChild checks if this Node is a child of another node
-func (n Node) IsChild() bool {
-	if n.parent == nil {
-		return false
-	}
-	return true
-}
-
-// Run is an empty function to satisfy the interface
+// Run is an empty function to satisfy the interface.
 func (n Node) Run() {}

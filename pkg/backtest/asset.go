@@ -8,10 +8,10 @@ type Asset struct {
 
 // NewAsset return a new strategy node ready to use.
 func NewAsset(name string) *Asset {
-	var a = &Asset{}
-	a.SetName(name)
-	a.SetRoot(false)
-	return a
+	var asset = &Asset{}
+	asset.SetName(name)
+	asset.SetRoot(false)
+	return asset
 }
 
 // Children returns an empty slice and false, an Asset is not allowed to have children.

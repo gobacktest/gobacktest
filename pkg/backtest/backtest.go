@@ -5,6 +5,11 @@ package backtest
 // used after calculations to format
 const DP = 4 // DP
 
+// Reseter provides a resting interface.
+type Reseter interface {
+	Reset() error
+}
+
 // Test is a basic back test struct
 type Test struct {
 	symbols    []string
@@ -64,12 +69,12 @@ func (t *Test) SetStatistic(statistic StatisticHandler) {
 }
 
 // Reset rests the backtest into a clean state with loaded data
-func (t *Test) Reset() {
+func (t *Test) Reset() error {
 	t.eventQueue = nil
 	t.data.Reset()
 	t.portfolio.Reset()
 	t.statistic.Reset()
-	return
+	return nil
 }
 
 // Stats returns the statistic handler of the backtest
@@ -79,8 +84,11 @@ func (t *Test) Stats() StatisticHandler {
 
 // Run starts the test.
 func (t *Test) Run() error {
-	// before first run, set portfolio cash
-	t.portfolio.SetCash(t.portfolio.InitialCash())
+	// setup before the test runs
+	err := t.setup()
+	if err != nil {
+		return err
+	}
 
 	// poll event queue
 	for event, ok := t.nextEvent(); true; event, ok = t.nextEvent() {
@@ -110,6 +118,26 @@ func (t *Test) Run() error {
 	return nil
 }
 
+// setup is run at the beginning ot the test
+func (t *Test) setup() error {
+	// before first run, set portfolio cash
+	t.portfolio.SetCash(t.portfolio.InitialCash())
+
+	// make the data known to the strategy
+	err := t.strategy.SetData(t.data)
+	if err != nil {
+		return err
+	}
+
+	// make the portfolio known to the strategy
+	err = t.strategy.SetPortfolio(t.portfolio)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // nextEvent gets the next event from the events queue
 func (t *Test) nextEvent() (e EventHandler, ok bool) {
 	// if event queue empty return false
@@ -134,7 +162,7 @@ func (t *Test) eventLoop(e EventHandler) error {
 		// update statistics
 		t.statistic.Update(event, t.portfolio)
 
-		signal, err := t.strategy.CalculateSignal(event, t.data, t.portfolio)
+		signal, err := t.strategy.OnData(event)
 		if err != nil {
 			break
 		}
@@ -162,9 +190,4 @@ func (t *Test) eventLoop(e EventHandler) error {
 	}
 
 	return nil
-}
-
-// Reseter provides a resting interface.
-type Reseter interface {
-	Reset()
 }

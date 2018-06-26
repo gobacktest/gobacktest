@@ -117,12 +117,13 @@ func (s Statistic) Transactions() []FillEvent {
 }
 
 // Reset the statistic to a clean state
-func (s *Statistic) Reset() {
+func (s *Statistic) Reset() error {
 	s.eventHistory = nil
 	s.transactionHistory = nil
 	s.equity = nil
 	s.high = equityPoint{}
 	s.low = equityPoint{}
+	return nil
 }
 
 // PrintResult prints the backtest statistics to the screen

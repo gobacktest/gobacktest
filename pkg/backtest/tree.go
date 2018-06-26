@@ -8,7 +8,7 @@ type NodeHandler interface {
 	SetRoot(bool)
 	Children() ([]NodeHandler, bool)
 	SetChildren(...NodeHandler) NodeHandler
-	Run()
+	Run() error
 }
 
 // Node implements NodeHandler. It represents the base information of each tree node.
@@ -58,4 +58,6 @@ func (n *Node) SetChildren(children ...NodeHandler) NodeHandler {
 }
 
 // Run is an empty function to satisfy the interface.
-func (n Node) Run() {}
+func (n Node) Run() error {
+	return nil
+}

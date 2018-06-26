@@ -80,10 +80,11 @@ func (p *Portfolio) SetRiskManager(risk RiskHandler) {
 }
 
 // Reset the portfolio into a clean state with set initial cash.
-func (p *Portfolio) Reset() {
+func (p *Portfolio) Reset() error {
 	p.cash = 0
 	p.holdings = nil
 	p.transactions = nil
+	return nil
 }
 
 // OnSignal handles an incomming signal event

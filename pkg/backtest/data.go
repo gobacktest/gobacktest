@@ -41,11 +41,12 @@ func (d *Data) Load(s []string) error {
 }
 
 // Reset implements the Reseter interface and resets the data struct to a clean state with loaded data points.
-func (d *Data) Reset() {
+func (d *Data) Reset() error {
 	d.latest = nil
 	d.list = nil
 	d.stream = d.streamHistory
 	d.streamHistory = nil
+	return nil
 }
 
 // SetStream sets the data stream.

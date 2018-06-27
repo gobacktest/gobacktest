@@ -60,6 +60,14 @@ func (s *Strategy) SetPortfolio(portfolio PortfolioHandler) error {
 	return nil
 }
 
+// SetAlgo sets the algo stack for the Strategy
+func (s *Strategy) SetAlgo(algos ...AlgoHandler) *Strategy {
+	for _, algo := range algos {
+		s.algos.stack = append(s.algos.stack, algo)
+	}
+	return s
+}
+
 // Strategies return all children which are a strategy.
 func (s *Strategy) Strategies() ([]StrategyHandler, bool) {
 	var strategies []StrategyHandler
@@ -132,23 +140,15 @@ func (s *Strategy) OnData(event DataEventHandler) (SignalEvent, error) {
 	return se, nil
 }
 
-// SetAlgo sets the algo stack for the Strategy
-func (s *Strategy) SetAlgo(algos ...AlgoHandler) *Strategy {
-	for _, algo := range algos {
-		s.algos.stack = append(s.algos.stack, algo)
-	}
-	return s
-}
-
-// Run the algos of this Strategy Node, overwrite base Node method functionality
-func (s Strategy) Run() error {
+// Run the algos of this Strategy Node
+func (s *Strategy) run(data DataEventHandler) error {
 	// run the algo stack
 	s.algos.Run()
 
-	// check for children and run their algos
-	if children, ok := s.Children(); ok {
-		for _, child := range children {
-			child.Run()
+	// pass data event down to child strategies and run their algos
+	if strategies, ok := s.Strategies(); ok {
+		for _, strategy := range strategies {
+			strategy.OnData(data)
 		}
 	}
 

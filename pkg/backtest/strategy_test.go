@@ -5,6 +5,120 @@ import (
 	"testing"
 )
 
+func TestSetData(t *testing.T) {
+	var testCases = []struct {
+		msg      string
+		strategy *Strategy
+		data     DataHandler
+		exp      *Strategy
+		expErr   error
+	}{
+		{"set data:",
+			&Strategy{
+				Node{name: "test", root: true},
+				AlgoStack{}, nil, nil,
+			},
+			&Data{},
+			&Strategy{
+				Node{name: "test", root: true},
+				AlgoStack{}, &Data{}, nil,
+			},
+			nil,
+		},
+		{"set data with child strategy:",
+			&Strategy{
+				Node{name: "test", root: true,
+					children: []NodeHandler{
+						&Strategy{
+							Node{name: "sub", root: false},
+							AlgoStack{}, nil, nil,
+						},
+					},
+				},
+				AlgoStack{}, nil, nil,
+			},
+			&Data{},
+			&Strategy{
+				Node{name: "test", root: true,
+					children: []NodeHandler{
+						&Strategy{
+							Node{name: "sub", root: false},
+							AlgoStack{}, &Data{}, nil,
+						},
+					},
+				},
+				AlgoStack{}, &Data{}, nil,
+			},
+			nil,
+		},
+	}
+
+	for _, tc := range testCases {
+		err := tc.strategy.SetData(tc.data)
+		if !reflect.DeepEqual(tc.strategy, tc.exp) || (err != tc.expErr) {
+			t.Errorf("%v SetData(%s): \nexpected: %#v %#v, \nactual:   %#v %#v",
+				tc.msg, tc.data, tc.exp, tc.expErr, tc.strategy, err)
+		}
+	}
+}
+
+func TestSetPortfolio(t *testing.T) {
+	var testCases = []struct {
+		msg       string
+		strategy  *Strategy
+		portfolio PortfolioHandler
+		exp       *Strategy
+		expErr    error
+	}{
+		{"set data:",
+			&Strategy{
+				Node{name: "test", root: true},
+				AlgoStack{}, nil, nil,
+			},
+			&Portfolio{},
+			&Strategy{
+				Node{name: "test", root: true},
+				AlgoStack{}, nil, &Portfolio{},
+			},
+			nil,
+		},
+		{"set data with child strategy:",
+			&Strategy{
+				Node{name: "test", root: true,
+					children: []NodeHandler{
+						&Strategy{
+							Node{name: "sub", root: false},
+							AlgoStack{}, nil, nil,
+						},
+					},
+				},
+				AlgoStack{}, nil, nil,
+			},
+			&Portfolio{},
+			&Strategy{
+				Node{name: "test", root: true,
+					children: []NodeHandler{
+						&Strategy{
+							Node{name: "sub", root: false},
+							AlgoStack{}, nil, &Portfolio{},
+						},
+					},
+				},
+				AlgoStack{}, nil, &Portfolio{},
+			},
+			nil,
+		},
+	}
+
+	for _, tc := range testCases {
+		err := tc.strategy.SetPortfolio(tc.portfolio)
+		if !reflect.DeepEqual(tc.strategy, tc.exp) || (err != tc.expErr) {
+			t.Errorf("%v SetPortfolio(%s): \nexpected: %#v %#v, \nactual:   %#v %#v",
+				tc.msg, tc.portfolio, tc.exp, tc.expErr, tc.strategy, err)
+		}
+	}
+}
+
 func TestNewStrategy(t *testing.T) {
 	var testCases = []struct {
 		msg  string
@@ -301,6 +415,6 @@ func TestStrategyMultipleSetAlgo(t *testing.T) {
 	)
 
 	if !reflect.DeepEqual(strategy, testStrategy) {
-		t.Errorf("set single algo SetAlgo(): \nexpected %#v, \nactual %#v", testStrategy, strategy)
+		t.Errorf("set multiple algos SetAlgo(): \nexpected %#v, \nactual %#v", testStrategy, strategy)
 	}
 }

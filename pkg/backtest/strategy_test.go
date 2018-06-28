@@ -16,12 +16,12 @@ func TestSetData(t *testing.T) {
 		{"set data:",
 			&Strategy{
 				Node{name: "test", root: true},
-				AlgoStack{}, nil, nil,
+				AlgoStack{}, nil, nil, nil,
 			},
 			&Data{},
 			&Strategy{
 				Node{name: "test", root: true},
-				AlgoStack{}, &Data{}, nil,
+				AlgoStack{}, &Data{}, nil, nil,
 			},
 			nil,
 		},
@@ -31,11 +31,11 @@ func TestSetData(t *testing.T) {
 					children: []NodeHandler{
 						&Strategy{
 							Node{name: "sub", root: false},
-							AlgoStack{}, nil, nil,
+							AlgoStack{}, nil, nil, nil,
 						},
 					},
 				},
-				AlgoStack{}, nil, nil,
+				AlgoStack{}, nil, nil, nil,
 			},
 			&Data{},
 			&Strategy{
@@ -43,11 +43,11 @@ func TestSetData(t *testing.T) {
 					children: []NodeHandler{
 						&Strategy{
 							Node{name: "sub", root: false},
-							AlgoStack{}, &Data{}, nil,
+							AlgoStack{}, &Data{}, nil, nil,
 						},
 					},
 				},
-				AlgoStack{}, &Data{}, nil,
+				AlgoStack{}, &Data{}, nil, nil,
 			},
 			nil,
 		},
@@ -73,12 +73,12 @@ func TestSetPortfolio(t *testing.T) {
 		{"set data:",
 			&Strategy{
 				Node{name: "test", root: true},
-				AlgoStack{}, nil, nil,
+				AlgoStack{}, nil, nil, nil,
 			},
 			&Portfolio{},
 			&Strategy{
 				Node{name: "test", root: true},
-				AlgoStack{}, nil, &Portfolio{},
+				AlgoStack{}, nil, &Portfolio{}, nil,
 			},
 			nil,
 		},
@@ -88,11 +88,11 @@ func TestSetPortfolio(t *testing.T) {
 					children: []NodeHandler{
 						&Strategy{
 							Node{name: "sub", root: false},
-							AlgoStack{}, nil, nil,
+							AlgoStack{}, nil, nil, nil,
 						},
 					},
 				},
-				AlgoStack{}, nil, nil,
+				AlgoStack{}, nil, nil, nil,
 			},
 			&Portfolio{},
 			&Strategy{
@@ -100,11 +100,11 @@ func TestSetPortfolio(t *testing.T) {
 					children: []NodeHandler{
 						&Strategy{
 							Node{name: "sub", root: false},
-							AlgoStack{}, nil, &Portfolio{},
+							AlgoStack{}, nil, &Portfolio{}, nil,
 						},
 					},
 				},
-				AlgoStack{}, nil, &Portfolio{},
+				AlgoStack{}, nil, &Portfolio{}, nil,
 			},
 			nil,
 		},
@@ -129,9 +129,7 @@ func TestNewStrategy(t *testing.T) {
 			"test",
 			&Strategy{
 				Node{name: "test", root: true},
-				AlgoStack{},
-				nil,
-				nil,
+				AlgoStack{}, nil, nil, nil,
 			},
 		},
 	}
@@ -155,7 +153,7 @@ func TestStrategies(t *testing.T) {
 		{"test no children:",
 			&Strategy{
 				Node{name: "test", root: true},
-				AlgoStack{}, nil, nil,
+				AlgoStack{}, nil, nil, nil,
 			},
 			nil,
 			false,
@@ -169,7 +167,7 @@ func TestStrategies(t *testing.T) {
 						},
 					},
 				},
-				AlgoStack{}, nil, nil,
+				AlgoStack{}, nil, nil, nil,
 			},
 			nil,
 			false,
@@ -180,16 +178,16 @@ func TestStrategies(t *testing.T) {
 					children: []NodeHandler{
 						&Strategy{
 							Node{name: "sub", root: false},
-							AlgoStack{}, nil, nil,
+							AlgoStack{}, nil, nil, nil,
 						},
 					},
 				},
-				AlgoStack{}, nil, nil,
+				AlgoStack{}, nil, nil, nil,
 			},
 			[]StrategyHandler{
 				&Strategy{
 					Node{name: "sub", root: false},
-					AlgoStack{}, nil, nil,
+					AlgoStack{}, nil, nil, nil,
 				},
 			},
 			true,
@@ -200,24 +198,24 @@ func TestStrategies(t *testing.T) {
 					children: []NodeHandler{
 						&Strategy{
 							Node{name: "subA", root: false},
-							AlgoStack{}, nil, nil,
+							AlgoStack{}, nil, nil, nil,
 						},
 						&Strategy{
 							Node{name: "subB", root: false},
-							AlgoStack{}, nil, nil,
+							AlgoStack{}, nil, nil, nil,
 						},
 					},
 				},
-				AlgoStack{}, nil, nil,
+				AlgoStack{}, nil, nil, nil,
 			},
 			[]StrategyHandler{
 				&Strategy{
 					Node{name: "subA", root: false},
-					AlgoStack{}, nil, nil,
+					AlgoStack{}, nil, nil, nil,
 				},
 				&Strategy{
 					Node{name: "subB", root: false},
-					AlgoStack{}, nil, nil,
+					AlgoStack{}, nil, nil, nil,
 				},
 			},
 			true,
@@ -228,11 +226,11 @@ func TestStrategies(t *testing.T) {
 					children: []NodeHandler{
 						&Strategy{
 							Node{name: "subA", root: false},
-							AlgoStack{}, nil, nil,
+							AlgoStack{}, nil, nil, nil,
 						},
 						&Strategy{
 							Node{name: "subB", root: false},
-							AlgoStack{}, nil, nil,
+							AlgoStack{}, nil, nil, nil,
 						},
 						&Asset{
 							Node{name: "assetA", root: false},
@@ -242,16 +240,16 @@ func TestStrategies(t *testing.T) {
 						},
 					},
 				},
-				AlgoStack{}, nil, nil,
+				AlgoStack{}, nil, nil, nil,
 			},
 			[]StrategyHandler{
 				&Strategy{
 					Node{name: "subA", root: false},
-					AlgoStack{}, nil, nil,
+					AlgoStack{}, nil, nil, nil,
 				},
 				&Strategy{
 					Node{name: "subB", root: false},
-					AlgoStack{}, nil, nil,
+					AlgoStack{}, nil, nil, nil,
 				},
 			},
 			true,
@@ -277,7 +275,7 @@ func TestAssets(t *testing.T) {
 		{"test no children:",
 			&Strategy{
 				Node{name: "test", root: true},
-				AlgoStack{}, nil, nil,
+				AlgoStack{}, nil, nil, nil,
 			},
 			nil,
 			false,
@@ -288,11 +286,11 @@ func TestAssets(t *testing.T) {
 					children: []NodeHandler{
 						&Strategy{
 							Node{name: "subA", root: true},
-							AlgoStack{}, nil, nil,
+							AlgoStack{}, nil, nil, nil,
 						},
 					},
 				},
-				AlgoStack{}, nil, nil,
+				AlgoStack{}, nil, nil, nil,
 			},
 			nil,
 			false,
@@ -306,7 +304,7 @@ func TestAssets(t *testing.T) {
 						},
 					},
 				},
-				AlgoStack{}, nil, nil,
+				AlgoStack{}, nil, nil, nil,
 			},
 			[]*Asset{
 				{
@@ -327,7 +325,7 @@ func TestAssets(t *testing.T) {
 						},
 					},
 				},
-				AlgoStack{}, nil, nil,
+				AlgoStack{}, nil, nil, nil,
 			},
 			[]*Asset{
 				{
@@ -345,11 +343,11 @@ func TestAssets(t *testing.T) {
 					children: []NodeHandler{
 						&Strategy{
 							Node{name: "subA", root: false},
-							AlgoStack{}, nil, nil,
+							AlgoStack{}, nil, nil, nil,
 						},
 						&Strategy{
 							Node{name: "subB", root: false},
-							AlgoStack{}, nil, nil,
+							AlgoStack{}, nil, nil, nil,
 						},
 						&Asset{
 							Node{name: "assetA", root: false},
@@ -359,7 +357,7 @@ func TestAssets(t *testing.T) {
 						},
 					},
 				},
-				AlgoStack{}, nil, nil,
+				AlgoStack{}, nil, nil, nil,
 			},
 			[]*Asset{
 				{
@@ -385,12 +383,12 @@ func TestStrategySingleSetAlgo(t *testing.T) {
 	testStrategy := &Strategy{
 		algos: AlgoStack{
 			stack: []AlgoHandler{
-				&TrueAlgo{},
+				&MockAlgo{ret: true},
 			},
 		},
 	}
 	strategy := &Strategy{}
-	strategy = strategy.SetAlgo(&TrueAlgo{})
+	strategy = strategy.SetAlgo(&MockAlgo{ret: true})
 
 	if !reflect.DeepEqual(strategy, testStrategy) {
 		t.Errorf("set single algo SetAlgo(): \nexpected %#v, \nactual %#v", testStrategy, strategy)
@@ -401,17 +399,17 @@ func TestStrategyMultipleSetAlgo(t *testing.T) {
 	testStrategy := &Strategy{
 		algos: AlgoStack{
 			stack: []AlgoHandler{
-				&TrueAlgo{},
-				&TrueAlgo{},
-				&FalseAlgo{},
+				&MockAlgo{ret: true},
+				&MockAlgo{ret: true},
+				&MockAlgo{ret: false},
 			},
 		},
 	}
 	strategy := &Strategy{}
 	strategy = strategy.SetAlgo(
-		&TrueAlgo{},
-		&TrueAlgo{},
-		&FalseAlgo{},
+		&MockAlgo{ret: true},
+		&MockAlgo{ret: true},
+		&MockAlgo{ret: false},
 	)
 
 	if !reflect.DeepEqual(strategy, testStrategy) {

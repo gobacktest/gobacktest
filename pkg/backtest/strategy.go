@@ -2,11 +2,13 @@ package backtest
 
 // StrategyHandler is a basic strategy interface.
 type StrategyHandler interface {
+	Data() (DataHandler, bool)
 	SetData(d DataHandler) error
+	Portfolio() (PortfolioHandler, bool)
 	SetPortfolio(p PortfolioHandler) error
+	Event() (DataEventHandler, bool)
 	Strategies() ([]StrategyHandler, bool)
 	Assets() ([]*Asset, bool)
-	// CalculateSignal(DataEventHandler, DataHandler, PortfolioHandler) (SignalEvent, error)
 	OnData(DataEventHandler) (SignalEvent, error)
 }
 
@@ -16,6 +18,7 @@ type Strategy struct {
 	algos     AlgoStack
 	data      DataHandler
 	portfolio PortfolioHandler
+	event     DataEventHandler
 }
 
 // NewStrategy return a new strategy node ready to use.
@@ -24,6 +27,15 @@ func NewStrategy(name string) *Strategy {
 	s.SetName(name)
 	s.SetRoot(true)
 	return s
+}
+
+// Data returns the underlying data property.
+func (s *Strategy) Data() (DataHandler, bool) {
+	if s.data == nil {
+		return nil, false
+	}
+
+	return s.data, true
 }
 
 // SetData sets the data property.
@@ -43,6 +55,15 @@ func (s *Strategy) SetData(data DataHandler) error {
 	return nil
 }
 
+// Portfolio returns the underlying portfolio property.
+func (s *Strategy) Portfolio() (PortfolioHandler, bool) {
+	if s.portfolio == nil {
+		return nil, false
+	}
+
+	return s.portfolio, true
+}
+
 // SetPortfolio sets the portfolio property.
 func (s *Strategy) SetPortfolio(portfolio PortfolioHandler) error {
 	s.portfolio = portfolio
@@ -58,6 +79,15 @@ func (s *Strategy) SetPortfolio(portfolio PortfolioHandler) error {
 	}
 
 	return nil
+}
+
+// Event returns the underlying data property.
+func (s *Strategy) Event() (DataEventHandler, bool) {
+	if s.event == nil {
+		return nil, false
+	}
+
+	return s.event, true
 }
 
 // SetAlgo sets the algo stack for the Strategy
@@ -126,31 +156,31 @@ func (s *Strategy) Assets() ([]*Asset, bool) {
 
 // OnData handles an incoming data event. It runs the algo stack on this data.
 func (s *Strategy) OnData(event DataEventHandler) (SignalEvent, error) {
+	s.event = event
+
 	// create Signal
 	se := &Signal{}
 
-	// type switch for event type
-	switch e := event.(type) {
-	case *Bar:
-		// fill Signal
-		se.Event = Event{Timestamp: e.GetTime(), Symbol: e.GetSymbol()}
-		se.Direction = "long"
+	// // type switch for event type
+	// switch e := event.(type) {
+	// case *Bar:
+	// 	// fill Signal
+	// 	se.Event = Event{Timestamp: e.GetTime(), Symbol: e.GetSymbol()}
+	// 	se.Direction = "long"
+	// }
+
+	// run the algo stack of this strategy
+	ok, err := s.algos.Run(s)
+	if !ok {
+		return se, err
 	}
 
-	return se, nil
-}
-
-// Run the algos of this Strategy Node
-func (s *Strategy) run(data DataEventHandler) error {
-	// run the algo stack
-	s.algos.Run()
-
-	// pass data event down to child strategies and run their algos
+	// pass data event down to child strategies
 	if strategies, ok := s.Strategies(); ok {
 		for _, strategy := range strategies {
-			strategy.OnData(data)
+			strategy.OnData(event)
 		}
 	}
 
-	return nil
+	return se, nil
 }

@@ -10,8 +10,8 @@ type TrueAlgo struct {
 }
 
 // Run runs the algo, returns true
-func (a TrueAlgo) Run() bool {
-	return true
+func (a TrueAlgo) Run() (bool, error) {
+	return true, nil
 }
 
 // FalseAlgo is an algo which always fails
@@ -20,6 +20,6 @@ type FalseAlgo struct {
 }
 
 // Run runs the algo, returns false
-func (a FalseAlgo) Run() bool {
-	return false
+func (a FalseAlgo) Run() (bool, error) {
+	return false, nil
 }

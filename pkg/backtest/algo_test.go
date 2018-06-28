@@ -4,107 +4,121 @@ import (
 	"testing"
 )
 
-// mocking algos
-// BasicAlgo is a base Algo which always returns true
-type TrueAlgo struct {
+// MockAlgo is a mocked base Algo
+type MockAlgo struct {
+	ret bool
 }
 
-// Run runs the algo, returns true
-func (a TrueAlgo) Run() bool {
-	return true
+// Run runs the algo
+func (ma MockAlgo) Run(s StrategyHandler) (bool, error) {
+	return ma.ret, nil
 }
 
-// FalseAlgo is an algo which always fails
-type FalseAlgo struct {
-}
-
-// Run runs the algo, returns false
-func (a FalseAlgo) Run() bool {
-	return false
-}
-
-func TestAlgoStackRun(t *testing.T) {
+func TestAlgoRun(t *testing.T) {
 	var testCases = []struct {
-		msg string
-		as  AlgoStack
-		exp bool
+		msg      string
+		algo     Algo
+		strategy *Strategy
+		expOk    bool
+		expErr   error
 	}{
-		{"Empty AlgoStack:",
-			AlgoStack{},
-			true,
-		},
-		{"Simple AlgoStack with single true Algo:",
-			AlgoStack{
-				stack: []AlgoHandler{
-					TrueAlgo{},
-				},
-			},
-			true,
-		},
-		{"Simple AlgoStack with single false Algo:",
-			AlgoStack{
-				stack: []AlgoHandler{
-					FalseAlgo{},
-				},
-			},
-			false,
-		},
-		{"AlgoStack with multiple true Algos:",
-			AlgoStack{
-				stack: []AlgoHandler{
-					TrueAlgo{},
-					TrueAlgo{},
-					TrueAlgo{},
-				},
-			},
-			true,
-		},
-		{"AlgoStack with multiple Algos, one is false:",
-			AlgoStack{
-				stack: []AlgoHandler{
-					TrueAlgo{},
-					FalseAlgo{},
-					TrueAlgo{},
-				},
-			},
-			false,
-		},
-		{"AlgoStack with true sub AlgoStack:",
-			AlgoStack{
-				stack: []AlgoHandler{
-					TrueAlgo{},
-					AlgoStack{
-						stack: []AlgoHandler{
-							TrueAlgo{},
-							TrueAlgo{},
-						},
-					},
-					TrueAlgo{},
-				},
-			},
-			true,
-		},
-		{"AlgoStack with false sub AlgoStack:",
-			AlgoStack{
-				stack: []AlgoHandler{
-					TrueAlgo{},
-					AlgoStack{
-						stack: []AlgoHandler{
-							TrueAlgo{},
-							FalseAlgo{},
-						},
-					},
-					TrueAlgo{},
-				},
-			},
-			false,
+		{"simple true test:",
+			Algo{}, &Strategy{},
+			true, nil,
 		},
 	}
 
 	for _, tc := range testCases {
-		ok := tc.as.Run()
-		if ok != tc.exp {
-			t.Errorf("%v Run(): \nexpected %#v, \nactual %#v", tc.msg, tc.exp, ok)
+		ok, err := tc.algo.Run(tc.strategy)
+		if (ok != tc.expOk) || (err != tc.expErr) {
+			t.Errorf("%v Run(): \nexpected %v %v, \nactual   %v %v", tc.msg, tc.expOk, tc.expErr, ok, err)
+		}
+	}
+}
+
+func TestAlgoStackRun(t *testing.T) {
+	var testCases = []struct {
+		msg      string
+		as       AlgoStack
+		strategy *Strategy
+		expOk    bool
+		expErr   error
+	}{
+		{"Empty AlgoStack:",
+			AlgoStack{}, &Strategy{}, true, nil,
+		},
+		{"Simple AlgoStack with single true Algo:",
+			AlgoStack{
+				stack: []AlgoHandler{
+					MockAlgo{ret: true},
+				},
+			},
+			&Strategy{}, true, nil,
+		},
+		{"Simple AlgoStack with single false Algo:",
+			AlgoStack{
+				stack: []AlgoHandler{
+					MockAlgo{ret: false},
+				},
+			},
+			&Strategy{}, false, nil,
+		},
+		{"AlgoStack with multiple true Algos:",
+			AlgoStack{
+				stack: []AlgoHandler{
+					MockAlgo{ret: true},
+					MockAlgo{ret: true},
+					MockAlgo{ret: true},
+				},
+			},
+			&Strategy{}, true, nil,
+		},
+		{"AlgoStack with multiple Algos, one is false:",
+			AlgoStack{
+				stack: []AlgoHandler{
+					MockAlgo{ret: true},
+					MockAlgo{ret: false},
+					MockAlgo{ret: true},
+				},
+			},
+			&Strategy{}, false, nil,
+		},
+		{"AlgoStack with true sub AlgoStack:",
+			AlgoStack{
+				stack: []AlgoHandler{
+					MockAlgo{ret: true},
+					AlgoStack{
+						stack: []AlgoHandler{
+							MockAlgo{ret: true},
+							MockAlgo{ret: true},
+						},
+					},
+					MockAlgo{ret: true},
+				},
+			},
+			&Strategy{}, true, nil,
+		},
+		{"AlgoStack with false sub AlgoStack:",
+			AlgoStack{
+				stack: []AlgoHandler{
+					MockAlgo{ret: true},
+					AlgoStack{
+						stack: []AlgoHandler{
+							MockAlgo{ret: true},
+							MockAlgo{ret: false},
+						},
+					},
+					MockAlgo{ret: true},
+				},
+			},
+			&Strategy{}, false, nil,
+		},
+	}
+
+	for _, tc := range testCases {
+		ok, err := tc.as.Run(tc.strategy)
+		if (ok != tc.expOk) || (err != tc.expErr) {
+			t.Errorf("%v Run(): \nexpected %v %v, \nactual   %v %v", tc.msg, tc.expOk, tc.expErr, ok, err)
 		}
 	}
 }

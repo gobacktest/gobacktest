@@ -7,6 +7,7 @@ type StrategyHandler interface {
 	Portfolio() (PortfolioHandler, bool)
 	SetPortfolio(p PortfolioHandler) error
 	Event() (DataEventHandler, bool)
+	SetEvent(DataEventHandler) error
 	Strategies() ([]StrategyHandler, bool)
 	Assets() ([]*Asset, bool)
 	OnData(DataEventHandler) (SignalEvent, error)
@@ -90,6 +91,12 @@ func (s *Strategy) Event() (DataEventHandler, bool) {
 	return s.event, true
 }
 
+// SetEvent sets the event property.
+func (s *Strategy) SetEvent(event DataEventHandler) error {
+	s.event = event
+	return nil
+}
+
 // SetAlgo sets the algo stack for the Strategy
 func (s *Strategy) SetAlgo(algos ...AlgoHandler) *Strategy {
 	for _, algo := range algos {
@@ -156,7 +163,7 @@ func (s *Strategy) Assets() ([]*Asset, bool) {
 
 // OnData handles an incoming data event. It runs the algo stack on this data.
 func (s *Strategy) OnData(event DataEventHandler) (SignalEvent, error) {
-	s.event = event
+	s.SetEvent(event)
 
 	// create Signal
 	se := &Signal{}

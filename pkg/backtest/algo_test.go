@@ -6,6 +6,7 @@ import (
 
 // MockAlgo is a mocked base Algo
 type MockAlgo struct {
+	Algo
 	ret bool
 }
 
@@ -50,7 +51,7 @@ func TestAlgoStackRun(t *testing.T) {
 		{"Simple AlgoStack with single true Algo:",
 			AlgoStack{
 				stack: []AlgoHandler{
-					MockAlgo{ret: true},
+					&MockAlgo{ret: true},
 				},
 			},
 			&Strategy{}, true, nil,
@@ -58,7 +59,7 @@ func TestAlgoStackRun(t *testing.T) {
 		{"Simple AlgoStack with single false Algo:",
 			AlgoStack{
 				stack: []AlgoHandler{
-					MockAlgo{ret: false},
+					&MockAlgo{ret: false},
 				},
 			},
 			&Strategy{}, false, nil,
@@ -66,9 +67,9 @@ func TestAlgoStackRun(t *testing.T) {
 		{"AlgoStack with multiple true Algos:",
 			AlgoStack{
 				stack: []AlgoHandler{
-					MockAlgo{ret: true},
-					MockAlgo{ret: true},
-					MockAlgo{ret: true},
+					&MockAlgo{ret: true},
+					&MockAlgo{ret: true},
+					&MockAlgo{ret: true},
 				},
 			},
 			&Strategy{}, true, nil,
@@ -76,9 +77,9 @@ func TestAlgoStackRun(t *testing.T) {
 		{"AlgoStack with multiple Algos, one is false:",
 			AlgoStack{
 				stack: []AlgoHandler{
-					MockAlgo{ret: true},
-					MockAlgo{ret: false},
-					MockAlgo{ret: true},
+					&MockAlgo{ret: true},
+					&MockAlgo{ret: false},
+					&MockAlgo{ret: true},
 				},
 			},
 			&Strategy{}, false, nil,
@@ -86,14 +87,14 @@ func TestAlgoStackRun(t *testing.T) {
 		{"AlgoStack with true sub AlgoStack:",
 			AlgoStack{
 				stack: []AlgoHandler{
-					MockAlgo{ret: true},
-					AlgoStack{
+					&MockAlgo{ret: true},
+					&AlgoStack{
 						stack: []AlgoHandler{
-							MockAlgo{ret: true},
-							MockAlgo{ret: true},
+							&MockAlgo{ret: true},
+							&MockAlgo{ret: true},
 						},
 					},
-					MockAlgo{ret: true},
+					&MockAlgo{ret: true},
 				},
 			},
 			&Strategy{}, true, nil,
@@ -101,14 +102,14 @@ func TestAlgoStackRun(t *testing.T) {
 		{"AlgoStack with false sub AlgoStack:",
 			AlgoStack{
 				stack: []AlgoHandler{
-					MockAlgo{ret: true},
-					AlgoStack{
+					&MockAlgo{ret: true},
+					&AlgoStack{
 						stack: []AlgoHandler{
-							MockAlgo{ret: true},
-							MockAlgo{ret: false},
+							&MockAlgo{ret: true},
+							&MockAlgo{ret: false},
 						},
 					},
-					MockAlgo{ret: true},
+					&MockAlgo{ret: true},
 				},
 			},
 			&Strategy{}, false, nil,

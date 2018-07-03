@@ -10,7 +10,7 @@ type TrueAlgo struct {
 }
 
 // Run runs the algo, returns true
-func (a TrueAlgo) Run() (bool, error) {
+func (a TrueAlgo) Run(s bt.StrategyHandler) (bool, error) {
 	return true, nil
 }
 
@@ -20,6 +20,6 @@ type FalseAlgo struct {
 }
 
 // Run runs the algo, returns false
-func (a FalseAlgo) Run() (bool, error) {
+func (a FalseAlgo) Run(s bt.StrategyHandler) (bool, error) {
 	return false, nil
 }

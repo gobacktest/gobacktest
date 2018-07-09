@@ -2,8 +2,6 @@ package backtest
 
 import (
 	"time"
-
-	"github.com/shopspring/decimal"
 )
 
 // EventHandler declares the basic event interface
@@ -110,10 +108,7 @@ func (t Tick) IsTick() bool {
 
 // LatestPrice returns the middle of Bid and Ask.
 func (t Tick) LatestPrice() float64 {
-	bid := decimal.NewFromFloat(t.Bid)
-	ask := decimal.NewFromFloat(t.Ask)
-	diff := decimal.New(2, 0)
-	latest, _ := bid.Add(ask).Div(diff).Round(DP).Float64()
+	latest := (t.Bid + t.Ask) / float64(2)
 	return latest
 }
 
@@ -272,25 +267,19 @@ func (f Fill) GetCost() float64 {
 
 // Value returns the value without cost.
 func (f Fill) Value() float64 {
-	qty := decimal.New(f.Qty, 0)
-	price := decimal.NewFromFloat(f.Price)
-	value, _ := qty.Mul(price).Round(DP).Float64()
+	value := float64(f.Qty) * f.Price
 	return value
 }
 
 // NetValue returns the net value including cost.
 func (f Fill) NetValue() float64 {
-	qty := decimal.New(f.Qty, 0)
-	price := decimal.NewFromFloat(f.Price)
-	cost := decimal.NewFromFloat(f.Cost)
-
 	if f.Direction == "BOT" {
 		// qty * price + cost
-		netValue, _ := qty.Mul(price).Add(cost).Round(DP).Float64()
+		netValue := float64(f.Qty)*f.Price + f.Cost
 		return netValue
 	}
 	// SLD
 	//qty * price - cost
-	netValue, _ := qty.Mul(price).Sub(cost).Round(DP).Float64()
+	netValue := float64(f.Qty)*f.Price - f.Cost
 	return netValue
 }

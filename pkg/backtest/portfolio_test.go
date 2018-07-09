@@ -481,13 +481,13 @@ func TestOnFill(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
+	for i, tc := range testCases {
 		fill, _ := tc.portfolio.OnFill(tc.fill, tc.data)
 		if !reflect.DeepEqual(tc.fill, fill) {
 		}
 		if !reflect.DeepEqual(tc.portfolio, tc.expPortfolio) {
-			t.Errorf("%v OnFill(): \nexpected %#v, \nactual   %#v",
-				tc.msg, tc.expPortfolio, tc.portfolio)
+			t.Errorf("%v. %v OnFill(): \nexpected %#v, \nactual   %#v",
+				i+1, tc.msg, tc.expPortfolio, tc.portfolio)
 		}
 	}
 }

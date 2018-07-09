@@ -1,9 +1,5 @@
 package backtest
 
-import (
-	"github.com/shopspring/decimal"
-)
-
 // PortfolioHandler is the combined interface building block for a portfolio.
 type PortfolioHandler interface {
 	OnSignaler
@@ -211,13 +207,12 @@ func (p Portfolio) Cash() float64 {
 
 // Value return the current total value of the portfolio
 func (p Portfolio) Value() float64 {
-	holdingValue := decimal.NewFromFloat(0)
+	var holdingValue float64
 	for _, pos := range p.holdings {
-		marketValue := decimal.NewFromFloat(pos.marketValue)
-		holdingValue = holdingValue.Add(marketValue)
+
+		holdingValue += pos.marketValue
 	}
 
-	cash := decimal.NewFromFloat(p.cash)
-	value, _ := cash.Add(holdingValue).Round(4).Float64()
+	value := p.cash + holdingValue
 	return value
 }

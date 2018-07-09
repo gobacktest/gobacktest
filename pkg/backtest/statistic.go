@@ -3,9 +3,9 @@ package backtest
 import (
 	"errors"
 	"fmt"
+	"math"
 	"time"
 
-	"github.com/shopspring/decimal"
 	"gonum.org/v1/gonum/stat"
 )
 
@@ -143,16 +143,16 @@ func (s Statistic) TotalEquityReturn() (r float64, err error) {
 	if !ok {
 		return r, errors.New("could not calculate totalEquityReturn, no equity points found")
 	}
-	firstEquity := decimal.NewFromFloat(firstEquityPoint.equity)
+	firstEquity := firstEquityPoint.equity
 
 	lastEquityPoint, _ := s.lastEquityPoint()
 	// if !ok {
 	// 	return r, errors.New("could not calculate totalEquityReturn, no last equity point")
 	// }
-	lastEquity := decimal.NewFromFloat(lastEquityPoint.equity)
+	lastEquity := lastEquityPoint.equity
 
-	totalEquityReturn := lastEquity.Sub(firstEquity).Div(firstEquity)
-	total, _ := totalEquityReturn.Round(DP).Float64()
+	totalEquityReturn := (lastEquity - firstEquity) / firstEquity
+	total := math.Round(totalEquityReturn*math.Pow10(DP)) / math.Pow10(DP)
 	return total, nil
 }
 
@@ -252,17 +252,17 @@ func (s Statistic) calcEquityReturn(e equityPoint) equityPoint {
 		return e
 	}
 
-	lastEquity := decimal.NewFromFloat(last.equity)
-	currentEquity := decimal.NewFromFloat(e.equity)
+	lastEquity := last.equity
+	currentEquity := e.equity
 
 	// last equity point has 0 equity
-	if lastEquity.Equal(decimal.Zero) {
+	if lastEquity == 0 {
 		e.equityReturn = 1
 		return e
 	}
 
-	equityReturn := currentEquity.Sub(lastEquity).Div(lastEquity)
-	e.equityReturn, _ = equityReturn.Round(DP).Float64()
+	equityReturn := (currentEquity - lastEquity) / lastEquity
+	e.equityReturn = math.Round(equityReturn*math.Pow10(DP)) / math.Pow10(DP)
 
 	return e
 }
@@ -274,16 +274,16 @@ func (s Statistic) calcDrawdown(e equityPoint) equityPoint {
 		return e
 	}
 
-	lastHigh := decimal.NewFromFloat(s.high.equity)
-	equity := decimal.NewFromFloat(e.equity)
+	lastHigh := s.high.equity
+	equity := e.equity
 
-	if equity.GreaterThanOrEqual(lastHigh) {
+	if equity >= lastHigh {
 		e.drawdown = 0
 		return e
 	}
 
-	drawdown := equity.Sub(lastHigh).Div(lastHigh)
-	e.drawdown, _ = drawdown.Round(DP).Float64()
+	drawdown := (equity - lastHigh) / lastHigh
+	e.drawdown = math.Round(drawdown*math.Pow10(DP)) / math.Pow10(DP)
 
 	return e
 }

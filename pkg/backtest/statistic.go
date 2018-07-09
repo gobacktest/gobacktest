@@ -71,7 +71,7 @@ type equityPoint struct {
 func (s *Statistic) Update(d DataEventHandler, p PortfolioHandler) {
 	// create new equity point based on current data timestamp and portfolio value
 	e := equityPoint{}
-	e.timestamp = d.GetTime()
+	e.timestamp = d.Time()
 	e.equity = p.Value()
 
 	// calc equity return for current equity point
@@ -133,7 +133,7 @@ func (s Statistic) PrintResult() {
 
 	fmt.Printf("Counted %d total transactions:\n", len(s.Transactions()))
 	for k, v := range s.Transactions() {
-		fmt.Printf("%d. Transaction: %v Action: %s Price: %f Qty: %d\n", k+1, v.GetTime().Format("2006-01-02"), v.GetDirection(), v.GetPrice(), v.GetQty())
+		fmt.Printf("%d. Transaction: %v Action: %s Price: %f Qty: %d\n", k+1, v.Time().Format("2006-01-02"), v.GetDirection(), v.GetPrice(), v.GetQty())
 	}
 }
 

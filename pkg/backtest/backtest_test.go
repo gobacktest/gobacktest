@@ -13,11 +13,11 @@ func (t testEvent) IsEvent() bool {
 	return true
 }
 
-func (t testEvent) GetTime() time.Time {
+func (t testEvent) Time() time.Time {
 	return time.Now()
 }
 
-func (t testEvent) GetSymbol() string {
+func (t testEvent) Symbol() string {
 	return "testEvent"
 }
 

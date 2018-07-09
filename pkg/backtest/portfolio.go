@@ -93,8 +93,8 @@ func (p *Portfolio) OnSignal(signal SignalEvent, data DataHandler) (*Order, erro
 
 	initialOrder := &Order{
 		Event: Event{
-			Timestamp: signal.GetTime(),
-			Symbol:    signal.GetSymbol(),
+			Timestamp: signal.Time(),
+			symbol:    signal.Symbol(),
 		},
 		Direction: signal.GetDirection(),
 		// Qty should be set by PositionSizer
@@ -103,7 +103,7 @@ func (p *Portfolio) OnSignal(signal SignalEvent, data DataHandler) (*Order, erro
 	}
 
 	// fetch latest known price for the symbol
-	latest := data.Latest(signal.GetSymbol())
+	latest := data.Latest(signal.Symbol())
 
 	sizedOrder, err := p.sizeManager.SizeOrder(initialOrder, latest, p)
 	if err != nil {
@@ -124,15 +124,15 @@ func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (*Fill, error) {
 	}
 
 	// check if portfolio has already a holding of the symbol from this fill
-	if pos, ok := p.holdings[fill.GetSymbol()]; ok {
+	if pos, ok := p.holdings[fill.Symbol()]; ok {
 		// update existing Position
 		pos.Update(fill)
-		p.holdings[fill.GetSymbol()] = pos
+		p.holdings[fill.Symbol()] = pos
 	} else {
 		// create new position
 		pos := Position{}
 		pos.Create(fill)
-		p.holdings[fill.GetSymbol()] = pos
+		p.holdings[fill.Symbol()] = pos
 	}
 
 	// update cash
@@ -179,9 +179,9 @@ func (p Portfolio) IsShort(symbol string) (pos Position, ok bool) {
 
 // Update updates the holding on a data event
 func (p *Portfolio) Update(d DataEventHandler) {
-	if pos, ok := p.IsInvested(d.GetSymbol()); ok {
+	if pos, ok := p.IsInvested(d.Symbol()); ok {
 		pos.UpdateValue(d)
-		p.holdings[d.GetSymbol()] = pos
+		p.holdings[d.Symbol()] = pos
 	}
 }
 

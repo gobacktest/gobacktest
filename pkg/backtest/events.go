@@ -6,46 +6,39 @@ import (
 
 // EventHandler declares the basic event interface
 type EventHandler interface {
-	IsEvent() bool
 	Timer
 	Symboler
 }
 
 // Timer declares the timer interface
 type Timer interface {
-	GetTime() time.Time
+	Time() time.Time
 }
 
 // Symboler declares the symboler interface
 type Symboler interface {
-	GetSymbol() string
+	Symbol() string
 }
 
 // Event is the implementation of the basic event interface.
 type Event struct {
 	Timestamp time.Time
-	Symbol    string
+	symbol    string
 }
 
-// IsEvent declares an event interface implementation.
-func (e Event) IsEvent() bool {
-	return true
-}
-
-// GetTime returns the timestamp of an event
-func (e Event) GetTime() time.Time {
+// Time returns the timestamp of an event
+func (e Event) Time() time.Time {
 	return e.Timestamp
 }
 
-// GetSymbol returns the symbol string of the event
-func (e Event) GetSymbol() string {
-	return e.Symbol
+// Symbol returns the symbol string of the event
+func (e Event) Symbol() string {
+	return e.symbol
 }
 
 // DataEventHandler declares a data event interface
 type DataEventHandler interface {
 	EventHandler
-	IsDataEvent() bool
 	LatestPrice() float64
 }
 
@@ -62,7 +55,6 @@ func (d DataEvent) IsDataEvent() bool {
 // BarEvent declares a bar event interface.
 type BarEvent interface {
 	DataEventHandler
-	IsBar() bool
 }
 
 // Bar declares an event for an OHLCV bar (Open, High, Low, Close, Volume).
@@ -77,11 +69,6 @@ type Bar struct {
 	Volume   int64
 }
 
-// IsBar declares a Bar event
-func (b Bar) IsBar() bool {
-	return true
-}
-
 // LatestPrice returns the close proce of the bar event.
 func (b Bar) LatestPrice() float64 {
 	return b.Close
@@ -90,7 +77,6 @@ func (b Bar) LatestPrice() float64 {
 // TickEvent declares a tick event interface.
 type TickEvent interface {
 	DataEventHandler
-	IsTick() bool
 }
 
 // Tick declares an tick event
@@ -99,11 +85,6 @@ type Tick struct {
 	DataEvent
 	Bid float64
 	Ask float64
-}
-
-// IsTick declares a tick event
-func (t Tick) IsTick() bool {
-	return true
 }
 
 // LatestPrice returns the middle of Bid and Ask.
@@ -116,7 +97,6 @@ func (t Tick) LatestPrice() float64 {
 type SignalEvent interface {
 	EventHandler
 	Directioner
-	IsSignal() bool
 }
 
 // Signal declares a basic signal event
@@ -125,14 +105,9 @@ type Signal struct {
 	Direction string // long or short
 }
 
-// IsSignal implements the Signal interface.
-func (s Signal) IsSignal() bool {
-	return true
-}
-
 // SetDirection sets the Directions field of a Signal
-func (s *Signal) SetDirection(st string) {
-	s.Direction = st
+func (s *Signal) SetDirection(dir string) {
+	s.Direction = dir
 }
 
 // GetDirection returns the Direction of a Signal
@@ -145,7 +120,6 @@ type OrderEvent interface {
 	EventHandler
 	Directioner
 	Quantifier
-	IsOrder() bool
 }
 
 // Directioner defines a direction interface
@@ -167,11 +141,6 @@ type Order struct {
 	Qty       int64   // quantity of the order
 	OrderType string  // market or limit
 	Limit     float64 // limit for the order
-}
-
-// IsOrder declares an order event.
-func (o Order) IsOrder() bool {
-	return true
 }
 
 // SetDirection sets the Directions field of an Order
@@ -199,7 +168,6 @@ type FillEvent interface {
 	EventHandler
 	Directioner
 	Quantifier
-	IsFill() bool
 	GetPrice() float64
 	GetCommission() float64
 	GetExchangeFee() float64
@@ -218,11 +186,6 @@ type Fill struct {
 	Commission  float64
 	ExchangeFee float64
 	Cost        float64 // the total cost of the filled order incl commission and fees
-}
-
-// IsFill declares a fill event.
-func (f Fill) IsFill() bool {
-	return true
 }
 
 // SetDirection sets the Directions field of a Fill

@@ -35,15 +35,15 @@ func (s *Size) SizeOrder(order OrderEvent, data DataEventHandler, pf PortfolioHa
 		o.SetQty(s.setDefaultSize(data.LatestPrice()))
 	case "exit": // all shares should be sold or bought, depending on position
 		// poll postions
-		if _, ok := pf.IsInvested(o.GetSymbol()); !ok {
+		if _, ok := pf.IsInvested(o.Symbol()); !ok {
 
 			return o, errors.New("cannot exit order: no position to symbol in portfolio,")
 		}
-		if pos, ok := pf.IsLong(o.GetSymbol()); ok {
+		if pos, ok := pf.IsLong(o.Symbol()); ok {
 			o.SetDirection("sell")
 			o.SetQty(pos.qty)
 		}
-		if pos, ok := pf.IsShort(o.GetSymbol()); ok {
+		if pos, ok := pf.IsShort(o.Symbol()); ok {
 			o.SetDirection("buy")
 			o.SetQty(pos.qty * -1)
 		}

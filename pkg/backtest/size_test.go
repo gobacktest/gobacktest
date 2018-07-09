@@ -52,7 +52,7 @@ func TestSizeOrder(t *testing.T) {
 		{"exit order with long position in portfolio:",
 			&Size{DefaultSize: 100, DefaultValue: 1000},
 			&Order{
-				Event:     Event{Symbol: "TEST.DE"},
+				Event:     Event{symbol: "TEST.DE"},
 				Direction: "exit"},
 			&Bar{},
 			&Portfolio{
@@ -61,7 +61,7 @@ func TestSizeOrder(t *testing.T) {
 				},
 			},
 			&Order{
-				Event:     Event{Symbol: "TEST.DE"},
+				Event:     Event{symbol: "TEST.DE"},
 				Direction: "sell",
 				Qty:       15,
 			},
@@ -70,7 +70,7 @@ func TestSizeOrder(t *testing.T) {
 		{"exit order with short position in portfolio:",
 			&Size{DefaultSize: 100, DefaultValue: 1000},
 			&Order{
-				Event:     Event{Symbol: "TEST.DE"},
+				Event:     Event{symbol: "TEST.DE"},
 				Direction: "exit"},
 			&Bar{},
 			&Portfolio{
@@ -79,7 +79,7 @@ func TestSizeOrder(t *testing.T) {
 				},
 			},
 			&Order{
-				Event:     Event{Symbol: "TEST.DE"},
+				Event:     Event{symbol: "TEST.DE"},
 				Direction: "buy",
 				Qty:       12,
 			},

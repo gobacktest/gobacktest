@@ -28,12 +28,12 @@ func NewExchange() *Exchange {
 // ExecuteOrder executes an order event
 func (e *Exchange) ExecuteOrder(order OrderEvent, data DataHandler) (*Fill, error) {
 	// fetch latest known data event for the symbol
-	latest := data.Latest(order.GetSymbol())
+	latest := data.Latest(order.Symbol())
 
 	// simple implementation, creates a direct fill from the order
 	// based on the last known data price
 	f := &Fill{
-		Event:    Event{Timestamp: order.GetTime(), Symbol: order.GetSymbol()},
+		Event:    Event{Timestamp: order.Time(), symbol: order.Symbol()},
 		Exchange: e.Symbol,
 		Qty:      order.GetQty(),
 		Price:    latest.LatestPrice(), // last price from data event

@@ -101,11 +101,11 @@ func (d *Data) SortStream() {
 		b2 := d.stream[j]
 
 		// if date is equal sort by symbol
-		if b1.GetTime().Equal(b2.GetTime()) {
-			return b1.GetSymbol() < b2.GetSymbol()
+		if b1.Time().Equal(b2.Time()) {
+			return b1.Symbol() < b2.Symbol()
 		}
 		// else sort by date
-		return b1.GetTime().Before(b2.GetTime())
+		return b1.Time().Before(b2.Time())
 	})
 }
 
@@ -116,7 +116,7 @@ func (d *Data) updateLatest(event DataEventHandler) {
 		d.latest = make(map[string]DataEventHandler)
 	}
 
-	d.latest[event.GetSymbol()] = event
+	d.latest[event.Symbol()] = event
 }
 
 // updateList appends an event to the data list.
@@ -126,5 +126,5 @@ func (d *Data) updateList(event DataEventHandler) {
 		d.list = make(map[string][]DataEventHandler)
 	}
 
-	d.list[event.GetSymbol()] = append(d.list[event.GetSymbol()], event)
+	d.list[event.Symbol()] = append(d.list[event.Symbol()], event)
 }

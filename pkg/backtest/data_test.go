@@ -64,52 +64,52 @@ func TestDataNext(t *testing.T) {
 		{"testing multiple data events",
 			&Data{
 				stream: []DataEventHandler{
-					&Bar{Event: Event{Symbol: "TEST.DE"}, Close: 110},
-					&Bar{Event: Event{Symbol: "TEST.DE"}, Close: 100},
-					&Bar{Event: Event{Symbol: "TEST.DE"}, Close: 90},
+					&Bar{Event: Event{symbol: "TEST.DE"}, Close: 110},
+					&Bar{Event: Event{symbol: "TEST.DE"}, Close: 100},
+					&Bar{Event: Event{symbol: "TEST.DE"}, Close: 90},
 				},
 			},
 			&Data{
 				latest: map[string]DataEventHandler{
-					"TEST.DE": &Bar{Event: Event{Symbol: "TEST.DE"}, Close: 110},
+					"TEST.DE": &Bar{Event: Event{symbol: "TEST.DE"}, Close: 110},
 				},
 				list: map[string][]DataEventHandler{
 					"TEST.DE": {
-						&Bar{Event: Event{Symbol: "TEST.DE"}, Close: 110},
+						&Bar{Event: Event{symbol: "TEST.DE"}, Close: 110},
 					},
 				},
 				stream: []DataEventHandler{
-					&Bar{Event: Event{Symbol: "TEST.DE"}, Close: 100},
-					&Bar{Event: Event{Symbol: "TEST.DE"}, Close: 90},
+					&Bar{Event: Event{symbol: "TEST.DE"}, Close: 100},
+					&Bar{Event: Event{symbol: "TEST.DE"}, Close: 90},
 				},
 				streamHistory: []DataEventHandler{
-					&Bar{Event: Event{Symbol: "TEST.DE"}, Close: 110},
+					&Bar{Event: Event{symbol: "TEST.DE"}, Close: 110},
 				},
 			},
-			&Bar{Event: Event{Symbol: "TEST.DE"}, Close: 110},
+			&Bar{Event: Event{symbol: "TEST.DE"}, Close: 110},
 			true,
 		},
 		{"testing single data events",
 			&Data{
 				stream: []DataEventHandler{
-					&Bar{Event: Event{Symbol: "TEST.DE"}, Close: 100},
+					&Bar{Event: Event{symbol: "TEST.DE"}, Close: 100},
 				},
 			},
 			&Data{
 				latest: map[string]DataEventHandler{
-					"TEST.DE": &Bar{Event: Event{Symbol: "TEST.DE"}, Close: 100},
+					"TEST.DE": &Bar{Event: Event{symbol: "TEST.DE"}, Close: 100},
 				},
 				list: map[string][]DataEventHandler{
 					"TEST.DE": {
-						&Bar{Event: Event{Symbol: "TEST.DE"}, Close: 100},
+						&Bar{Event: Event{symbol: "TEST.DE"}, Close: 100},
 					},
 				},
 				stream: []DataEventHandler{},
 				streamHistory: []DataEventHandler{
-					&Bar{Event: Event{Symbol: "TEST.DE"}, Close: 100},
+					&Bar{Event: Event{symbol: "TEST.DE"}, Close: 100},
 				},
 			},
-			&Bar{Event: Event{Symbol: "TEST.DE"}, Close: 100},
+			&Bar{Event: Event{symbol: "TEST.DE"}, Close: 100},
 			true,
 		},
 		{"testing empty data events",
@@ -142,36 +142,36 @@ func TestUpdateLatest(t *testing.T) {
 		{"test update filled latest",
 			Data{
 				latest: map[string]DataEventHandler{
-					"TEST.DE": &Bar{Event: Event{Symbol: "TEST.DE"}, Close: 80},
+					"TEST.DE": &Bar{Event: Event{symbol: "TEST.DE"}, Close: 80},
 				},
 			},
-			&Bar{Event: Event{Symbol: "TEST.DE"}, Close: 100},
+			&Bar{Event: Event{symbol: "TEST.DE"}, Close: 100},
 			Data{
 				latest: map[string]DataEventHandler{
-					"TEST.DE": &Bar{Event: Event{Symbol: "TEST.DE"}, Close: 100},
+					"TEST.DE": &Bar{Event: Event{symbol: "TEST.DE"}, Close: 100},
 				},
 			},
 		},
 		{"test update empty latest",
 			Data{},
-			&Bar{Event: Event{Symbol: "TEST.DE"}, Close: 100},
+			&Bar{Event: Event{symbol: "TEST.DE"}, Close: 100},
 			Data{
 				latest: map[string]DataEventHandler{
-					"TEST.DE": &Bar{Event: Event{Symbol: "TEST.DE"}, Close: 100},
+					"TEST.DE": &Bar{Event: Event{symbol: "TEST.DE"}, Close: 100},
 				},
 			},
 		},
 		{"test update filled latest with other symbol data",
 			Data{
 				latest: map[string]DataEventHandler{
-					"TEST.DE": &Bar{Event: Event{Symbol: "TEST.DE"}, Close: 100},
+					"TEST.DE": &Bar{Event: Event{symbol: "TEST.DE"}, Close: 100},
 				},
 			},
-			&Bar{Event: Event{Symbol: "BAS.DE"}, Close: 90},
+			&Bar{Event: Event{symbol: "BAS.DE"}, Close: 90},
 			Data{
 				latest: map[string]DataEventHandler{
-					"TEST.DE": &Bar{Event: Event{Symbol: "TEST.DE"}, Close: 100},
-					"BAS.DE":  &Bar{Event: Event{Symbol: "BAS.DE"}, Close: 90},
+					"TEST.DE": &Bar{Event: Event{symbol: "TEST.DE"}, Close: 100},
+					"BAS.DE":  &Bar{Event: Event{symbol: "BAS.DE"}, Close: 90},
 				},
 			},
 		},
@@ -197,27 +197,27 @@ func TestUpdateList(t *testing.T) {
 			Data{
 				list: map[string][]DataEventHandler{
 					"TEST.DE": {
-						&Bar{Event: Event{Symbol: "TEST.DE"}, Close: 90},
+						&Bar{Event: Event{symbol: "TEST.DE"}, Close: 90},
 					},
 				},
 			},
-			&Bar{Event: Event{Symbol: "TEST.DE"}, Close: 100},
+			&Bar{Event: Event{symbol: "TEST.DE"}, Close: 100},
 			Data{
 				list: map[string][]DataEventHandler{
 					"TEST.DE": {
-						&Bar{Event: Event{Symbol: "TEST.DE"}, Close: 90},
-						&Bar{Event: Event{Symbol: "TEST.DE"}, Close: 100},
+						&Bar{Event: Event{symbol: "TEST.DE"}, Close: 90},
+						&Bar{Event: Event{symbol: "TEST.DE"}, Close: 100},
 					},
 				},
 			},
 		},
 		{"test update empty list",
 			Data{},
-			&Bar{Event: Event{Symbol: "TEST.DE"}, Close: 100},
+			&Bar{Event: Event{symbol: "TEST.DE"}, Close: 100},
 			Data{
 				list: map[string][]DataEventHandler{
 					"TEST.DE": {
-						&Bar{Event: Event{Symbol: "TEST.DE"}, Close: 100},
+						&Bar{Event: Event{symbol: "TEST.DE"}, Close: 100},
 					},
 				},
 			},
@@ -226,18 +226,18 @@ func TestUpdateList(t *testing.T) {
 			Data{
 				list: map[string][]DataEventHandler{
 					"TEST.DE": {
-						&Bar{Event: Event{Symbol: "TEST.DE"}, Close: 100},
+						&Bar{Event: Event{symbol: "TEST.DE"}, Close: 100},
 					},
 				},
 			},
-			&Bar{Event: Event{Symbol: "BAS.DE"}, Close: 90},
+			&Bar{Event: Event{symbol: "BAS.DE"}, Close: 90},
 			Data{
 				list: map[string][]DataEventHandler{
 					"TEST.DE": {
-						&Bar{Event: Event{Symbol: "TEST.DE"}, Close: 100},
+						&Bar{Event: Event{symbol: "TEST.DE"}, Close: 100},
 					},
 					"BAS.DE": {
-						&Bar{Event: Event{Symbol: "BAS.DE"}, Close: 90},
+						&Bar{Event: Event{symbol: "BAS.DE"}, Close: 90},
 					},
 				},
 			},

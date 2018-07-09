@@ -4,22 +4,18 @@ import (
 	bt "github.com/dirkolbrich/gobacktest/pkg/backtest"
 )
 
-// TrueAlgo is a base Algo which always returns true
-type TrueAlgo struct {
+// boolAlgo is a base Algo which return a set bool value
+type boolAlgo struct {
 	bt.Algo
+	bool
 }
 
-// Run runs the algo, returns true
-func (a TrueAlgo) Run(s bt.StrategyHandler) (bool, error) {
-	return true, nil
+// BoolAlgo returns a simple true/false algo ready to use.
+func BoolAlgo(b bool) bt.AlgoHandler {
+	return &boolAlgo{bool: b}
 }
 
-// FalseAlgo is an algo which always fails
-type FalseAlgo struct {
-	bt.Algo
-}
-
-// Run runs the algo, returns false
-func (a FalseAlgo) Run(s bt.StrategyHandler) (bool, error) {
-	return false, nil
+// Run runs the algo, returns the bool value of the algo
+func (a boolAlgo) Run(s bt.StrategyHandler) (bool, error) {
+	return a.bool, nil
 }

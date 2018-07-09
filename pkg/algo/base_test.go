@@ -1,25 +1,37 @@
 package algo
 
 import (
+	"reflect"
 	"testing"
 
 	bt "github.com/dirkolbrich/gobacktest/pkg/backtest"
 )
 
-func TestAlgoTrue(t *testing.T) {
-	algo := &TrueAlgo{}
-
-	ok, err := algo.Run(&bt.Strategy{})
-	if !ok || (err != nil) {
-		t.Errorf("TrueAlgo(): \nexpected %#v %v, \nactual   %#v %v", nil, true, err, ok)
+func TestBoolAlgo(t *testing.T) {
+	var testCases = []struct {
+		msg     string
+		option  bool
+		expBool bool
+		expErr  error
+	}{
+		{"test true option",
+			true,
+			true,
+			nil,
+		},
+		{"test false option",
+			false,
+			false,
+			nil,
+		},
 	}
-}
 
-func TestAlgoFalse(t *testing.T) {
-	algo := &FalseAlgo{}
-
-	ok, err := algo.Run(&bt.Strategy{})
-	if ok || (err != nil) {
-		t.Errorf("FalseAlgo(): \nexpected %#v %v, \nactual   %#v %v", nil, false, err, ok)
+	for _, tc := range testCases {
+		algo := BoolAlgo(tc.option)
+		ok, err := algo.Run(&bt.Strategy{})
+		if (ok != tc.expBool) || !reflect.DeepEqual(err, tc.expErr) {
+			t.Errorf("%v: BoolAlgo(%v): \nexpected %#v %v, \nactual   %#v %v", tc.msg, tc.option, tc.expBool, tc.expErr, ok, err)
+		}
 	}
+
 }

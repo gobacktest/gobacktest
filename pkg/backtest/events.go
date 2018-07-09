@@ -22,13 +22,13 @@ type Symboler interface {
 
 // Event is the implementation of the basic event interface.
 type Event struct {
-	Timestamp time.Time
+	timestamp time.Time
 	symbol    string
 }
 
 // Time returns the timestamp of an event
 func (e Event) Time() time.Time {
-	return e.Timestamp
+	return e.timestamp
 }
 
 // Symbol returns the symbol string of the event

@@ -33,7 +33,7 @@ func (e *Exchange) ExecuteOrder(order OrderEvent, data DataHandler) (*Fill, erro
 	// simple implementation, creates a direct fill from the order
 	// based on the last known data price
 	f := &Fill{
-		Event:    Event{Timestamp: order.Time(), symbol: order.Symbol()},
+		Event:    Event{timestamp: order.Time(), symbol: order.Symbol()},
 		Exchange: e.Symbol,
 		Qty:      order.GetQty(),
 		Price:    latest.LatestPrice(), // last price from data event

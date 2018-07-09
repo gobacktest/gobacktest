@@ -93,7 +93,7 @@ func (p *Portfolio) OnSignal(signal SignalEvent, data DataHandler) (*Order, erro
 
 	initialOrder := &Order{
 		Event: Event{
-			Timestamp: signal.Time(),
+			timestamp: signal.Time(),
 			symbol:    signal.Symbol(),
 		},
 		Direction: signal.GetDirection(),

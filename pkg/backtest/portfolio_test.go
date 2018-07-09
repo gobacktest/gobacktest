@@ -74,7 +74,7 @@ func TestOnSignal(t *testing.T) {
 				riskManager: &Risk{},
 			},
 			&Signal{
-				Event:     Event{symbol: "TEST.DE", Timestamp: timestamp},
+				Event:     Event{symbol: "TEST.DE", timestamp: timestamp},
 				Direction: "long",
 			},
 			&Data{
@@ -83,7 +83,7 @@ func TestOnSignal(t *testing.T) {
 				},
 			},
 			&Order{
-				Event:     Event{symbol: "TEST.DE", Timestamp: timestamp},
+				Event:     Event{symbol: "TEST.DE", timestamp: timestamp},
 				Direction: "long",
 				OrderType: "MKT",
 			},
@@ -103,14 +103,14 @@ func TestOnFill(t *testing.T) {
 	var timestamp, _ = time.Parse("2006-01-02", "2017-09-29")
 	var fillCases = map[string]FillEvent{
 		"BOT": &Fill{
-			Event:     Event{symbol: "TEST.DE", Timestamp: timestamp},
+			Event:     Event{symbol: "TEST.DE", timestamp: timestamp},
 			Direction: "BOT",
 			Qty:       100,
 			Price:     10,
 			Cost:      10,
 		},
 		"SLD": &Fill{
-			Event:     Event{symbol: "TEST.DE", Timestamp: timestamp},
+			Event:     Event{symbol: "TEST.DE", timestamp: timestamp},
 			Direction: "SLD",
 			Qty:       100,
 			Price:     10,

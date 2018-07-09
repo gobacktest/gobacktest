@@ -30,7 +30,7 @@ type Investor interface {
 
 // Updater handles the updating of the portfolio on data events
 type Updater interface {
-	Update(DataEventHandler)
+	Update(DataEvent)
 }
 
 // Casher handles basic portolio info
@@ -195,7 +195,7 @@ func (p Portfolio) IsShort(symbol string) (pos Position, ok bool) {
 }
 
 // Update updates the holding on a data event
-func (p *Portfolio) Update(d DataEventHandler) {
+func (p *Portfolio) Update(d DataEvent) {
 	if pos, ok := p.IsInvested(d.Symbol()); ok {
 		pos.UpdateValue(d)
 		p.holdings[d.Symbol()] = pos

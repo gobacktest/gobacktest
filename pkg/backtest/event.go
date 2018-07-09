@@ -48,26 +48,26 @@ func (e *Event) SetSymbol(s string) {
 	e.symbol = s
 }
 
-// DataEventHandler declares a data event interface
-type DataEventHandler interface {
+// DataEvent declares a data event interface
+type DataEvent interface {
 	EventHandler
 	LatestPrice() float64
 }
 
-// DataEvent is the basic implementation of a data event handler.
-type DataEvent struct {
-	Metrics map[string]float64
+// Metric defines a metric property to a data point.
+type Metric struct {
+	metrics map[string]float64
 }
 
 // BarEvent declares a bar event interface.
 type BarEvent interface {
-	DataEventHandler
+	DataEvent
 }
 
 // Bar declares an event for an OHLCV bar (Open, High, Low, Close, Volume).
 type Bar struct {
 	Event
-	DataEvent
+	Metric
 	Open     float64
 	High     float64
 	Low      float64
@@ -83,13 +83,13 @@ func (b Bar) LatestPrice() float64 {
 
 // TickEvent declares a tick event interface.
 type TickEvent interface {
-	DataEventHandler
+	DataEvent
 }
 
 // Tick declares an tick event
 type Tick struct {
 	Event
-	DataEvent
+	Metric
 	Bid float64
 	Ask float64
 }

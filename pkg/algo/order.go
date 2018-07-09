@@ -29,12 +29,12 @@ func (algo orderAlgo) Run(s bt.StrategyHandler) (bool, error) {
 	event.SetSymbol(symbol)
 
 	initialOrder := &bt.Order{
-		Event:     *event,
-		Direction: "BOT",
+		Event: *event,
 		// Qty should be set by PositionSizer
 		OrderType: orderType,
 		Limit:     0,
 	}
+	initialOrder.SetDirection("BOT")
 
 	// fetch latest known data for the symbol
 	latest := data.Latest(symbol)

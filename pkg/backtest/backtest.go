@@ -156,7 +156,7 @@ func (t *Test) nextEvent() (e EventHandler, ok bool) {
 func (t *Test) eventLoop(e EventHandler) error {
 	// type check for event type
 	switch event := e.(type) {
-	case DataEventHandler:
+	case DataEvent:
 		// update portfolio to the last known price data
 		t.portfolio.Update(event)
 		// update statistics

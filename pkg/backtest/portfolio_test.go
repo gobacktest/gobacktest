@@ -78,7 +78,7 @@ func TestOnSignal(t *testing.T) {
 				direction: "long",
 			},
 			&Data{
-				latest: map[string]DataEventHandler{
+				latest: map[string]DataEvent{
 					"TEST.DE": &Bar{Close: 100},
 				},
 			},

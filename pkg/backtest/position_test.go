@@ -480,7 +480,7 @@ func TestUpdatePositionValue(t *testing.T) {
 	}
 	// testCases is a table for testing updating a position
 	var testCases = []struct {
-		data   DataEventHandler
+		data   DataEvent
 		expPos *Position // expected Position
 	}{
 		{

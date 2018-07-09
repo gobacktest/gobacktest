@@ -31,7 +31,7 @@ func TestExecuteOrder(t *testing.T) {
 				qty:       10,
 			},
 			&Data{
-				latest: map[string]DataEventHandler{
+				latest: map[string]DataEvent{
 					"TEST.DE": &Bar{Close: 10},
 				},
 			},
@@ -54,7 +54,7 @@ func TestExecuteOrder(t *testing.T) {
 				qty:       10,
 			},
 			&Data{
-				latest: map[string]DataEventHandler{
+				latest: map[string]DataEvent{
 					"TEST.DE": &Bar{Close: 10},
 				},
 			},

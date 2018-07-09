@@ -38,7 +38,7 @@ type StatisticPrinter interface {
 
 // StatisticUpdater handles the updateing of the statistics
 type StatisticUpdater interface {
-	Update(DataEventHandler, PortfolioHandler)
+	Update(DataEvent, PortfolioHandler)
 }
 
 // Resulter bundles all methods which return the results of the backtest
@@ -68,7 +68,7 @@ type equityPoint struct {
 }
 
 // Update the complete statistics to a given data event.
-func (s *Statistic) Update(d DataEventHandler, p PortfolioHandler) {
+func (s *Statistic) Update(d DataEvent, p PortfolioHandler) {
 	// create new equity point based on current data timestamp and portfolio value
 	e := equityPoint{}
 	e.timestamp = d.Time()

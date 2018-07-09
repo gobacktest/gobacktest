@@ -6,13 +6,13 @@ type StrategyHandler interface {
 	SetData(d DataHandler) error
 	Portfolio() (PortfolioHandler, bool)
 	SetPortfolio(p PortfolioHandler) error
-	Event() (DataEventHandler, bool)
-	SetEvent(DataEventHandler) error
+	Event() (DataEvent, bool)
+	SetEvent(DataEvent) error
 	Orders() ([]OrderEvent, bool)
 	AddOrder(...OrderEvent) error
 	Strategies() ([]StrategyHandler, bool)
 	Assets() ([]*Asset, bool)
-	OnData(DataEventHandler) ([]OrderEvent, error)
+	OnData(DataEvent) ([]OrderEvent, error)
 }
 
 // Strategy implements NodeHandler via Node, used as a strategy building block.
@@ -21,7 +21,7 @@ type Strategy struct {
 	algos     AlgoStack
 	data      DataHandler
 	portfolio PortfolioHandler
-	event     DataEventHandler
+	event     DataEvent
 	orders    []OrderEvent
 }
 
@@ -86,7 +86,7 @@ func (s *Strategy) SetPortfolio(portfolio PortfolioHandler) error {
 }
 
 // Event returns the underlying data property.
-func (s *Strategy) Event() (DataEventHandler, bool) {
+func (s *Strategy) Event() (DataEvent, bool) {
 	if s.event == nil {
 		return nil, false
 	}
@@ -95,7 +95,7 @@ func (s *Strategy) Event() (DataEventHandler, bool) {
 }
 
 // SetEvent sets the event property.
-func (s *Strategy) SetEvent(event DataEventHandler) error {
+func (s *Strategy) SetEvent(event DataEvent) error {
 	s.event = event
 	return nil
 }
@@ -182,7 +182,7 @@ func (s *Strategy) Assets() ([]*Asset, bool) {
 }
 
 // OnData handles an incoming data event. It runs the algo stack on this data.
-func (s *Strategy) OnData(event DataEventHandler) (orders []OrderEvent, err error) {
+func (s *Strategy) OnData(event DataEvent) (orders []OrderEvent, err error) {
 	s.SetEvent(event)
 
 	// // type switch for event type

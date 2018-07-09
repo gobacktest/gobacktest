@@ -7,7 +7,7 @@ import (
 
 // SizeHandler is the basic interface for setting the size of an order
 type SizeHandler interface {
-	SizeOrder(OrderEvent, DataEventHandler, PortfolioHandler) (*Order, error)
+	SizeOrder(OrderEvent, DataEvent, PortfolioHandler) (*Order, error)
 }
 
 // Size is a basic size handler implementation
@@ -17,7 +17,7 @@ type Size struct {
 }
 
 // SizeOrder adjusts the size of an order
-func (s *Size) SizeOrder(order OrderEvent, data DataEventHandler, pf PortfolioHandler) (*Order, error) {
+func (s *Size) SizeOrder(order OrderEvent, data DataEvent, pf PortfolioHandler) (*Order, error) {
 	// assert interface to concrete Type
 	o := order.(*Order)
 	// no default set, no sizing possible, order rejected

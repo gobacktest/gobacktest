@@ -51,7 +51,7 @@ func (p *Position) Update(fill FillEvent) {
 }
 
 // UpdateValue updates the current market value of a position
-func (p *Position) UpdateValue(data DataEventHandler) {
+func (p *Position) UpdateValue(data DataEvent) {
 	p.timestamp = data.Time()
 
 	latest := data.LatestPrice()

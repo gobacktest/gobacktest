@@ -125,7 +125,7 @@ func TestAlgoRunDailyImplementation(t *testing.T) {
 		"2018-07-02",
 	}
 	// set up mock Data Events
-	mockdata := []bt.DataEventHandler{}
+	mockdata := []bt.DataEvent{}
 	for i, d := range dates {
 		time, _ := time.Parse("2006-01-02", d)
 		symbol := "Date" + strconv.Itoa(i)
@@ -290,7 +290,7 @@ func TestAlgoRunMonthlyImplementation(t *testing.T) {
 		"2018-02-01",
 	}
 	// set up mock Data Events
-	mockdata := []bt.DataEventHandler{}
+	mockdata := []bt.DataEvent{}
 	for i, d := range dates {
 		time, _ := time.Parse("2006-01-02", d)
 		symbol := "Date" + strconv.Itoa(i)

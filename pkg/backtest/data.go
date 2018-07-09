@@ -18,19 +18,19 @@ type DataLoader interface {
 
 // DataStreamer is the interface defining data streams functionality.
 type DataStreamer interface {
-	Next() (DataEventHandler, bool)
-	Stream() []DataEventHandler
-	History() []DataEventHandler
-	Latest(string) DataEventHandler
-	List(string) []DataEventHandler
+	Next() (DataEvent, bool)
+	Stream() []DataEvent
+	History() []DataEvent
+	Latest(string) DataEvent
+	List(string) []DataEvent
 }
 
 // Data is a basic data struct.
 type Data struct {
-	latest        map[string]DataEventHandler
-	list          map[string][]DataEventHandler
-	stream        []DataEventHandler
-	streamHistory []DataEventHandler
+	latest        map[string]DataEvent
+	list          map[string][]DataEvent
+	stream        []DataEvent
+	streamHistory []DataEvent
 }
 
 // Load loads data endpoints into a stream.
@@ -50,18 +50,18 @@ func (d *Data) Reset() error {
 }
 
 // SetStream sets the data stream.
-func (d *Data) SetStream(stream []DataEventHandler) {
+func (d *Data) SetStream(stream []DataEvent) {
 	d.stream = stream
 }
 
 // Stream returns the data stream.
-func (d *Data) Stream() []DataEventHandler {
+func (d *Data) Stream() []DataEvent {
 	return d.stream
 }
 
 // Next returns the first element of the data stream,
 // deletes it from the stream and appends it to history.
-func (d *Data) Next() (dh DataEventHandler, ok bool) {
+func (d *Data) Next() (dh DataEvent, ok bool) {
 	// check for element in datastream
 	if len(d.stream) == 0 {
 		return dh, false
@@ -80,17 +80,17 @@ func (d *Data) Next() (dh DataEventHandler, ok bool) {
 }
 
 // History returns the historic data stream.
-func (d *Data) History() []DataEventHandler {
+func (d *Data) History() []DataEvent {
 	return d.streamHistory
 }
 
 // Latest returns the last known data event for a symbol.
-func (d *Data) Latest(symbol string) DataEventHandler {
+func (d *Data) Latest(symbol string) DataEvent {
 	return d.latest[symbol]
 }
 
 // List returns the data event list for a symbol.
-func (d *Data) List(symbol string) []DataEventHandler {
+func (d *Data) List(symbol string) []DataEvent {
 	return d.list[symbol]
 }
 
@@ -110,20 +110,20 @@ func (d *Data) SortStream() {
 }
 
 // updateLatest puts the last current data event to the current list.
-func (d *Data) updateLatest(event DataEventHandler) {
+func (d *Data) updateLatest(event DataEvent) {
 	// check for nil map, else initialise the map
 	if d.latest == nil {
-		d.latest = make(map[string]DataEventHandler)
+		d.latest = make(map[string]DataEvent)
 	}
 
 	d.latest[event.Symbol()] = event
 }
 
 // updateList appends an event to the data list.
-func (d *Data) updateList(event DataEventHandler) {
+func (d *Data) updateList(event DataEvent) {
 	// Check for nil map, else initialise the map
 	if d.list == nil {
-		d.list = make(map[string][]DataEventHandler)
+		d.list = make(map[string][]DataEvent)
 	}
 
 	d.list[event.Symbol()] = append(d.list[event.Symbol()], event)

@@ -27,15 +27,14 @@ func TestSMAIntegration(t *testing.T) {
 	mockdata := []bt.DataEventHandler{}
 	for i, d := range dates {
 		time, _ := time.Parse("2006-01-02", d)
-		event := bt.Event{
-			symbol:    "Date" + strconv.Itoa(i),
-			timestamp: time,
-		}
-		bar := bt.Bar{
-			Event: bt.Event{
-				symbol:    "Date" + strconv.Itoa(i),
-				timestamp: time,
-			},
+		symbol := "Date" + strconv.Itoa(i)
+
+		event := &bt.Event{}
+		event.SetSymbol(symbol)
+		event.SetTime(time)
+
+		bar := &bt.Bar{
+			Event: *event,
 			Close: float64(i),
 		}
 		mockdata = append(mockdata, bar)

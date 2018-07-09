@@ -12,6 +12,9 @@ import (
 func TestCreateBarEventFromLine(t *testing.T) {
 	// set the example time string in format yyyy-mm-dd
 	var exampleTime, _ = time.Parse("2006-01-02", "2017-06-01")
+	var event = &backtest.Event{}
+	event.SetTime(exampleTime)
+	event.SetSymbol("TEST.DE")
 
 	// testCases is a table for testing parsing bar data into a BarEvent
 	var testCases = []struct {
@@ -32,7 +35,7 @@ func TestCreateBarEventFromLine(t *testing.T) {
 			},
 			"TEST.DE",
 			&backtest.Bar{
-				Event:     backtest.Event{Timestamp: exampleTime, Symbol: "TEST.DE"},
+				Event:     *event,
 				DataEvent: backtest.DataEvent{Metrics: make(map[string]float64)},
 				Open:      float64(10),
 				High:      float64(10),

@@ -128,11 +128,14 @@ func TestAlgoRunDailyImplementation(t *testing.T) {
 	mockdata := []bt.DataEventHandler{}
 	for i, d := range dates {
 		time, _ := time.Parse("2006-01-02", d)
-		bar := bt.Bar{
-			bt.Event: bt.Event{
-				symbol:    "Date" + strconv.Itoa(i),
-				timestamp: time,
-			},
+		symbol := "Date" + strconv.Itoa(i)
+
+		event := &bt.Event{}
+		event.SetSymbol(symbol)
+		event.SetTime(time)
+
+		bar := &bt.Bar{
+			Event: *event,
 		}
 		mockdata = append(mockdata, bar)
 	}
@@ -290,11 +293,14 @@ func TestAlgoRunMonthlyImplementation(t *testing.T) {
 	mockdata := []bt.DataEventHandler{}
 	for i, d := range dates {
 		time, _ := time.Parse("2006-01-02", d)
-		bar := bt.Bar{
-			Event: bt.Event{
-				symbol:    "Date" + strconv.Itoa(i),
-				timestamp: time,
-			},
+		symbol := "Date" + strconv.Itoa(i)
+
+		event := &bt.Event{}
+		event.SetSymbol(symbol)
+		event.SetTime(time)
+
+		bar := &bt.Bar{
+			Event: *event,
 		}
 		mockdata = append(mockdata, bar)
 	}

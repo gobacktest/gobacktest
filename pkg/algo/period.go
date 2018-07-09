@@ -77,7 +77,7 @@ func (rp *runPeriod) Run(s bt.StrategyHandler) (bool, error) {
 func (rp *runPeriod) getNow(s bt.StrategyHandler) time.Time {
 	// get current data event date
 	event, _ := s.Event()
-	now := event.GetTime()
+	now := event.Time()
 
 	return now
 }
@@ -94,7 +94,7 @@ func (rp *runPeriod) getDateToCompare(s bt.StrategyHandler) (time.Time, bool) {
 	if len(history) <= 1 {
 		return time.Time{}, false
 	}
-	dateToCompare := history[len(history)-2].GetTime()
+	dateToCompare := history[len(history)-2].Time()
 
 	return dateToCompare, true
 }

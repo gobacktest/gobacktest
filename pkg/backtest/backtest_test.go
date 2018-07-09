@@ -9,16 +9,18 @@ import (
 type testEvent struct {
 }
 
-func (t testEvent) IsEvent() bool {
-	return true
-}
-
 func (t testEvent) Time() time.Time {
 	return time.Now()
 }
 
+func (t *testEvent) SetTime(time time.Time) {
+}
+
 func (t testEvent) Symbol() string {
 	return "testEvent"
+}
+
+func (t *testEvent) SetSymbol(s string) {
 }
 
 // queueTests is a table for testing the event queue
@@ -30,9 +32,9 @@ var queueTests = []struct {
 	{Test{}, nil, false}, // Test.eventQueue is empty
 	{Test{
 		eventQueue: []EventHandler{
-			testEvent{},
+			&testEvent{},
 		},
-	}, testEvent{}, true},
+	}, &testEvent{}, true},
 }
 
 func TestNextEvent(t *testing.T) {

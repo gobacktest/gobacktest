@@ -13,11 +13,13 @@ type EventHandler interface {
 // Timer declares the timer interface
 type Timer interface {
 	Time() time.Time
+	SetTime(time.Time)
 }
 
 // Symboler declares the symboler interface
 type Symboler interface {
 	Symbol() string
+	SetSymbol(string)
 }
 
 // Event is the implementation of the basic event interface.
@@ -31,9 +33,19 @@ func (e Event) Time() time.Time {
 	return e.timestamp
 }
 
+// SetTime returns the timestamp of an event
+func (e *Event) SetTime(t time.Time) {
+	e.timestamp = t
+}
+
 // Symbol returns the symbol string of the event
 func (e Event) Symbol() string {
 	return e.symbol
+}
+
+// SetSymbol returns the symbol string of the event
+func (e *Event) SetSymbol(s string) {
+	e.symbol = s
 }
 
 // DataEventHandler declares a data event interface
@@ -45,11 +57,6 @@ type DataEventHandler interface {
 // DataEvent is the basic implementation of a data event handler.
 type DataEvent struct {
 	Metrics map[string]float64
-}
-
-// IsDataEvent declares a data event
-func (d DataEvent) IsDataEvent() bool {
-	return true
 }
 
 // BarEvent declares a bar event interface.

@@ -23,7 +23,7 @@ func NewSMA(i int) *SMA {
 func (a *SMA) Run(s bt.StrategyHandler) (bool, error) {
 	data, _ := s.Data()
 	event, _ := s.Event()
-	symbol := event.GetSymbol()
+	symbol := event.Symbol()
 
 	// prepare list of floats
 	list := data.List(symbol)

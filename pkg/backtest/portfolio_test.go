@@ -21,8 +21,8 @@ func TestResetPortfolio(t *testing.T) {
 					"BAS.DE":  {qty: 90},
 				},
 				transactions: []FillEvent{
-					&Fill{Direction: "BOT", Qty: 100},
-					&Fill{Direction: "BOT", Qty: 90},
+					&Fill{direction: "BOT", qty: 100},
+					&Fill{direction: "BOT", qty: 90},
 				},
 				sizeManager: &Size{},
 				riskManager: &Risk{},
@@ -75,7 +75,7 @@ func TestOnSignal(t *testing.T) {
 			},
 			&Signal{
 				Event:     Event{symbol: "TEST.DE", timestamp: timestamp},
-				Direction: "long",
+				direction: "long",
 			},
 			&Data{
 				latest: map[string]DataEventHandler{
@@ -84,7 +84,7 @@ func TestOnSignal(t *testing.T) {
 			},
 			&Order{
 				Event:     Event{symbol: "TEST.DE", timestamp: timestamp},
-				Direction: "long",
+				direction: "long",
 				OrderType: "MKT",
 			},
 			nil},
@@ -104,17 +104,17 @@ func TestOnFill(t *testing.T) {
 	var fillCases = map[string]FillEvent{
 		"BOT": &Fill{
 			Event:     Event{symbol: "TEST.DE", timestamp: timestamp},
-			Direction: "BOT",
-			Qty:       100,
-			Price:     10,
-			Cost:      10,
+			direction: "BOT",
+			qty:       100,
+			price:     10,
+			cost:      10,
 		},
 		"SLD": &Fill{
 			Event:     Event{symbol: "TEST.DE", timestamp: timestamp},
-			Direction: "SLD",
-			Qty:       100,
-			Price:     10,
-			Cost:      10,
+			direction: "SLD",
+			qty:       100,
+			price:     10,
+			cost:      10,
 		},
 	}
 	var holdingCases = map[string]Position{

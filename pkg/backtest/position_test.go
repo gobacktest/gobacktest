@@ -20,9 +20,9 @@ func TestCreatePosition(t *testing.T) {
 			&Fill{
 				Event:     Event{timestamp: exampleTime, symbol: "TEST.DE"},
 				Exchange:  "TEST",
-				Direction: "BOT", // BOT for buy or SLD for sell
-				Qty:       10, Price: 10,
-				Commission: 4, ExchangeFee: 1, Cost: 5,
+				direction: "BOT", // BOT for buy or SLD for sell
+				qty:       10, price: 10,
+				commission: 4, exchangeFee: 1, cost: 5,
 			},
 			&Position{
 				timestamp: exampleTime, symbol: "TEST.DE",
@@ -39,9 +39,9 @@ func TestCreatePosition(t *testing.T) {
 			&Fill{
 				Event:     Event{timestamp: exampleTime, symbol: "TEST.DE"},
 				Exchange:  "TEST",
-				Direction: "SLD", // BOT for buy or SLD for sell
-				Qty:       10, Price: 10,
-				Commission: 4, ExchangeFee: 1, Cost: 5,
+				direction: "SLD", // BOT for buy or SLD for sell
+				qty:       10, price: 10,
+				commission: 4, exchangeFee: 1, cost: 5,
 			},
 			&Position{
 				timestamp: exampleTime, symbol: "TEST.DE",
@@ -102,9 +102,9 @@ func TestUpdatePosition(t *testing.T) {
 			posBOT,
 			&Fill{
 				Event:    Event{timestamp: exampleTime, symbol: "TEST.DE"},
-				Exchange: "TEST", Direction: "BOT", // BOT for buy or SLD for sell
-				Qty: 15, Price: 15,
-				Commission: 6, ExchangeFee: 1, Cost: 7,
+				Exchange: "TEST", direction: "BOT", // BOT for buy or SLD for sell
+				qty: 15, price: 15,
+				commission: 6, exchangeFee: 1, cost: 7,
 			},
 			&Position{
 				timestamp: exampleTime, symbol: "TEST.DE",
@@ -121,9 +121,9 @@ func TestUpdatePosition(t *testing.T) {
 			posBOT,
 			&Fill{
 				Event:    Event{timestamp: exampleTime, symbol: "TEST.DE"},
-				Exchange: "TEST", Direction: "SLD", // BOT for buy or SLD for sell
-				Qty: 6, Price: 12,
-				Commission: 4, ExchangeFee: 1, Cost: 5,
+				Exchange: "TEST", direction: "SLD", // BOT for buy or SLD for sell
+				qty: 6, price: 12,
+				commission: 4, exchangeFee: 1, cost: 5,
 			},
 			&Position{
 				timestamp: exampleTime, symbol: "TEST.DE",
@@ -140,9 +140,9 @@ func TestUpdatePosition(t *testing.T) {
 			posBOT,
 			&Fill{
 				Event:    Event{timestamp: exampleTime, symbol: "TEST.DE"},
-				Exchange: "TEST", Direction: "SLD", // BOT for buy or SLD for sell
-				Qty: 15, Price: 5,
-				Commission: 4, ExchangeFee: 1, Cost: 5,
+				Exchange: "TEST", direction: "SLD", // BOT for buy or SLD for sell
+				qty: 15, price: 5,
+				commission: 4, exchangeFee: 1, cost: 5,
 			},
 			&Position{
 				timestamp: exampleTime, symbol: "TEST.DE",
@@ -159,9 +159,9 @@ func TestUpdatePosition(t *testing.T) {
 			posBOT,
 			&Fill{
 				Event:    Event{timestamp: exampleTime, symbol: "TEST.DE"},
-				Exchange: "TEST", Direction: "SLD", // BOT for buy or SLD for sell
-				Qty: 10, Price: 12,
-				Commission: 5, ExchangeFee: 1, Cost: 6,
+				Exchange: "TEST", direction: "SLD", // BOT for buy or SLD for sell
+				qty: 10, price: 12,
+				commission: 5, exchangeFee: 1, cost: 6,
 			},
 			&Position{
 				timestamp: exampleTime, symbol: "TEST.DE",
@@ -178,9 +178,9 @@ func TestUpdatePosition(t *testing.T) {
 			posSLD,
 			&Fill{
 				Event:    Event{timestamp: exampleTime, symbol: "TEST.DE"},
-				Exchange: "TEST", Direction: "SLD", // BOT for buy or SLD for sell
-				Qty: 15, Price: 15,
-				Commission: 6, ExchangeFee: 1, Cost: 7,
+				Exchange: "TEST", direction: "SLD", // BOT for buy or SLD for sell
+				qty: 15, price: 15,
+				commission: 6, exchangeFee: 1, cost: 7,
 			},
 			&Position{
 				timestamp: exampleTime, symbol: "TEST.DE",
@@ -197,9 +197,9 @@ func TestUpdatePosition(t *testing.T) {
 			posSLD,
 			&Fill{
 				Event:    Event{timestamp: exampleTime, symbol: "TEST.DE"},
-				Exchange: "TEST", Direction: "BOT", // BOT for buy or SLD for sell
-				Qty: 6, Price: 12,
-				Commission: 4, ExchangeFee: 1, Cost: 5,
+				Exchange: "TEST", direction: "BOT", // BOT for buy or SLD for sell
+				qty: 6, price: 12,
+				commission: 4, exchangeFee: 1, cost: 5,
 			},
 			&Position{
 				timestamp: exampleTime, symbol: "TEST.DE",
@@ -216,9 +216,9 @@ func TestUpdatePosition(t *testing.T) {
 			posSLD,
 			&Fill{
 				Event:    Event{timestamp: exampleTime, symbol: "TEST.DE"},
-				Exchange: "TEST", Direction: "BOT", // BOT for buy or SLD for sell
-				Qty: 15, Price: 5,
-				Commission: 4, ExchangeFee: 1, Cost: 5,
+				Exchange: "TEST", direction: "BOT", // BOT for buy or SLD for sell
+				qty: 15, price: 5,
+				commission: 4, exchangeFee: 1, cost: 5,
 			},
 			&Position{
 				timestamp: exampleTime, symbol: "TEST.DE",
@@ -235,9 +235,9 @@ func TestUpdatePosition(t *testing.T) {
 			posSLD,
 			&Fill{
 				Event:    Event{timestamp: exampleTime, symbol: "TEST.DE"},
-				Exchange: "TEST", Direction: "BOT", // BOT for buy or SLD for sell
-				Qty: 10, Price: 12,
-				Commission: 5, ExchangeFee: 1, Cost: 6,
+				Exchange: "TEST", direction: "BOT", // BOT for buy or SLD for sell
+				qty: 10, price: 12,
+				commission: 5, exchangeFee: 1, cost: 6,
 			},
 			&Position{
 				timestamp: exampleTime, symbol: "TEST.DE",
@@ -357,21 +357,21 @@ func TestMultipleUpdatePosition(t *testing.T) {
 			[]FillEvent{
 				&Fill{
 					Event:    Event{timestamp: exampleTime, symbol: "TEST.DE"},
-					Exchange: "TEST", Direction: "BOT", // BOT for buy or SLD for sell
-					Qty: 15, Price: 15,
-					Commission: 6, ExchangeFee: 1, Cost: 7,
+					Exchange: "TEST", direction: "BOT", // BOT for buy or SLD for sell
+					qty: 15, price: 15,
+					commission: 6, exchangeFee: 1, cost: 7,
 				},
 				&Fill{
 					Event:    Event{timestamp: exampleTime, symbol: "TEST.DE"},
-					Exchange: "TEST", Direction: "SLD", // BOT for buy or SLD for sell
-					Qty: 18, Price: 20,
-					Commission: 8, ExchangeFee: 1, Cost: 9,
+					Exchange: "TEST", direction: "SLD", // BOT for buy or SLD for sell
+					qty: 18, price: 20,
+					commission: 8, exchangeFee: 1, cost: 9,
 				},
 				&Fill{
 					Event:    Event{timestamp: exampleTime, symbol: "TEST.DE"},
-					Exchange: "TEST", Direction: "BOT", // BOT for buy or SLD for sell
-					Qty: 12, Price: 18,
-					Commission: 7, ExchangeFee: 1, Cost: 8,
+					Exchange: "TEST", direction: "BOT", // BOT for buy or SLD for sell
+					qty: 12, price: 18,
+					commission: 7, exchangeFee: 1, cost: 8,
 				},
 			},
 			&Position{

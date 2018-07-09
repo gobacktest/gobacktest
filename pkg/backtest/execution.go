@@ -35,30 +35,30 @@ func (e *Exchange) ExecuteOrder(order OrderEvent, data DataHandler) (*Fill, erro
 	f := &Fill{
 		Event:    Event{timestamp: order.Time(), symbol: order.Symbol()},
 		Exchange: e.Symbol,
-		Qty:      order.GetQty(),
-		Price:    latest.LatestPrice(), // last price from data event
+		qty:      order.Qty(),
+		price:    latest.LatestPrice(), // last price from data event
 	}
 
-	switch order.GetDirection() {
+	switch order.Direction() {
 	case "buy":
-		f.Direction = "BOT"
+		f.direction = "BOT"
 	case "sell":
-		f.Direction = "SLD"
+		f.direction = "SLD"
 	}
 
-	commission, err := e.Commission.Calculate(float64(f.Qty), f.Price)
+	commission, err := e.Commission.Calculate(float64(f.qty), f.price)
 	if err != nil {
 		return f, err
 	}
-	f.Commission = commission
+	f.commission = commission
 
 	exchangeFee, err := e.ExchangeFee.Fee()
 	if err != nil {
 		return f, err
 	}
-	f.ExchangeFee = exchangeFee
+	f.exchangeFee = exchangeFee
 
-	f.Cost = e.calculateCost(commission, exchangeFee)
+	f.cost = e.calculateCost(commission, exchangeFee)
 
 	return f, nil
 }

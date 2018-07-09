@@ -61,11 +61,11 @@ func (p *Position) UpdateValue(data DataEventHandler) {
 // internal function to update a position on a new fill event
 func (p *Position) update(fill FillEvent) {
 	// convert fill to internally used decimal numbers
-	fillQty := float64(fill.GetQty())
-	fillPrice := fill.GetPrice()
-	fillCommission := fill.GetCommission()
-	fillExchangeFee := fill.GetExchangeFee()
-	fillCost := fill.GetCost()
+	fillQty := float64(fill.Qty())
+	fillPrice := fill.Price()
+	fillCommission := fill.Commission()
+	fillExchangeFee := fill.ExchangeFee()
+	fillCost := fill.Cost()
 	fillNetValue := fill.NetValue()
 
 	// convert position to internally used decimal numbers
@@ -88,7 +88,7 @@ func (p *Position) update(fill FillEvent) {
 	costBasis := p.costBasis
 	realProfitLoss := p.realProfitLoss
 
-	switch fill.GetDirection() {
+	switch fill.Direction() {
 	case "BOT":
 		if p.qty >= 0 { // position is long, adding to position
 			costBasis += fillNetValue
@@ -167,7 +167,7 @@ func (p *Position) update(fill FillEvent) {
 	p.costBasis = math.Round(costBasis*math.Pow10(DP)) / math.Pow10(DP)
 	p.realProfitLoss = math.Round(realProfitLoss*math.Pow10(DP)) / math.Pow10(DP)
 
-	p.updateValue(fill.GetPrice())
+	p.updateValue(fill.Price())
 }
 
 // internal function to updates the current market value and profit/loss of a position

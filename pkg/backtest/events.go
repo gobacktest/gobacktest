@@ -109,17 +109,17 @@ type SignalEvent interface {
 // Signal declares a basic signal event
 type Signal struct {
 	Event
-	Direction string // long or short
+	direction string // long or short
+}
+
+// Direction returns the Direction of a Signal
+func (s Signal) Direction() string {
+	return s.direction
 }
 
 // SetDirection sets the Directions field of a Signal
 func (s *Signal) SetDirection(dir string) {
-	s.Direction = dir
-}
-
-// GetDirection returns the Direction of a Signal
-func (s Signal) GetDirection() string {
-	return s.Direction
+	s.direction = dir
 }
 
 // OrderEvent declares the order event interface.
@@ -131,43 +131,43 @@ type OrderEvent interface {
 
 // Directioner defines a direction interface
 type Directioner interface {
+	Direction() string
 	SetDirection(string)
-	GetDirection() string
 }
 
 // Quantifier defines a qty interface
 type Quantifier interface {
+	Qty() int64
 	SetQty(int64)
-	GetQty() int64
 }
 
 // Order declares a basic order event
 type Order struct {
 	Event
-	Direction string  // buy or sell
-	Qty       int64   // quantity of the order
+	direction string  // buy or sell
+	qty       int64   // quantity of the order
 	OrderType string  // market or limit
 	Limit     float64 // limit for the order
 }
 
-// SetDirection sets the Directions field of an Order
-func (o *Order) SetDirection(s string) {
-	o.Direction = s
+// Direction returns the Direction of an Order
+func (o Order) Direction() string {
+	return o.direction
 }
 
-// GetDirection returns the Direction of an Order
-func (o Order) GetDirection() string {
-	return o.Direction
+// SetDirection sets the Directions field of an Order
+func (o *Order) SetDirection(s string) {
+	o.direction = s
+}
+
+// Qty returns the Qty field of an Order
+func (o Order) Qty() int64 {
+	return o.qty
 }
 
 // SetQty sets the Qty field of an Order
 func (o *Order) SetQty(i int64) {
-	o.Qty = i
-}
-
-// GetQty returns the Qty field of an Order
-func (o Order) GetQty() int64 {
-	return o.Qty
+	o.qty = i
 }
 
 // FillEvent declares the fill event interface.
@@ -175,10 +175,10 @@ type FillEvent interface {
 	EventHandler
 	Directioner
 	Quantifier
-	GetPrice() float64
-	GetCommission() float64
-	GetExchangeFee() float64
-	GetCost() float64
+	Price() float64
+	Commission() float64
+	ExchangeFee() float64
+	Cost() float64
 	Value() float64
 	NetValue() float64
 }
@@ -187,69 +187,69 @@ type FillEvent interface {
 type Fill struct {
 	Event
 	Exchange    string // exchange symbol
-	Direction   string // BOT for buy or SLD for sell
-	Qty         int64
-	Price       float64
-	Commission  float64
-	ExchangeFee float64
-	Cost        float64 // the total cost of the filled order incl commission and fees
+	direction   string // BOT for buy or SLD for sell
+	qty         int64
+	price       float64
+	commission  float64
+	exchangeFee float64
+	cost        float64 // the total cost of the filled order incl commission and fees
+}
+
+// Direction returns the direction of a Fill
+func (f Fill) Direction() string {
+	return f.direction
 }
 
 // SetDirection sets the Directions field of a Fill
 func (f *Fill) SetDirection(s string) {
-	f.Direction = s
+	f.direction = s
 }
 
-// GetDirection returns the direction of a Fill
-func (f Fill) GetDirection() string {
-	return f.Direction
+// Qty returns the qty field of a fill
+func (f Fill) Qty() int64 {
+	return f.qty
 }
 
 // SetQty sets the Qty field of a Fill
 func (f *Fill) SetQty(i int64) {
-	f.Qty = i
+	f.qty = i
 }
 
-// GetQty returns the qty field of a fill
-func (f Fill) GetQty() int64 {
-	return f.Qty
+// Price returns the Price field of a fill
+func (f Fill) Price() float64 {
+	return f.price
 }
 
-// GetPrice returns the Price field of a fill
-func (f Fill) GetPrice() float64 {
-	return f.Price
+// Commission returns the Commission field of a fill.
+func (f Fill) Commission() float64 {
+	return f.commission
 }
 
-// GetCommission returns the Commission field of a fill.
-func (f Fill) GetCommission() float64 {
-	return f.Commission
+// ExchangeFee returns the ExchangeFee Field of a fill
+func (f Fill) ExchangeFee() float64 {
+	return f.exchangeFee
 }
 
-// GetExchangeFee returns the ExchangeFee Field of a fill
-func (f Fill) GetExchangeFee() float64 {
-	return f.ExchangeFee
-}
-
-// GetCost returns the Cost field of a Fill
-func (f Fill) GetCost() float64 {
-	return f.Cost
+// Cost returns the Cost field of a Fill
+func (f Fill) Cost() float64 {
+	return f.cost
 }
 
 // Value returns the value without cost.
 func (f Fill) Value() float64 {
-	value := float64(f.Qty) * f.Price
+	value := float64(f.qty) * f.price
 	return value
 }
 
 // NetValue returns the net value including cost.
 func (f Fill) NetValue() float64 {
-	if f.Direction == "BOT" {
+	if f.direction == "BOT" {
 		// qty * price + cost
-		netValue := float64(f.Qty)*f.Price + f.Cost
+		netValue := float64(f.qty)*f.price + f.cost
 		return netValue
 	}
 	// SLD
 	//qty * price - cost
-	netValue := float64(f.Qty)*f.Price - f.Cost
+	netValue := float64(f.qty)*f.price - f.cost
 	return netValue
 }

@@ -26,7 +26,7 @@ func (s *Size) SizeOrder(order OrderEvent, data DataEventHandler, pf PortfolioHa
 	}
 
 	// decide on order direction
-	switch o.GetDirection() {
+	switch o.Direction() {
 	case "long":
 		o.SetDirection("buy")
 		o.SetQty(s.setDefaultSize(data.LatestPrice()))

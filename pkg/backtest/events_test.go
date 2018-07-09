@@ -39,7 +39,7 @@ func TestSignalSetDirection(t *testing.T) {
 		{"simple direction:",
 			Signal{},
 			"long",
-			Signal{Direction: "long"},
+			Signal{direction: "long"},
 		},
 	}
 
@@ -59,15 +59,15 @@ func TestSignalGetDirection(t *testing.T) {
 		expDir string
 	}{
 		{"simple direction:",
-			Signal{Direction: "long"},
+			Signal{direction: "long"},
 			"long",
 		},
 	}
 
 	for _, tc := range testCases {
-		dir := tc.signal.GetDirection()
+		dir := tc.signal.Direction()
 		if dir != tc.expDir {
-			t.Errorf("%v GetDirection(): \nexpected %#v, \nactual %#v",
+			t.Errorf("%v Direction(): \nexpected %#v, \nactual %#v",
 				tc.msg, tc.expDir, dir)
 		}
 	}
@@ -83,7 +83,7 @@ func TestFillSetDirection(t *testing.T) {
 		{"simple direction:",
 			Fill{},
 			"BOT",
-			Fill{Direction: "BOT"},
+			Fill{direction: "BOT"},
 		},
 	}
 
@@ -106,7 +106,7 @@ func TestFillSetQty(t *testing.T) {
 		{"simple qty:",
 			Fill{},
 			100,
-			Fill{Qty: 100},
+			Fill{qty: 100},
 		},
 	}
 
@@ -126,11 +126,11 @@ func TestFillValue(t *testing.T) {
 		exp  float64
 	}{
 		{"Empty Fill:",
-			Fill{Qty: 0, Price: 0},
+			Fill{qty: 0, price: 0},
 			0,
 		},
 		{"Standard Fill:",
-			Fill{Qty: 10, Price: 5},
+			Fill{qty: 10, price: 5},
 			50,
 		},
 	}
@@ -150,19 +150,19 @@ func TestFillNetValue(t *testing.T) {
 		exp  float64
 	}{
 		{"Empty BOT Fill:",
-			Fill{Direction: "BOT", Qty: 0, Price: 0, Cost: 0},
+			Fill{direction: "BOT", qty: 0, price: 0, cost: 0},
 			0,
 		},
 		{"Standard BOT Fill:",
-			Fill{Direction: "BOT", Qty: 10, Price: 5, Cost: 5},
+			Fill{direction: "BOT", qty: 10, price: 5, cost: 5},
 			55,
 		},
 		{"Empty SLD Fill:",
-			Fill{Direction: "SLD", Qty: 0, Price: 0, Cost: 0},
+			Fill{direction: "SLD", qty: 0, price: 0, cost: 0},
 			0,
 		},
 		{"Standard SLD Fill:",
-			Fill{Direction: "SLD", Qty: 10, Price: 5, Cost: 5},
+			Fill{direction: "SLD", qty: 10, price: 5, cost: 5},
 			45,
 		},
 	}

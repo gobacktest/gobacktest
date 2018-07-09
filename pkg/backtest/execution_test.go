@@ -27,8 +27,8 @@ func TestExecuteOrder(t *testing.T) {
 		{
 			&Order{
 				Event:     Event{timestamp: exampleTime, symbol: "TEST.DE"},
-				Direction: "buy", // buy or sell
-				Qty:       10,
+				direction: "buy", // buy or sell
+				qty:       10,
 			},
 			&Data{
 				latest: map[string]DataEventHandler{
@@ -38,20 +38,20 @@ func TestExecuteOrder(t *testing.T) {
 			&Fill{
 				Event:       Event{timestamp: exampleTime, symbol: "TEST.DE"},
 				Exchange:    "TEST",
-				Direction:   "BOT", // BOT for buy or SLD for sell
-				Qty:         10,
-				Price:       10,
-				Commission:  0,
-				ExchangeFee: 1,
-				Cost:        1,
+				direction:   "BOT", // BOT for buy or SLD for sell
+				qty:         10,
+				price:       10,
+				commission:  0,
+				exchangeFee: 1,
+				cost:        1,
 			},
 			nil,
 		},
 		{
 			&Order{
 				Event:     Event{timestamp: exampleTime, symbol: "TEST.DE"},
-				Direction: "sell", // buy or sell
-				Qty:       10,
+				direction: "sell", // buy or sell
+				qty:       10,
 			},
 			&Data{
 				latest: map[string]DataEventHandler{
@@ -61,12 +61,12 @@ func TestExecuteOrder(t *testing.T) {
 			&Fill{
 				Event:       Event{timestamp: exampleTime, symbol: "TEST.DE"},
 				Exchange:    "TEST",
-				Direction:   "SLD", // BOT for buy or SLD for sell
-				Qty:         10,
-				Price:       10,
-				Commission:  0,
-				ExchangeFee: 1,
-				Cost:        1,
+				direction:   "SLD", // BOT for buy or SLD for sell
+				qty:         10,
+				price:       10,
+				commission:  0,
+				exchangeFee: 1,
+				cost:        1,
 			},
 			nil,
 		},

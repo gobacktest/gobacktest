@@ -113,7 +113,7 @@ func (p *Portfolio) OnSignal(signal SignalEvent, data DataHandler) (*Order, erro
 			timestamp: signal.Time(),
 			symbol:    signal.Symbol(),
 		},
-		Direction: signal.GetDirection(),
+		direction: signal.Direction(),
 		// Qty should be set by PositionSizer
 		OrderType: orderType,
 		Limit:     limit,
@@ -153,7 +153,7 @@ func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (*Fill, error) {
 	}
 
 	// update cash
-	if fill.GetDirection() == "BOT" {
+	if fill.Direction() == "BOT" {
 		p.cash = p.cash - fill.NetValue()
 	} else {
 		// direction is "SLD"

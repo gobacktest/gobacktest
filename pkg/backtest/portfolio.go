@@ -11,17 +11,17 @@ type PortfolioHandler interface {
 	Reseter
 }
 
-// OnSignaler as an intercafe for the OnSignal method
+// OnSignaler is an interface for the OnSignal method
 type OnSignaler interface {
 	OnSignal(SignalEvent, DataHandler) (*Order, error)
 }
 
-// OnFiller as an intercafe for the OnFill method
+// OnFiller is an interface for the OnFill method
 type OnFiller interface {
 	OnFill(FillEvent, DataHandler) (*Fill, error)
 }
 
-// Investor is an inteface to check if a portfolio has a position of a symbol
+// Investor is an interface to check if a portfolio has a position of a symbol
 type Investor interface {
 	IsInvested(string) (Position, bool)
 	IsLong(string) (Position, bool)
@@ -35,10 +35,10 @@ type Updater interface {
 
 // Casher handles basic portolio info
 type Casher interface {
-	SetInitialCash(float64)
 	InitialCash() float64
-	SetCash(float64)
+	SetInitialCash(float64)
 	Cash() float64
+	SetCash(float64)
 }
 
 // Valuer returns the values of the portfolio
@@ -46,11 +46,18 @@ type Valuer interface {
 	Value() float64
 }
 
+// Booker defines methods for handling the order book of the portfolio
+type Booker interface {
+	OrderBook() ([]OrderEvent, bool)
+	OrdersBySymbol(symbol string) ([]OrderEvent, bool)
+}
+
 // Portfolio represent a simple portfolio struct.
 type Portfolio struct {
 	initialCash  float64
 	cash         float64
 	holdings     map[string]Position
+	orderBook    []OrderEvent
 	transactions []FillEvent
 	sizeManager  SizeHandler
 	riskManager  RiskHandler
@@ -65,12 +72,22 @@ func NewPortfolio() *Portfolio {
 	}
 }
 
-// SetSizeManager sets the size manager to be used with the portfolio
+// SizeManager return the size manager of the portfolio.
+func (p Portfolio) SizeManager() SizeHandler {
+	return p.sizeManager
+}
+
+// SetSizeManager sets the size manager to be used with the portfolio.
 func (p *Portfolio) SetSizeManager(size SizeHandler) {
 	p.sizeManager = size
 }
 
-// SetRiskManager sets the risk manager to be used with the portfolio
+// RiskManager returns the risk manager of the portfolio.
+func (p Portfolio) RiskManager() RiskHandler {
+	return p.riskManager
+}
+
+// SetRiskManager sets the risk manager to be used with the portfolio.
 func (p *Portfolio) SetRiskManager(risk RiskHandler) {
 	p.riskManager = risk
 }
@@ -215,4 +232,35 @@ func (p Portfolio) Value() float64 {
 
 	value := p.cash + holdingValue
 	return value
+}
+
+// Holdings returns the holdings of the portfolio
+func (p Portfolio) Holdings() map[string]Position {
+	return p.holdings
+}
+
+// OrderBook returns the order book of the portfolio
+func (p Portfolio) OrderBook() ([]OrderEvent, bool) {
+	if len(p.orderBook) == 0 {
+		return p.orderBook, false
+	}
+
+	return p.orderBook, true
+}
+
+// OrdersBySymbol returns the order of a specific symbol from the order book.
+func (p Portfolio) OrdersBySymbol(symbol string) ([]OrderEvent, bool) {
+	var orders = []OrderEvent{}
+
+	for _, order := range p.orderBook {
+		if order.Symbol() == symbol {
+			orders = append(orders, order)
+		}
+	}
+
+	if len(orders) == 0 {
+		return orders, false
+	}
+
+	return orders, true
 }

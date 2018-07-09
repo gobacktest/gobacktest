@@ -15,39 +15,42 @@ func TestSetData(t *testing.T) {
 	}{
 		{"set data:",
 			&Strategy{
-				Node{name: "test", root: true},
-				AlgoStack{}, nil, nil, nil,
+				Node:  Node{name: "test", root: true},
+				algos: AlgoStack{},
 			},
 			&Data{},
 			&Strategy{
-				Node{name: "test", root: true},
-				AlgoStack{}, &Data{}, nil, nil,
+				Node:  Node{name: "test", root: true},
+				algos: AlgoStack{},
+				data:  &Data{},
 			},
 			nil,
 		},
 		{"set data with child strategy:",
 			&Strategy{
-				Node{name: "test", root: true,
+				Node: Node{name: "test", root: true,
 					children: []NodeHandler{
 						&Strategy{
-							Node{name: "sub", root: false},
-							AlgoStack{}, nil, nil, nil,
+							Node:  Node{name: "sub", root: false},
+							algos: AlgoStack{},
 						},
 					},
 				},
-				AlgoStack{}, nil, nil, nil,
+				algos: AlgoStack{},
 			},
 			&Data{},
 			&Strategy{
-				Node{name: "test", root: true,
+				Node: Node{name: "test", root: true,
 					children: []NodeHandler{
 						&Strategy{
-							Node{name: "sub", root: false},
-							AlgoStack{}, &Data{}, nil, nil,
+							Node:  Node{name: "sub", root: false},
+							algos: AlgoStack{},
+							data:  &Data{},
 						},
 					},
 				},
-				AlgoStack{}, &Data{}, nil, nil,
+				algos: AlgoStack{},
+				data:  &Data{},
 			},
 			nil,
 		},
@@ -72,39 +75,42 @@ func TestSetPortfolio(t *testing.T) {
 	}{
 		{"set data:",
 			&Strategy{
-				Node{name: "test", root: true},
-				AlgoStack{}, nil, nil, nil,
+				Node:  Node{name: "test", root: true},
+				algos: AlgoStack{},
 			},
 			&Portfolio{},
 			&Strategy{
-				Node{name: "test", root: true},
-				AlgoStack{}, nil, &Portfolio{}, nil,
+				Node:      Node{name: "test", root: true},
+				algos:     AlgoStack{},
+				portfolio: &Portfolio{},
 			},
 			nil,
 		},
 		{"set data with child strategy:",
 			&Strategy{
-				Node{name: "test", root: true,
+				Node: Node{name: "test", root: true,
 					children: []NodeHandler{
 						&Strategy{
-							Node{name: "sub", root: false},
-							AlgoStack{}, nil, nil, nil,
+							Node:  Node{name: "sub", root: false},
+							algos: AlgoStack{},
 						},
 					},
 				},
-				AlgoStack{}, nil, nil, nil,
+				algos: AlgoStack{},
 			},
 			&Portfolio{},
 			&Strategy{
-				Node{name: "test", root: true,
+				Node: Node{name: "test", root: true,
 					children: []NodeHandler{
 						&Strategy{
-							Node{name: "sub", root: false},
-							AlgoStack{}, nil, &Portfolio{}, nil,
+							Node:      Node{name: "sub", root: false},
+							algos:     AlgoStack{},
+							portfolio: &Portfolio{},
 						},
 					},
 				},
-				AlgoStack{}, nil, &Portfolio{}, nil,
+				algos:     AlgoStack{},
+				portfolio: &Portfolio{},
 			},
 			nil,
 		},
@@ -128,8 +134,8 @@ func TestNewStrategy(t *testing.T) {
 		{"setup new strategy:",
 			"test",
 			&Strategy{
-				Node{name: "test", root: true},
-				AlgoStack{}, nil, nil, nil,
+				Node:  Node{name: "test", root: true},
+				algos: AlgoStack{},
 			},
 		},
 	}
@@ -152,104 +158,104 @@ func TestStrategies(t *testing.T) {
 	}{
 		{"test no children:",
 			&Strategy{
-				Node{name: "test", root: true},
-				AlgoStack{}, nil, nil, nil,
+				Node:  Node{name: "test", root: true},
+				algos: AlgoStack{},
 			},
 			nil,
 			false,
 		},
 		{"test no sub strategy, only assets:",
 			&Strategy{
-				Node{name: "test", root: true,
+				Node: Node{name: "test", root: true,
 					children: []NodeHandler{
 						&Asset{
-							Node{name: "asset", root: false},
+							Node: Node{name: "asset", root: false},
 						},
 					},
 				},
-				AlgoStack{}, nil, nil, nil,
+				algos: AlgoStack{},
 			},
 			nil,
 			false,
 		},
 		{"test single sub strategy:",
 			&Strategy{
-				Node{name: "test", root: true,
+				Node: Node{name: "test", root: true,
 					children: []NodeHandler{
 						&Strategy{
-							Node{name: "sub", root: false},
-							AlgoStack{}, nil, nil, nil,
+							Node:  Node{name: "sub", root: false},
+							algos: AlgoStack{},
 						},
 					},
 				},
-				AlgoStack{}, nil, nil, nil,
+				algos: AlgoStack{},
 			},
 			[]StrategyHandler{
 				&Strategy{
-					Node{name: "sub", root: false},
-					AlgoStack{}, nil, nil, nil,
+					Node:  Node{name: "sub", root: false},
+					algos: AlgoStack{},
 				},
 			},
 			true,
 		},
 		{"test multiple sub strategies:",
 			&Strategy{
-				Node{name: "test", root: true,
+				Node: Node{name: "test", root: true,
 					children: []NodeHandler{
 						&Strategy{
-							Node{name: "subA", root: false},
-							AlgoStack{}, nil, nil, nil,
+							Node:  Node{name: "subA", root: false},
+							algos: AlgoStack{},
 						},
 						&Strategy{
-							Node{name: "subB", root: false},
-							AlgoStack{}, nil, nil, nil,
+							Node:  Node{name: "subB", root: false},
+							algos: AlgoStack{},
 						},
 					},
 				},
-				AlgoStack{}, nil, nil, nil,
+				algos: AlgoStack{},
 			},
 			[]StrategyHandler{
 				&Strategy{
-					Node{name: "subA", root: false},
-					AlgoStack{}, nil, nil, nil,
+					Node:  Node{name: "subA", root: false},
+					algos: AlgoStack{},
 				},
 				&Strategy{
-					Node{name: "subB", root: false},
-					AlgoStack{}, nil, nil, nil,
+					Node:  Node{name: "subB", root: false},
+					algos: AlgoStack{},
 				},
 			},
 			true,
 		},
 		{"test multiple sub strategies and multiple assets:",
 			&Strategy{
-				Node{name: "test", root: true,
+				Node: Node{name: "test", root: true,
 					children: []NodeHandler{
 						&Strategy{
-							Node{name: "subA", root: false},
-							AlgoStack{}, nil, nil, nil,
+							Node:  Node{name: "subA", root: false},
+							algos: AlgoStack{},
 						},
 						&Strategy{
-							Node{name: "subB", root: false},
-							AlgoStack{}, nil, nil, nil,
+							Node:  Node{name: "subB", root: false},
+							algos: AlgoStack{},
 						},
 						&Asset{
-							Node{name: "assetA", root: false},
+							Node: Node{name: "assetA", root: false},
 						},
 						&Asset{
-							Node{name: "assetB", root: false},
+							Node: Node{name: "assetB", root: false},
 						},
 					},
 				},
-				AlgoStack{}, nil, nil, nil,
+				algos: AlgoStack{},
 			},
 			[]StrategyHandler{
 				&Strategy{
-					Node{name: "subA", root: false},
-					AlgoStack{}, nil, nil, nil,
+					Node:  Node{name: "subA", root: false},
+					algos: AlgoStack{},
 				},
 				&Strategy{
-					Node{name: "subB", root: false},
-					AlgoStack{}, nil, nil, nil,
+					Node:  Node{name: "subB", root: false},
+					algos: AlgoStack{},
 				},
 			},
 			true,
@@ -274,97 +280,97 @@ func TestAssets(t *testing.T) {
 	}{
 		{"test no children:",
 			&Strategy{
-				Node{name: "test", root: true},
-				AlgoStack{}, nil, nil, nil,
+				Node:  Node{name: "test", root: true},
+				algos: AlgoStack{},
 			},
 			nil,
 			false,
 		},
 		{"test no assets, only sub strategy:",
 			&Strategy{
-				Node{name: "test", root: true,
+				Node: Node{name: "test", root: true,
 					children: []NodeHandler{
 						&Strategy{
-							Node{name: "subA", root: true},
-							AlgoStack{}, nil, nil, nil,
+							Node:  Node{name: "subA", root: true},
+							algos: AlgoStack{},
 						},
 					},
 				},
-				AlgoStack{}, nil, nil, nil,
+				algos: AlgoStack{},
 			},
 			nil,
 			false,
 		},
 		{"test single asset:",
 			&Strategy{
-				Node{name: "test", root: true,
+				Node: Node{name: "test", root: true,
 					children: []NodeHandler{
 						&Asset{
-							Node{name: "asset", root: false},
+							Node: Node{name: "asset", root: false},
 						},
 					},
 				},
-				AlgoStack{}, nil, nil, nil,
+				algos: AlgoStack{},
 			},
 			[]*Asset{
 				{
-					Node{name: "asset", root: false},
+					Node: Node{name: "asset", root: false},
 				},
 			},
 			true,
 		},
 		{"test multiple assetss:",
 			&Strategy{
-				Node{name: "test", root: true,
+				Node: Node{name: "test", root: true,
 					children: []NodeHandler{
 						&Asset{
-							Node{name: "assetA", root: false},
+							Node: Node{name: "assetA", root: false},
 						},
 						&Asset{
-							Node{name: "assetB", root: false},
+							Node: Node{name: "assetB", root: false},
 						},
 					},
 				},
-				AlgoStack{}, nil, nil, nil,
+				algos: AlgoStack{},
 			},
 			[]*Asset{
 				{
-					Node{name: "assetA", root: false},
+					Node: Node{name: "assetA", root: false},
 				},
 				{
-					Node{name: "assetB", root: false},
+					Node: Node{name: "assetB", root: false},
 				},
 			},
 			true,
 		},
 		{"test multiple sub strategies and multiple assets:",
 			&Strategy{
-				Node{name: "test", root: true,
+				Node: Node{name: "test", root: true,
 					children: []NodeHandler{
 						&Strategy{
-							Node{name: "subA", root: false},
-							AlgoStack{}, nil, nil, nil,
+							Node:  Node{name: "subA", root: false},
+							algos: AlgoStack{},
 						},
 						&Strategy{
-							Node{name: "subB", root: false},
-							AlgoStack{}, nil, nil, nil,
+							Node:  Node{name: "subB", root: false},
+							algos: AlgoStack{},
 						},
 						&Asset{
-							Node{name: "assetA", root: false},
+							Node: Node{name: "assetA", root: false},
 						},
 						&Asset{
-							Node{name: "assetB", root: false},
+							Node: Node{name: "assetB", root: false},
 						},
 					},
 				},
-				AlgoStack{}, nil, nil, nil,
+				algos: AlgoStack{},
 			},
 			[]*Asset{
 				{
-					Node{name: "assetA", root: false},
+					Node: Node{name: "assetA", root: false},
 				},
 				{
-					Node{name: "assetB", root: false},
+					Node: Node{name: "assetB", root: false},
 				},
 			},
 			true,

@@ -8,9 +8,11 @@ type StrategyHandler interface {
 	SetPortfolio(p PortfolioHandler) error
 	Event() (DataEventHandler, bool)
 	SetEvent(DataEventHandler) error
+	Orders() ([]OrderEvent, bool)
+	AddOrder(...OrderEvent) error
 	Strategies() ([]StrategyHandler, bool)
 	Assets() ([]*Asset, bool)
-	OnData(DataEventHandler) (SignalEvent, error)
+	OnData(DataEventHandler) ([]OrderEvent, error)
 }
 
 // Strategy implements NodeHandler via Node, used as a strategy building block.
@@ -20,6 +22,7 @@ type Strategy struct {
 	data      DataHandler
 	portfolio PortfolioHandler
 	event     DataEventHandler
+	orders    []OrderEvent
 }
 
 // NewStrategy return a new strategy node ready to use.
@@ -97,6 +100,23 @@ func (s *Strategy) SetEvent(event DataEventHandler) error {
 	return nil
 }
 
+// Orders the orderbook, a slice of all known orders.
+func (s *Strategy) Orders() ([]OrderEvent, bool) {
+	if len(s.orders) == 0 {
+		return s.orders, false
+	}
+
+	return s.orders, true
+}
+
+// AddOrder sets the data property.
+func (s *Strategy) AddOrder(orders ...OrderEvent) error {
+	for _, order := range orders {
+		s.orders = append(s.orders, order)
+	}
+	return nil
+}
+
 // SetAlgo sets the algo stack for the Strategy
 func (s *Strategy) SetAlgo(algos ...AlgoHandler) *Strategy {
 	for _, algo := range algos {
@@ -162,11 +182,8 @@ func (s *Strategy) Assets() ([]*Asset, bool) {
 }
 
 // OnData handles an incoming data event. It runs the algo stack on this data.
-func (s *Strategy) OnData(event DataEventHandler) (SignalEvent, error) {
+func (s *Strategy) OnData(event DataEventHandler) (orders []OrderEvent, err error) {
 	s.SetEvent(event)
-
-	// create Signal
-	se := &Signal{}
 
 	// // type switch for event type
 	// switch e := event.(type) {
@@ -179,15 +196,24 @@ func (s *Strategy) OnData(event DataEventHandler) (SignalEvent, error) {
 	// run the algo stack of this strategy
 	ok, err := s.algos.Run(s)
 	if !ok {
-		return se, err
+		return nil, err
 	}
 
 	// pass data event down to child strategies
 	if strategies, ok := s.Strategies(); ok {
 		for _, strategy := range strategies {
-			strategy.OnData(event)
+			orders, err := strategy.OnData(event)
+			if err != nil {
+				return nil, err
+			}
+			s.AddOrder(orders...)
 		}
 	}
 
-	return se, nil
+	orders, ok = s.Orders()
+	if !ok {
+		return []OrderEvent{}, nil
+	}
+
+	return orders, nil
 }

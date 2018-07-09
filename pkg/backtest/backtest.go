@@ -162,11 +162,14 @@ func (t *Test) eventLoop(e EventHandler) error {
 		// update statistics
 		t.statistic.Update(event, t.portfolio)
 
-		signal, err := t.strategy.OnData(event)
+		// run strategy with this data point
+		orders, err := t.strategy.OnData(event)
 		if err != nil {
 			break
 		}
-		t.eventQueue = append(t.eventQueue, signal)
+		for _, order := range orders {
+			t.eventQueue = append(t.eventQueue, order)
+		}
 
 	case SignalEvent:
 		order, err := t.portfolio.OnSignal(event, t.data)

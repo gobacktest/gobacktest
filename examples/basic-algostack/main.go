@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/dirkolbrich/gobacktest/pkg/algo"
 	bt "github.com/dirkolbrich/gobacktest/pkg/backtest"
 	"github.com/dirkolbrich/gobacktest/pkg/data"
@@ -20,23 +21,25 @@ func main() {
 	data.Load(symbols)
 	test.SetData(data)
 
-	// create new strategy with algo stack and load into the backtest
+	// create a new strategy with an algo stack and load into the backtest
 	strategy := bt.NewStrategy("basic")
 	strategy.SetAlgo(
-		algo.TrueAlgo{},
+		algo.BoolAlgo(true),
+		algo.CreateOrder("buy", 1000),
 	)
 
-	// create assets and append to strategy
+	// create an asset and append to strategy
 	strategy.SetChildren(bt.NewAsset("TEST.DE"))
-	fmt.Printf("%#v\n", strategy)
+	fmt.Printf("strategy: %#v\n", strategy)
 
-	// load strategy into the backtest
+	// load the strategy into the backtest
 	test.SetStrategy(strategy)
+	fmt.Printf("test: %#v\n", test)
 
 	// run the backtest
 	err := test.Run()
 	if err != nil {
-		fmt.Println(err)
+		fmt.Printf("err: %v", err)
 	}
 
 	// print the result of the test

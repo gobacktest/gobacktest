@@ -88,10 +88,10 @@ func TestTrackTransaction(t *testing.T) {
 	}{
 		{"testing simple fill",
 			Statistic{},
-			&Fill{direction: "BOT", qty: 100},
+			&Fill{direction: BOT, qty: 100},
 			Statistic{
 				transactionHistory: []FillEvent{
-					&Fill{direction: "BOT", qty: 100},
+					&Fill{direction: BOT, qty: 100},
 				},
 			},
 		},
@@ -115,25 +115,25 @@ func TestTransactions(t *testing.T) {
 		{"testing single fill",
 			Statistic{
 				transactionHistory: []FillEvent{
-					&Fill{direction: "BOT", qty: 100},
+					&Fill{direction: BOT, qty: 100},
 				},
 			},
 			[]FillEvent{
-				&Fill{direction: "BOT", qty: 100},
+				&Fill{direction: BOT, qty: 100},
 			},
 		},
 		{"testing multiple fill events",
 			Statistic{
 				transactionHistory: []FillEvent{
-					&Fill{direction: "BOT", qty: 100},
-					&Fill{direction: "SLD", qty: 100},
-					&Fill{direction: "BOT", qty: 50},
+					&Fill{direction: BOT, qty: 100},
+					&Fill{direction: SLD, qty: 100},
+					&Fill{direction: BOT, qty: 50},
 				},
 			},
 			[]FillEvent{
-				&Fill{direction: "BOT", qty: 100},
-				&Fill{direction: "SLD", qty: 100},
-				&Fill{direction: "BOT", qty: 50},
+				&Fill{direction: BOT, qty: 100},
+				&Fill{direction: SLD, qty: 100},
+				&Fill{direction: BOT, qty: 50},
 			},
 		},
 		{"testing nil fill Events",
@@ -162,8 +162,8 @@ func TestResetStatistic(t *testing.T) {
 				eventHistory: []EventHandler{
 					&Bar{Close: 10},
 					&Bar{Close: 15},
-					&Signal{direction: "long"},
-					&Order{direction: "BOT"},
+					&Signal{direction: BOT},
+					&Order{direction: BOT},
 					&Fill{qty: 100},
 				},
 				transactionHistory: []FillEvent{

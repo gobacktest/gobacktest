@@ -33,13 +33,13 @@ func TestSignalSetDirection(t *testing.T) {
 	var testCases = []struct {
 		msg       string
 		signal    Signal
-		dir       string
+		dir       OrderDirection
 		expSignal Signal
 	}{
 		{"simple direction:",
 			Signal{},
-			"long",
-			Signal{direction: "long"},
+			BOT,
+			Signal{direction: BOT},
 		},
 	}
 
@@ -56,11 +56,11 @@ func TestSignalGetDirection(t *testing.T) {
 	var testCases = []struct {
 		msg    string
 		signal Signal
-		expDir string
+		expDir OrderDirection
 	}{
 		{"simple direction:",
-			Signal{direction: "long"},
-			"long",
+			Signal{direction: BOT},
+			BOT,
 		},
 	}
 
@@ -77,13 +77,13 @@ func TestFillSetDirection(t *testing.T) {
 	var testCases = []struct {
 		msg     string
 		fill    Fill
-		dir     string
+		dir     OrderDirection
 		expFill Fill
 	}{
 		{"simple direction:",
 			Fill{},
-			"BOT",
-			Fill{direction: "BOT"},
+			BOT,
+			Fill{direction: BOT},
 		},
 	}
 
@@ -150,19 +150,19 @@ func TestFillNetValue(t *testing.T) {
 		exp  float64
 	}{
 		{"Empty BOT Fill:",
-			Fill{direction: "BOT", qty: 0, price: 0, cost: 0},
+			Fill{direction: BOT, qty: 0, price: 0, cost: 0},
 			0,
 		},
 		{"Standard BOT Fill:",
-			Fill{direction: "BOT", qty: 10, price: 5, cost: 5},
+			Fill{direction: BOT, qty: 10, price: 5, cost: 5},
 			55,
 		},
 		{"Empty SLD Fill:",
-			Fill{direction: "SLD", qty: 0, price: 0, cost: 0},
+			Fill{direction: SLD, qty: 0, price: 0, cost: 0},
 			0,
 		},
 		{"Standard SLD Fill:",
-			Fill{direction: "SLD", qty: 10, price: 5, cost: 5},
+			Fill{direction: SLD, qty: 10, price: 5, cost: 5},
 			45,
 		},
 	}

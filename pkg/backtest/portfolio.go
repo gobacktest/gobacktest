@@ -105,7 +105,7 @@ func (p *Portfolio) OnSignal(signal SignalEvent, data DataHandler) (*Order, erro
 	// fmt.Printf("Portfolio receives Signal: %#v \n", signal)
 
 	// set order type
-	orderType := "MKT" // default Market, should be set by risk manager
+	orderType := MarketOrder // default Market, should be set by risk manager
 	var limit float64
 
 	initialOrder := &Order{
@@ -115,8 +115,8 @@ func (p *Portfolio) OnSignal(signal SignalEvent, data DataHandler) (*Order, erro
 		},
 		direction: signal.Direction(),
 		// Qty should be set by PositionSizer
-		OrderType: orderType,
-		Limit:     limit,
+		orderType:  orderType,
+		limitPrice: limit,
 	}
 
 	// fetch latest known price for the symbol
@@ -153,7 +153,7 @@ func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (*Fill, error) {
 	}
 
 	// update cash
-	if fill.Direction() == "BOT" {
+	if fill.Direction() == BOT {
 		p.cash = p.cash - fill.NetValue()
 	} else {
 		// direction is "SLD"

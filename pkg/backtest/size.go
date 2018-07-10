@@ -27,24 +27,24 @@ func (s *Size) SizeOrder(order OrderEvent, data DataEvent, pf PortfolioHandler) 
 
 	// decide on order direction
 	switch o.Direction() {
-	case "long":
-		o.SetDirection("buy")
+	case BOT:
+		o.SetDirection(BOT)
 		o.SetQty(s.setDefaultSize(data.LatestPrice()))
-	case "short":
-		o.SetDirection("sell")
+	case SLD:
+		o.SetDirection(SLD)
 		o.SetQty(s.setDefaultSize(data.LatestPrice()))
-	case "exit": // all shares should be sold or bought, depending on position
+	case EXT: // all shares should be sold or bought, depending on position
 		// poll postions
 		if _, ok := pf.IsInvested(o.Symbol()); !ok {
 
 			return o, errors.New("cannot exit order: no position to symbol in portfolio,")
 		}
 		if pos, ok := pf.IsLong(o.Symbol()); ok {
-			o.SetDirection("sell")
+			o.SetDirection(SLD)
 			o.SetQty(pos.qty)
 		}
 		if pos, ok := pf.IsShort(o.Symbol()); ok {
-			o.SetDirection("buy")
+			o.SetDirection(BOT)
 			o.SetQty(pos.qty * -1)
 		}
 	}

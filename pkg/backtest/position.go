@@ -89,7 +89,7 @@ func (p *Position) update(fill FillEvent) {
 	realProfitLoss := p.realProfitLoss
 
 	switch fill.Direction() {
-	case "BOT":
+	case BOT:
 		if p.qty >= 0 { // position is long, adding to position
 			costBasis += fillNetValue
 		} else { // position is short, closing partially out
@@ -115,7 +115,7 @@ func (p *Position) update(fill FillEvent) {
 		valueBot = qtyBot * avgPriceBot
 		netValueBot += fillNetValue
 
-	case "SLD":
+	case SLD:
 		if p.qty > 0 { // position is long, closing partially out
 			costBasis -= math.Abs(fillQty) / qty * costBasis
 			// realProfitLoss + fillQty * (fillPrice - avgPriceNet) - fillCost

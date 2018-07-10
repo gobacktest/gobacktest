@@ -109,16 +109,16 @@ type SignalEvent interface {
 // Signal declares a basic signal event
 type Signal struct {
 	Event
-	direction string // long or short
+	direction OrderDirection // long or short
 }
 
 // Direction returns the Direction of a Signal
-func (s Signal) Direction() string {
+func (s Signal) Direction() OrderDirection {
 	return s.direction
 }
 
 // SetDirection sets the Directions field of a Signal
-func (s *Signal) SetDirection(dir string) {
+func (s *Signal) SetDirection(dir OrderDirection) {
 	s.direction = dir
 }
 
@@ -127,47 +127,19 @@ type OrderEvent interface {
 	EventHandler
 	Directioner
 	Quantifier
+	Status() OrderStatus
 }
 
 // Directioner defines a direction interface
 type Directioner interface {
-	Direction() string
-	SetDirection(string)
+	Direction() OrderDirection
+	SetDirection(OrderDirection)
 }
 
 // Quantifier defines a qty interface
 type Quantifier interface {
 	Qty() int64
 	SetQty(int64)
-}
-
-// Order declares a basic order event
-type Order struct {
-	Event
-	direction string  // buy or sell
-	qty       int64   // quantity of the order
-	OrderType string  // market or limit
-	Limit     float64 // limit for the order
-}
-
-// Direction returns the Direction of an Order
-func (o Order) Direction() string {
-	return o.direction
-}
-
-// SetDirection sets the Directions field of an Order
-func (o *Order) SetDirection(s string) {
-	o.direction = s
-}
-
-// Qty returns the Qty field of an Order
-func (o Order) Qty() int64 {
-	return o.qty
-}
-
-// SetQty sets the Qty field of an Order
-func (o *Order) SetQty(i int64) {
-	o.qty = i
 }
 
 // FillEvent declares the fill event interface.
@@ -186,8 +158,8 @@ type FillEvent interface {
 // Fill declares a basic fill event
 type Fill struct {
 	Event
-	Exchange    string // exchange symbol
-	direction   string // BOT for buy or SLD for sell
+	direction   OrderDirection // BOT for buy, SLD for sell, HLD for hold
+	Exchange    string         // exchange symbol
 	qty         int64
 	price       float64
 	commission  float64
@@ -196,13 +168,13 @@ type Fill struct {
 }
 
 // Direction returns the direction of a Fill
-func (f Fill) Direction() string {
+func (f Fill) Direction() OrderDirection {
 	return f.direction
 }
 
 // SetDirection sets the Directions field of a Fill
-func (f *Fill) SetDirection(s string) {
-	f.direction = s
+func (f *Fill) SetDirection(dir OrderDirection) {
+	f.direction = dir
 }
 
 // Qty returns the qty field of a fill
@@ -243,7 +215,7 @@ func (f Fill) Value() float64 {
 
 // NetValue returns the net value including cost.
 func (f Fill) NetValue() float64 {
-	if f.direction == "BOT" {
+	if f.direction == BOT {
 		// qty * price + cost
 		netValue := float64(f.qty)*f.price + f.cost
 		return netValue

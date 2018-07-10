@@ -133,7 +133,7 @@ func (s Statistic) PrintResult() {
 
 	fmt.Printf("Counted %d total transactions:\n", len(s.Transactions()))
 	for k, v := range s.Transactions() {
-		fmt.Printf("%d. Transaction: %v Action: %s Price: %f Qty: %d\n", k+1, v.Time().Format("2006-01-02"), v.Direction(), v.Price(), v.Qty())
+		fmt.Printf("%d. Transaction: %v Action: %v Price: %f Qty: %d\n", k+1, v.Time().Format("2006-01-02"), v.Direction(), v.Price(), v.Qty())
 	}
 }
 

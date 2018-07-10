@@ -39,12 +39,7 @@ func (e *Exchange) ExecuteOrder(order OrderEvent, data DataHandler) (*Fill, erro
 		price:    latest.LatestPrice(), // last price from data event
 	}
 
-	switch order.Direction() {
-	case "buy":
-		f.direction = "BOT"
-	case "sell":
-		f.direction = "SLD"
-	}
+	f.direction = order.Direction()
 
 	commission, err := e.Commission.Calculate(float64(f.qty), f.price)
 	if err != nil {

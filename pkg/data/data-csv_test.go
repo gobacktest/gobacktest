@@ -15,6 +15,7 @@ func TestCreateBarEventFromLine(t *testing.T) {
 	var event = &backtest.Event{}
 	event.SetTime(exampleTime)
 	event.SetSymbol("TEST.DE")
+	metric := &backtest.Metric{}
 
 	// testCases is a table for testing parsing bar data into a BarEvent
 	var testCases = []struct {
@@ -35,14 +36,14 @@ func TestCreateBarEventFromLine(t *testing.T) {
 			},
 			"TEST.DE",
 			&backtest.Bar{
-				Event:     *event,
-				DataEvent: backtest.DataEvent{Metrics: make(map[string]float64)},
-				Open:      float64(10),
-				High:      float64(10),
-				Low:       float64(10),
-				Close:     float64(10),
-				AdjClose:  float64(10),
-				Volume:    100,
+				Event:    *event,
+				Metric:   *metric,
+				Open:     float64(10),
+				High:     float64(10),
+				Low:      float64(10),
+				Close:    float64(10),
+				AdjClose: float64(10),
+				Volume:   100,
 			},
 			nil},
 		{

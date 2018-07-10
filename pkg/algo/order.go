@@ -22,7 +22,6 @@ func (algo orderAlgo) Run(s bt.StrategyHandler) (bool, error) {
 	portfolio, _ := s.Portfolio()
 	dataEvent, _ := s.Event()
 	symbol := dataEvent.Symbol()
-	orderType := "MKT"
 
 	event := &bt.Event{}
 	event.SetTime(dataEvent.Time())
@@ -30,11 +29,8 @@ func (algo orderAlgo) Run(s bt.StrategyHandler) (bool, error) {
 
 	initialOrder := &bt.Order{
 		Event: *event,
-		// Qty should be set by PositionSizer
-		OrderType: orderType,
-		Limit:     0,
 	}
-	initialOrder.SetDirection("BOT")
+	initialOrder.SetDirection(bt.BOT)
 
 	// fetch latest known data for the symbol
 	latest := data.Latest(symbol)

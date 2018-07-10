@@ -184,15 +184,17 @@ func createBarEventFromLine(line map[string]string, symbol string) (bar *backtes
 	event.SetTime(date)
 	event.SetSymbol(strings.ToUpper(symbol))
 
+	metric := &backtest.Metric{}
+
 	bar = &backtest.Bar{
-		Event:     *event,
-		DataEvent: backtest.DataEvent{Metrics: make(map[string]float64)},
-		Open:      openPrice,
-		High:      highPrice,
-		Low:       lowPrice,
-		Close:     closePrice,
-		AdjClose:  adjClosePrice,
-		Volume:    volume,
+		Event:    *event,
+		Metric:   *metric,
+		Open:     openPrice,
+		High:     highPrice,
+		Low:      lowPrice,
+		Close:    closePrice,
+		AdjClose: adjClosePrice,
+		Volume:   volume,
 	}
 
 	return bar, nil

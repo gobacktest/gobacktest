@@ -25,12 +25,12 @@ func (t *testEvent) SetSymbol(s string) {
 
 // queueTests is a table for testing the event queue
 var queueTests = []struct {
-	test     Test         // Test struct
+	test     Backtest     // Test struct
 	expEvent EventHandler // expected Event interface return
 	expBool  bool         // expected bool return
 }{
-	{Test{}, nil, false}, // Test.eventQueue is empty
-	{Test{
+	{Backtest{}, nil, false}, // Test.eventQueue is empty
+	{Backtest{
 		eventQueue: []EventHandler{
 			&testEvent{},
 		},

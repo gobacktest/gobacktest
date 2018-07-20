@@ -9,8 +9,8 @@ type Reseter interface {
 	Reset() error
 }
 
-// Test is a basic back test struct
-type Test struct {
+// Backtest is a basic back test struct
+type Backtest struct {
 	symbols    []string
 	data       DataHandler
 	strategy   StrategyHandler
@@ -21,8 +21,8 @@ type Test struct {
 }
 
 // New creates a default test backtest with sensible defaults ready for use.
-func New() *Test {
-	return &Test{
+func New() *Backtest {
+	return &Backtest{
 		portfolio: &Portfolio{
 			initialCash: 100000,
 			sizeManager: &Size{DefaultSize: 100, DefaultValue: 1000},
@@ -38,37 +38,37 @@ func New() *Test {
 }
 
 // SetSymbols sets the symbols to include into the test
-func (t *Test) SetSymbols(symbols []string) {
+func (t *Backtest) SetSymbols(symbols []string) {
 	t.symbols = symbols
 }
 
 // SetData sets the data provider to to be used within the test
-func (t *Test) SetData(data DataHandler) {
+func (t *Backtest) SetData(data DataHandler) {
 	t.data = data
 }
 
 // SetStrategy sets the strategy provider to to be used within the test
-func (t *Test) SetStrategy(strategy StrategyHandler) {
+func (t *Backtest) SetStrategy(strategy StrategyHandler) {
 	t.strategy = strategy
 }
 
 // SetPortfolio sets the portfolio provider to to be used within the test
-func (t *Test) SetPortfolio(portfolio PortfolioHandler) {
+func (t *Backtest) SetPortfolio(portfolio PortfolioHandler) {
 	t.portfolio = portfolio
 }
 
 // SetExchange sets the execution provider to to be used within the test
-func (t *Test) SetExchange(exchange ExecutionHandler) {
+func (t *Backtest) SetExchange(exchange ExecutionHandler) {
 	t.exchange = exchange
 }
 
 // SetStatistic sets the statistic provider to to be used within the test
-func (t *Test) SetStatistic(statistic StatisticHandler) {
+func (t *Backtest) SetStatistic(statistic StatisticHandler) {
 	t.statistic = statistic
 }
 
 // Reset rests the backtest into a clean state with loaded data
-func (t *Test) Reset() error {
+func (t *Backtest) Reset() error {
 	t.eventQueue = nil
 	t.data.Reset()
 	t.portfolio.Reset()
@@ -77,12 +77,12 @@ func (t *Test) Reset() error {
 }
 
 // Stats returns the statistic handler of the backtest
-func (t *Test) Stats() StatisticHandler {
+func (t *Backtest) Stats() StatisticHandler {
 	return t.statistic
 }
 
 // Run starts the test.
-func (t *Test) Run() error {
+func (t *Backtest) Run() error {
 	// setup before the test runs
 	err := t.setup()
 	if err != nil {
@@ -118,7 +118,7 @@ func (t *Test) Run() error {
 }
 
 // setup is run at the beginning ot the test
-func (t *Test) setup() error {
+func (t *Backtest) setup() error {
 	// before first run, set portfolio cash
 	t.portfolio.SetCash(t.portfolio.InitialCash())
 
@@ -138,7 +138,7 @@ func (t *Test) setup() error {
 }
 
 // nextEvent gets the next event from the events queue
-func (t *Test) nextEvent() (e EventHandler, ok bool) {
+func (t *Backtest) nextEvent() (e EventHandler, ok bool) {
 	// if event queue empty return false
 	if len(t.eventQueue) == 0 {
 		return e, false
@@ -152,7 +152,7 @@ func (t *Test) nextEvent() (e EventHandler, ok bool) {
 }
 
 // eventLoop
-func (t *Test) eventLoop(e EventHandler) error {
+func (t *Backtest) eventLoop(e EventHandler) error {
 	// type check for event type
 	switch event := e.(type) {
 	case DataEvent:

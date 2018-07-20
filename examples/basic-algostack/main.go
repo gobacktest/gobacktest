@@ -3,14 +3,14 @@ package main
 import (
 	"fmt"
 
-	"github.com/dirkolbrich/gobacktest/pkg/algo"
-	bt "github.com/dirkolbrich/gobacktest/pkg/backtest"
-	"github.com/dirkolbrich/gobacktest/pkg/data"
+	gbt "github.com/dirkolbrich/gobacktest"
+	"github.com/dirkolbrich/gobacktest/algo"
+	"github.com/dirkolbrich/gobacktest/data"
 )
 
 func main() {
 	// initiate new backtester
-	test := bt.New()
+	test := gbt.New()
 
 	// define and load symbols
 	var symbols = []string{"TEST.DE"}
@@ -22,14 +22,14 @@ func main() {
 	test.SetData(data)
 
 	// create a new strategy with an algo stack and load into the backtest
-	strategy := bt.NewStrategy("basic")
+	strategy := gbt.NewStrategy("basic")
 	strategy.SetAlgo(
 		algo.BoolAlgo(true),
 		algo.CreateOrder("buy", 1000),
 	)
 
 	// create an asset and append to strategy
-	strategy.SetChildren(bt.NewAsset("TEST.DE"))
+	strategy.SetChildren(gbt.NewAsset("TEST.DE"))
 	fmt.Printf("strategy: %#v\n", strategy)
 
 	// load the strategy into the backtest

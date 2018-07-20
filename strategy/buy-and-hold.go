@@ -9,6 +9,7 @@ import (
 // BuyAndHold is a basic test strategy, which interprets the first DataEvent on a symbal
 // as a signal to buy if the portfolio is not already invested.
 type BuyAndHold struct {
+	gbt.Strategy
 }
 
 // CalculateSignal handles the single Event

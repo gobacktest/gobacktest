@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/dirkolbrich/gobacktest/pkg/backtest"
-	"github.com/dirkolbrich/gobacktest/pkg/data"
-	"github.com/dirkolbrich/gobacktest/pkg/strategy"
+	"github.com/dirkolbrich/gobacktest"
+	"github.com/dirkolbrich/gobacktest/data"
+	"github.com/dirkolbrich/gobacktest/strategy"
 )
 
 func main() {
 	// initiate new backtester
-	test := backtest.New()
+	test := gobacktest.New()
 
 	// define and load symbols
 	symbols := []string{"SDF.DE"}
@@ -28,9 +28,9 @@ func main() {
 	fmt.Printf("Loading data took %v ms \n", stopDataLoad.Sub(startDataLoad).Seconds()*1000)
 
 	// set default portfolio and redefine size manager
-	portfolio := backtest.NewPortfolio()
+	portfolio := gobacktest.NewPortfolio()
 
-	sizeManager := &backtest.Size{DefaultSize: 200, DefaultValue: 2500}
+	sizeManager := &gobacktest.Size{DefaultSize: 200, DefaultValue: 2500}
 	portfolio.SetSizeManager(sizeManager)
 
 	test.SetPortfolio(portfolio)

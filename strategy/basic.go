@@ -6,6 +6,7 @@ import (
 
 // Basic is a basic test strategy, which interprets every DataEvent as a signal to buy
 type Basic struct {
+	gbt.Strategy
 }
 
 // CalculateSignal handles the single Event

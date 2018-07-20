@@ -5,9 +5,9 @@ import (
 	"sort"
 	"time"
 
-	"github.com/dirkolbrich/gobacktest/pkg/backtest"
-	"github.com/dirkolbrich/gobacktest/pkg/data"
-	"github.com/dirkolbrich/gobacktest/pkg/strategy"
+	"github.com/dirkolbrich/gobacktest"
+	"github.com/dirkolbrich/gobacktest/data"
+	"github.com/dirkolbrich/gobacktest/strategy"
 )
 
 // Result bundles the result of a single backtest
@@ -30,7 +30,7 @@ func main() {
 	}
 
 	// initiate new backtester
-	test := backtest.New()
+	test := gobacktest.New()
 
 	// define and load symbols
 	symbols := []string{"TEST.DE"}

@@ -12,6 +12,7 @@ import (
 // If SW bigger tha LW and there is not already an invested BOT position, the strategy creates a buy signal.
 // If SW falls below LW and there is an invested BOT position, the strategy creates an exit signal.
 type MovingAverageCross struct {
+	gbt.Strategy
 	ShortWindow int
 	LongWindow  int
 }

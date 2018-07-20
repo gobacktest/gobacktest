@@ -58,46 +58,46 @@ func TestResetPortfolio(t *testing.T) {
 	}
 }
 
-func TestOnSignal(t *testing.T) {
-	var timestamp, _ = time.Parse("2006-01-02", "2017-09-29")
-	var testCases = []struct {
-		msg       string
-		portfolio PortfolioHandler
-		signal    SignalEvent
-		data      DataHandler
-		expOrder  OrderEvent
-		expErr    error
-	}{
-		{"testing simple signal",
-			&Portfolio{
-				sizeManager: &Size{},
-				riskManager: &Risk{},
-			},
-			&Signal{
-				Event:     Event{symbol: "TEST.DE", timestamp: timestamp},
-				direction: BOT,
-			},
-			&Data{
-				latest: map[string]DataEvent{
-					"TEST.DE": &Bar{Close: 100},
-				},
-			},
-			&Order{
-				Event:     Event{symbol: "TEST.DE", timestamp: timestamp},
-				direction: BOT,
-				orderType: MarketOrder,
-			},
-			nil},
-	}
+// func TestOnSignal(t *testing.T) {
+// 	var timestamp, _ = time.Parse("2006-01-02", "2017-09-29")
+// 	var testCases = []struct {
+// 		msg       string
+// 		portfolio PortfolioHandler
+// 		signal    SignalEvent
+// 		data      DataHandler
+// 		expOrder  OrderEvent
+// 		expErr    error
+// 	}{
+// 		{"testing simple signal",
+// 			&Portfolio{
+// 				sizeManager: &Size{},
+// 				riskManager: &Risk{},
+// 			},
+// 			&Signal{
+// 				Event:     Event{symbol: "TEST.DE", timestamp: timestamp},
+// 				direction: BOT,
+// 			},
+// 			&Data{
+// 				latest: map[string]DataEvent{
+// 					"TEST.DE": &Bar{Close: 100},
+// 				},
+// 			},
+// 			&Order{
+// 				Event:     Event{symbol: "TEST.DE", timestamp: timestamp},
+// 				direction: BOT,
+// 				orderType: MarketOrder,
+// 			},
+// 			nil},
+// 	}
 
-	for _, tc := range testCases {
-		order, err := tc.portfolio.OnSignal(tc.signal, tc.data)
-		if !reflect.DeepEqual(order, tc.expOrder) || (reflect.TypeOf(err) != reflect.TypeOf(tc.expErr)) {
-			t.Errorf("%v OnSignal(): \nexpected %#v %v, \nactual   %#v %v",
-				tc.msg, tc.expOrder, tc.expErr, order, err)
-		}
-	}
-}
+// 	for _, tc := range testCases {
+// 		order, err := tc.portfolio.OnSignal(tc.signal, tc.data)
+// 		if !reflect.DeepEqual(order, tc.expOrder) || (reflect.TypeOf(err) != reflect.TypeOf(tc.expErr)) {
+// 			t.Errorf("%v OnSignal(): \nexpected %#v %v, \nactual   %#v %v",
+// 				tc.msg, tc.expOrder, tc.expErr, order, err)
+// 		}
+// 	}
+// }
 
 func TestOnFill(t *testing.T) {
 	var timestamp, _ = time.Parse("2006-01-02", "2017-09-29")

@@ -171,12 +171,12 @@ func (t *Test) eventLoop(e EventHandler) error {
 			t.eventQueue = append(t.eventQueue, order)
 		}
 
-	case SignalEvent:
-		order, err := t.portfolio.OnSignal(event, t.data)
-		if err != nil {
-			break
-		}
-		t.eventQueue = append(t.eventQueue, order)
+	// case SignalEvent:
+	// 	order, err := t.portfolio.OnSignal(event, t.data)
+	// 	if err != nil {
+	// 		break
+	// 	}
+	// 	t.eventQueue = append(t.eventQueue, order)
 
 	case OrderEvent:
 		fill, err := t.exchange.ExecuteOrder(event, t.data)

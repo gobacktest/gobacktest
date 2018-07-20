@@ -1,6 +1,7 @@
 package gobacktest
 
 import (
+	"errors"
 	"time"
 )
 
@@ -50,7 +51,7 @@ func (e *Event) SetSymbol(s string) {
 
 // MetricHandler defines the handling of metrics to a data event
 type MetricHandler interface {
-	Add(string, float64)
+	Add(string, float64) error
 	Get(string) (float64, bool)
 }
 
@@ -60,12 +61,22 @@ type Metric struct {
 }
 
 // Add ads a value to the metrics map
-func (m *Metric) Add(key string, value float64) {
+func (m *Metric) Add(key string, value float64) error {
+	// initialize map if nil
+	if m.metrics == nil {
+		m.metrics = map[string]float64{}
+	}
+
+	if key == "" {
+		return errors.New("invalid key given")
+	}
+
 	m.metrics[key] = value
+	return nil
 }
 
 // Get return a metric by name, if not found it returns false.
-func (m *Metric) Get(key string) (float64, bool) {
+func (m Metric) Get(key string) (float64, bool) {
 	value, ok := m.metrics[key]
 	return value, ok
 }
@@ -99,22 +110,24 @@ type Bar struct {
 	Volume   int64
 }
 
-// Price returns the close proce of the bar event.
+// Price returns the close price of the bar event.
 func (b Bar) Price() float64 {
 	return b.Close
 }
 
 // TickEvent declares a tick event interface.
-type TickEvent interface {
-	DataEvent
-}
+// type TickEvent interface {
+// 	DataEvent
+// }
 
 // Tick declares an tick event
 type Tick struct {
 	Event
 	Metric
-	Bid float64
-	Ask float64
+	Bid       float64
+	Ask       float64
+	BidVolume int64
+	AskVolume int64
 }
 
 // Price returns the middle of Bid and Ask.
@@ -145,14 +158,6 @@ func (s *Signal) SetDirection(dir OrderDirection) {
 	s.direction = dir
 }
 
-// OrderEvent declares the order event interface.
-type OrderEvent interface {
-	EventHandler
-	Directioner
-	Quantifier
-	Status() OrderStatus
-}
-
 // Directioner defines a direction interface
 type Directioner interface {
 	Direction() OrderDirection
@@ -163,6 +168,14 @@ type Directioner interface {
 type Quantifier interface {
 	Qty() int64
 	SetQty(int64)
+}
+
+// OrderEvent declares the order event interface.
+type OrderEvent interface {
+	EventHandler
+	Directioner
+	Quantifier
+	Status() OrderStatus
 }
 
 // FillEvent declares the fill event interface.

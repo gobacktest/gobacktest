@@ -36,7 +36,7 @@ func (e *Exchange) ExecuteOrder(order OrderEvent, data DataHandler) (*Fill, erro
 		Event:    Event{timestamp: order.Time(), symbol: order.Symbol()},
 		Exchange: e.Symbol,
 		qty:      order.Qty(),
-		price:    latest.LatestPrice(), // last price from data event
+		price:    latest.Price(), // last price from data event
 	}
 
 	f.direction = order.Direction()

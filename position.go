@@ -54,7 +54,7 @@ func (p *Position) Update(fill FillEvent) {
 func (p *Position) UpdateValue(data DataEvent) {
 	p.timestamp = data.Time()
 
-	latest := data.LatestPrice()
+	latest := data.Price()
 	p.updateValue(latest)
 }
 

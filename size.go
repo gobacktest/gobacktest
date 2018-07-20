@@ -29,10 +29,10 @@ func (s *Size) SizeOrder(order OrderEvent, data DataEvent, pf PortfolioHandler) 
 	switch o.Direction() {
 	case BOT:
 		o.SetDirection(BOT)
-		o.SetQty(s.setDefaultSize(data.LatestPrice()))
+		o.SetQty(s.setDefaultSize(data.Price()))
 	case SLD:
 		o.SetDirection(SLD)
-		o.SetQty(s.setDefaultSize(data.LatestPrice()))
+		o.SetQty(s.setDefaultSize(data.Price()))
 	case EXT: // all shares should be sold or bought, depending on position
 		// poll postions
 		if _, ok := pf.IsInvested(o.Symbol()); !ok {

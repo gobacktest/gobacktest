@@ -34,7 +34,7 @@ func (a *SMA) Run(s gbt.StrategyHandler) (bool, error) {
 	}
 
 	for i := 0; i < a.period; i++ {
-		values = append(values, list[len(list)-i-1].LatestPrice())
+		values = append(values, list[len(list)-i-1].Price())
 	}
 
 	// calculate SMA

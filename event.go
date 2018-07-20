@@ -48,10 +48,10 @@ func (e *Event) SetSymbol(s string) {
 	e.symbol = s
 }
 
-// DataEvent declares a data event interface
-type DataEvent interface {
-	EventHandler
-	LatestPrice() float64
+// MetricHandler defines the handling of metrics to a data event
+type MetricHandler interface {
+	Add(string, float64)
+	Get(string) (float64, bool)
 }
 
 // Metric defines a metric property to a data point.
@@ -60,8 +60,26 @@ type Metric struct {
 }
 
 // Add ads a value to the metrics map
-func (m *Metric) Add(name string, value float64) {
-	m.metrics[name] = value
+func (m *Metric) Add(key string, value float64) {
+	m.metrics[key] = value
+}
+
+// Get return a metric by name, if not found it returns false.
+func (m *Metric) Get(key string) (float64, bool) {
+	value, ok := m.metrics[key]
+	return value, ok
+}
+
+// Pricer defines the handling otf the latest Price Information
+type Pricer interface {
+	Price() float64
+}
+
+// DataEvent declares a data event interface
+type DataEvent interface {
+	EventHandler
+	MetricHandler
+	Pricer
 }
 
 // BarEvent declares a bar event interface.
@@ -81,8 +99,8 @@ type Bar struct {
 	Volume   int64
 }
 
-// LatestPrice returns the close proce of the bar event.
-func (b Bar) LatestPrice() float64 {
+// Price returns the close proce of the bar event.
+func (b Bar) Price() float64 {
 	return b.Close
 }
 
@@ -99,8 +117,8 @@ type Tick struct {
 	Ask float64
 }
 
-// LatestPrice returns the middle of Bid and Ask.
-func (t Tick) LatestPrice() float64 {
+// Price returns the middle of Bid and Ask.
+func (t Tick) Price() float64 {
 	latest := (t.Bid + t.Ask) / float64(2)
 	return latest
 }

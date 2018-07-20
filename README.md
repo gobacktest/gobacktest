@@ -20,32 +20,32 @@ Basic example:
 package main
 
 import (
-  "github.com/dirkolbrich/gobacktest/pkg/backtest"
-  "github.com/dirkolbrich/gobacktest/pkg/data"
-  "github.com/dirkolbrich/gobacktest/pkg/strategy"
+  "github.com/dirkolbrich/gobacktest"
+  "github.com/dirkolbrich/gobacktest/data"
+  "github.com/dirkolbrich/gobacktest/strategy"
 )
 
 func main() {
-  // initiate new backtester
-  test := backtest.New()
+  // initiate a new backtester
+  test := gobacktest.New()
 
   // define and load symbols
   symbols := []string{"TEST.DE"}
   test.SetSymbols(symbols)
 
-  // create data provider and load data into the backtest
+  // create a data provider and load the data into the backtest
   data := &data.BarEventFromCSVFile{FileDir: "../testdata/test/"}
   data.Load(symbols)
   test.SetData(data)
 
-  // create strategy provider and load into the backtest
+  // choose a strategy and load it into the backtest
   strategy := &strategy.Basic{}
   test.SetStrategy(strategy)
 
   // run the backtest
   test.Run()
 
-  // print the result of the test
+  // print the results of the test
   test.Stats().PrintResult()
 }
 ```
@@ -56,16 +56,16 @@ The single parts of the backtester can be set independently:
 
 ```golang
 // initiate new backtester
-test := &Test{}
+test := &Backtest{}
 
 // set the portfolio with initial cash and a default size and risk manager
-portfolio := &backtest.Portfolio{}
+portfolio := &gobacktest.Portfolio{}
 portfolio.SetInitialCash(10000)
 
-sizeManager := &backtest.Size{DefaultSize: 100, DefaultValue: 1000}
+sizeManager := &gobacktest.Size{DefaultSize: 100, DefaultValue: 1000}
 portfolio.SetSizeManager(sizeManager)
 
-riskManager := &backtest.Risk{}
+riskManager := &gobacktest.Risk{}
 portfolio.SetRiskManager(riskManager)
 
 test.SetPortfolio(portfolio)
@@ -75,25 +75,27 @@ strategy := &strategy.Basic{}
 test.SetStrategy(strategy)
 
 // create an execution provider and load it into the backtest
-exchange := &backtest.Exchange{
+exchange := &gobacktest.Exchange{
     Symbol:      "TEST",
     Commission:  &FixedCommission{Commission: 0},
     ExchangeFee: &FixedExchangeFee{ExchangeFee: 0},
 }
 test.SetExchange(exchange)
 
-// choose a statistic and load into the backtest
-statistic := &backtest.Statistic{}
+// choose a statistic and load into it the backtest
+statistic := &gobacktest.Statistic{}
 test.SetStatistic(statistic)
 ```
 
 ## Dependencies
 
-The internal calculations use the [github.com/shopspring/decimal](https://github.com/shopspring/decimal) package for arbitrary-precision fixed-point decimals.
+Only the standard library.
 
-Make sure to install it into your `$GOPATH` with
+~~The internal calculations use the [github.com/shopspring/decimal](https://github.com/shopspring/decimal) package for arbitrary-precision fixed-point decimals.~~
 
-    go get github.com/shopspring/decimal
+~~Make sure to install it into your `$GOPATH` with~~
+
+    ~~go get github.com/shopspring/decimal~~
 
 ## Basic components
 
@@ -156,6 +158,7 @@ These links to articles are a good starting point to understand the intentions a
 - [QuantRocket](https://www.quantrocket.com) - in development, available Q2/2018
 - [Quandl](https://www.quandl.com) - financial data
 - [QSTrader](https://www.quantstart.com/qstrader) - open-source backtesting framework from [QuantStart](https://www.quantstart.com)
+- [bt - Flexible Backtesting for Python](http://pmorissette.github.io/bt/) - an inspiration for algorithm building blocks and a strategy/assets tree
 
 ### General information on Quantitative Finance
 

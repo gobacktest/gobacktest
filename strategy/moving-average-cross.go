@@ -29,7 +29,7 @@ func (s *MovingAverageCross) CalculateSignal(e gbt.DataEvent, data gbt.DataHandl
 		var values []float64
 		list := data.List(e.Symbol())
 		for i, v := range list {
-			values[i] = v.LatestPrice()
+			values[i] = v.Price()
 		}
 
 		// calculate and set SMA for short window

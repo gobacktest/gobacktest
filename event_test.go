@@ -22,7 +22,7 @@ func TestTickLatestPrice(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		float := tc.tick.LatestPrice()
+		float := tc.tick.Price()
 		if float != tc.exp {
 			t.Errorf("%v LatestPrice(): \nexpected %#v, \nactual %#v", tc.msg, tc.exp, float)
 		}

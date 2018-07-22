@@ -55,29 +55,22 @@ type MetricHandler interface {
 	Get(string) (float64, bool)
 }
 
-// Metric defines a metric property to a data point.
-type Metric struct {
-	metrics map[string]float64
-}
+// Metric holds metric propertys to a data point.
+type Metric map[string]float64
 
 // Add ads a value to the metrics map
-func (m *Metric) Add(key string, value float64) error {
-	// initialize map if nil
-	if m.metrics == nil {
-		m.metrics = map[string]float64{}
-	}
-
+func (m Metric) Add(key string, value float64) error {
 	if key == "" {
 		return errors.New("invalid key given")
 	}
 
-	m.metrics[key] = value
+	m[key] = value
 	return nil
 }
 
 // Get return a metric by name, if not found it returns false.
 func (m Metric) Get(key string) (float64, bool) {
-	value, ok := m.metrics[key]
+	value, ok := m[key]
 	return value, ok
 }
 

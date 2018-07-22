@@ -20,9 +20,7 @@ func TestMetricAdd(t *testing.T) {
 			metric: Metric{},
 			key:    "",
 			value:  123.45,
-			expM: Metric{
-				metrics: map[string]float64{},
-			},
+			expM:   map[string]float64{},
 			expErr: errors.New("invalid key given"),
 		},
 		{
@@ -30,38 +28,26 @@ func TestMetricAdd(t *testing.T) {
 			metric: Metric{},
 			key:    "test",
 			value:  123.45,
-			expM: Metric{
-				metrics: map[string]float64{"test": 123.45},
+			expM:   map[string]float64{"test": 123.45},
+			expErr: nil,
+		},
+		{
+			msg:    "add to existing key value:",
+			metric: map[string]float64{"abcd": 678.90},
+			key:    "test",
+			value:  123.45,
+			expM: map[string]float64{
+				"test": 123.45,
+				"abcd": 678.90,
 			},
 			expErr: nil,
 		},
 		{
-			msg: "add to existing key value:",
-			metric: Metric{
-				metrics: map[string]float64{"abcd": 678.90},
-			},
-			key:   "test",
-			value: 123.45,
-			expM: Metric{
-				metrics: map[string]float64{
-					"test": 123.45,
-					"abcd": 678.90,
-				},
-			},
-			expErr: nil,
-		},
-		{
-			msg: "overwrite existing key value:",
-			metric: Metric{
-				metrics: map[string]float64{"test": 678.90},
-			},
-			key:   "test",
-			value: 123.45,
-			expM: Metric{
-				metrics: map[string]float64{
-					"test": 123.45,
-				},
-			},
+			msg:    "overwrite existing key value:",
+			metric: map[string]float64{"test": 678.90},
+			key:    "test",
+			value:  123.45,
+			expM:   map[string]float64{"test": 123.45},
 			expErr: nil,
 		},
 	}
@@ -90,23 +76,17 @@ func TestMetricGet(t *testing.T) {
 			expOk:  false,
 		},
 		{
-			msg: "simple metric:",
-			metric: Metric{
-				metrics: map[string]float64{
-					"test": 123.45,
-				},
-			},
+			msg:    "simple metric:",
+			metric: map[string]float64{"test": 123.45},
 			key:    "test",
 			expVal: 123.45,
 			expOk:  true,
 		},
 		{
 			msg: "multiple metric:",
-			metric: Metric{
-				metrics: map[string]float64{
-					"test": 123.45,
-					"abcd": 678.90,
-				},
+			metric: map[string]float64{
+				"test": 123.45,
+				"abcd": 678.90,
 			},
 			key:    "test",
 			expVal: 123.45,

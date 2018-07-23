@@ -31,11 +31,11 @@ func (algo signalAlgo) Run(s gbt.StrategyHandler) (bool, error) {
 	}
 
 	switch algo.direction {
-	case "BOT":
+	case "buy":
 		signal.SetDirection(gbt.BOT)
-	case "SLD":
+	case "sell":
 		signal.SetDirection(gbt.SLD)
-	case "EXT":
+	case "exit":
 		signal.SetDirection(gbt.EXT)
 	}
 

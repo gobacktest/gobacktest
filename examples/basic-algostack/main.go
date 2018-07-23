@@ -25,7 +25,7 @@ func main() {
 	strategy := gbt.NewStrategy("basic")
 	strategy.SetAlgo(
 		algo.BoolAlgo(true),
-		algo.CreateOrder("buy", 1000),
+		algo.CreateSignal("buy"),
 	)
 
 	// create an asset and append to strategy

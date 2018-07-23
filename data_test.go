@@ -24,7 +24,7 @@ func TestDataReset(t *testing.T) {
 					},
 				},
 				stream: []DataEvent{},
-				streamHistory: []DataEvent{
+				history: []DataEvent{
 					&Bar{Close: 100},
 					&Bar{Close: 110},
 					&Bar{Close: 95},
@@ -82,7 +82,7 @@ func TestDataNext(t *testing.T) {
 					&Bar{Event: Event{symbol: "TEST.DE"}, Close: 100},
 					&Bar{Event: Event{symbol: "TEST.DE"}, Close: 90},
 				},
-				streamHistory: []DataEvent{
+				history: []DataEvent{
 					&Bar{Event: Event{symbol: "TEST.DE"}, Close: 110},
 				},
 			},
@@ -105,7 +105,7 @@ func TestDataNext(t *testing.T) {
 					},
 				},
 				stream: []DataEvent{},
-				streamHistory: []DataEvent{
+				history: []DataEvent{
 					&Bar{Event: Event{symbol: "TEST.DE"}, Close: 100},
 				},
 			},

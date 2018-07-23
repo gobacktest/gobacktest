@@ -12,14 +12,14 @@ import (
 	gbt "github.com/dirkolbrich/gobacktest"
 )
 
-// BarEventFromSQLiteData is a data struct, which loads the market data from a SQLite database.
-// It expands the underlying data struct
+// BarEventFromSQLiteData loads the market data from a SQLite database.
+// It expands the underlying data struct.
 type BarEventFromSQLiteData struct {
 	gbt.Data
 	FileDir string
 }
 
-// Load loads single data endpoints into a stream ordered by date (latest first).
+// Load single data events into a stream ordered by date (latest first).
 func (d *BarEventFromSQLiteData) Load(symbols []string) error {
 	// check file location
 	if len(d.FileDir) == 0 {
@@ -72,8 +72,8 @@ func (d *BarEventFromSQLiteData) Load(symbols []string) error {
 	return nil
 }
 
-// fetchFilesFromDir returns a map of all filenames in a directory
-// e.g map{"BAS.DE": "BAS.DE.csv"}
+// fetchFilesFromDir returns a map of all filenames in a directory,
+// e.g. map{"BAS.DE": "BAS.DE.csv"},
 func fetchTableFromDB(dir string) (m map[string]string, err error) {
 	// read filenames from directory
 	files, err := ioutil.ReadDir(dir)
@@ -104,7 +104,7 @@ func fetchTableFromDB(dir string) (m map[string]string, err error) {
 	return m, nil
 }
 
-// createBarEventFromLine takes a key/value map and a string and builds a bar struct
+// createBarEventFromLine takes a key/value map and a string and builds a bar struct.
 func createBarEventFromEntry(line map[string]string, symbol string) (bar gbt.BarEvent, err error) {
 	// parse each string in line to corresponding record value
 	date, _ := time.Parse("2006-01-02", line["Date"])

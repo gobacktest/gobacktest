@@ -6,8 +6,8 @@ type OrderBook struct {
 	history []OrderEvent
 }
 
-// AddOrder adds an order to the order book.
-func (ob *OrderBook) AddOrder(order OrderEvent) error {
+// Add an order to the order book.
+func (ob *OrderBook) Add(order OrderEvent) error {
 	ob.orders = append(ob.orders, order)
 	return nil
 }
@@ -21,8 +21,8 @@ func (ob OrderBook) Orders() ([]OrderEvent, bool) {
 	return ob.orders, true
 }
 
-// OrdersBy returns the order by a select function from the order book.
-func (ob OrderBook) OrdersBy(fn func(order OrderEvent) bool) ([]OrderEvent, bool) {
+// OrderBy returns the order by a select function from the order book.
+func (ob OrderBook) OrderBy(fn func(order OrderEvent) bool) ([]OrderEvent, bool) {
 	var orders = []OrderEvent{}
 
 	for _, order := range ob.orders {
@@ -38,8 +38,8 @@ func (ob OrderBook) OrdersBy(fn func(order OrderEvent) bool) ([]OrderEvent, bool
 	return orders, true
 }
 
-// OrdersBySymbol returns the order of a specific symbol from the order book.
-func (ob OrderBook) OrdersBySymbol(symbol string) ([]OrderEvent, bool) {
+// OrderBySymbol returns the order of a specific symbol from the order book.
+func (ob OrderBook) OrderBySymbol(symbol string) ([]OrderEvent, bool) {
 	var orders = []OrderEvent{}
 
 	var fn = func(order OrderEvent) bool {
@@ -49,7 +49,7 @@ func (ob OrderBook) OrdersBySymbol(symbol string) ([]OrderEvent, bool) {
 		return true
 	}
 
-	orders, ok := ob.OrdersBy(fn)
+	orders, ok := ob.OrderBy(fn)
 	return orders, ok
 }
 
@@ -64,7 +64,7 @@ func (ob OrderBook) OpenOrders() ([]OrderEvent, bool) {
 		return true
 	}
 
-	orders, ok := ob.OrdersBy(fn)
+	orders, ok := ob.OrderBy(fn)
 	return orders, ok
 }
 
@@ -79,6 +79,6 @@ func (ob OrderBook) CanceledOrders() ([]OrderEvent, bool) {
 		return false
 	}
 
-	orders, ok := ob.OrdersBy(fn)
+	orders, ok := ob.OrderBy(fn)
 	return orders, ok
 }

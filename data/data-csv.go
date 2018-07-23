@@ -14,14 +14,14 @@ import (
 	gbt "github.com/dirkolbrich/gobacktest"
 )
 
-// BarEventFromCSVFile is a data struct, which loads the market data from csv files.
-// It expands the underlying data struct
+// BarEventFromCSVFile loads the market data from csv files.
+// It expands the underlying data struct.
 type BarEventFromCSVFile struct {
 	gbt.Data
 	FileDir string
 }
 
-// Load loads single data endpoints into a stream ordered by date (latest first).
+// Load single data events into the stream ordered by date (latest first).
 func (d *BarEventFromCSVFile) Load(symbols []string) (err error) {
 	// check file location
 	if len(d.FileDir) == 0 {
@@ -77,8 +77,8 @@ func (d *BarEventFromCSVFile) Load(symbols []string) (err error) {
 	return nil
 }
 
-// fetchFilesFromDir returns a map of all filenames in a directory
-// e.g map{"BAS.DE": "BAS.DE.csv"}
+// fetchFilesFromDir returns a map of all filenames in a directory,
+// e.g map{"BAS.DE": "BAS.DE.csv"}.
 func fetchFilesFromDir(dir string) (m map[string]string, err error) {
 	// read filenames from directory
 	files, err := ioutil.ReadDir(dir)
@@ -110,7 +110,7 @@ func fetchFilesFromDir(dir string) (m map[string]string, err error) {
 }
 
 // readCSVFile opens and reads a csv file line by line
-// and returns a slice with a key/value map for each line
+// and returns a slice with a key/value map for each line.
 func readCSVFile(path string) (lines []map[string]string, err error) {
 	log.Printf("Loading from %s.\n", path)
 	// open file
@@ -119,15 +119,13 @@ func readCSVFile(path string) (lines []map[string]string, err error) {
 		return nil, err
 	}
 	defer file.Close()
+
 	// create scanner on top of file
 	reader := csv.NewReader(file)
 	// set delimeter
 	reader.Comma = ','
 	// read first line for keys and fill in array
 	keys, err := reader.Read()
-
-	// create a slice for holding the different maps of each line
-	// var lines []map[string]string
 
 	// read each line and create a map of values combined to the keys
 	for line, err := reader.Read(); err == nil; line, err = reader.Read() {
@@ -142,7 +140,7 @@ func readCSVFile(path string) (lines []map[string]string, err error) {
 	return lines, nil
 }
 
-// createBarEventFromLine takes a key/value map and a string and builds a bar struct
+// createBarEventFromLine takes a key/value map and a string and builds a bar struct.
 func createBarEventFromLine(line map[string]string, symbol string) (bar *gbt.Bar, err error) {
 	// parse each string in line to corresponding record value
 	date, err := time.Parse("2006-01-02", line["Date"])

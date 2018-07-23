@@ -27,31 +27,26 @@ type DataStreamer interface {
 
 // Data is a basic data struct.
 type Data struct {
-	latest        map[string]DataEvent
-	list          map[string][]DataEvent
-	stream        []DataEvent
-	streamHistory []DataEvent
+	latest  map[string]DataEvent
+	list    map[string][]DataEvent
+	stream  []DataEvent
+	history []DataEvent
 }
 
-// Load loads data endpoints into a stream.
+// Load data events into a stream.
 // This method satisfies the DataLoader interface, but should be overwritten
 // by the specific data loading implementation.
 func (d *Data) Load(s []string) error {
 	return nil
 }
 
-// Reset implements the Reseter interface and resets the data struct to a clean state with loaded data points.
+// Reset implements the Reseter interface and resets the data struct to a clean state with loaded data events.
 func (d *Data) Reset() error {
 	d.latest = nil
 	d.list = nil
-	d.stream = d.streamHistory
-	d.streamHistory = nil
+	d.stream = d.history
+	d.history = nil
 	return nil
-}
-
-// SetStream sets the data stream.
-func (d *Data) SetStream(stream []DataEvent) {
-	d.stream = stream
 }
 
 // Stream returns the data stream.
@@ -59,8 +54,13 @@ func (d *Data) Stream() []DataEvent {
 	return d.stream
 }
 
+// SetStream sets the data stream.
+func (d *Data) SetStream(stream []DataEvent) {
+	d.stream = stream
+}
+
 // Next returns the first element of the data stream,
-// deletes it from the stream and appends it to history.
+// deletes it from the data stream and appends it to the historic data stream.
 func (d *Data) Next() (dh DataEvent, ok bool) {
 	// check for element in datastream
 	if len(d.stream) == 0 {
@@ -69,7 +69,7 @@ func (d *Data) Next() (dh DataEvent, ok bool) {
 
 	dh = d.stream[0]
 	d.stream = d.stream[1:] // delete first element from stream
-	d.streamHistory = append(d.streamHistory, dh)
+	d.history = append(d.history, dh)
 
 	// update list of current data events
 	d.updateLatest(dh)
@@ -81,7 +81,7 @@ func (d *Data) Next() (dh DataEvent, ok bool) {
 
 // History returns the historic data stream.
 func (d *Data) History() []DataEvent {
-	return d.streamHistory
+	return d.history
 }
 
 // Latest returns the last known data event for a symbol.
@@ -94,7 +94,7 @@ func (d *Data) List(symbol string) []DataEvent {
 	return d.list[symbol]
 }
 
-// SortStream sorts the dataStream.
+// SortStream sorts the data stream in ascending order.
 func (d *Data) SortStream() {
 	sort.Slice(d.stream, func(i, j int) bool {
 		b1 := d.stream[i]
@@ -119,7 +119,7 @@ func (d *Data) updateLatest(event DataEvent) {
 	d.latest[event.Symbol()] = event
 }
 
-// updateList appends an event to the data list.
+// updateList appends a data event to the data list for the corresponding symbol.
 func (d *Data) updateList(event DataEvent) {
 	// Check for nil map, else initialise the map
 	if d.list == nil {

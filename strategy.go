@@ -8,11 +8,11 @@ type StrategyHandler interface {
 	SetPortfolio(p PortfolioHandler) error
 	Event() (DataEvent, bool)
 	SetEvent(DataEvent) error
-	Orders() ([]OrderEvent, bool)
-	AddOrder(...OrderEvent) error
+	Signals() ([]SignalEvent, bool)
+	AddSignal(...SignalEvent) error
 	Strategies() ([]StrategyHandler, bool)
 	Assets() ([]*Asset, bool)
-	OnData(DataEvent) ([]OrderEvent, error)
+	OnData(DataEvent) ([]SignalEvent, error)
 }
 
 // Strategy implements NodeHandler via Node, used as a strategy building block.
@@ -22,7 +22,7 @@ type Strategy struct {
 	data      DataHandler
 	portfolio PortfolioHandler
 	event     DataEvent
-	orders    []OrderEvent
+	signals   []SignalEvent
 }
 
 // NewStrategy return a new strategy node ready to use.
@@ -30,6 +30,7 @@ func NewStrategy(name string) *Strategy {
 	var s = &Strategy{}
 	s.SetName(name)
 	s.SetRoot(true)
+	s.SetWeight(1)
 	return s
 }
 
@@ -100,19 +101,19 @@ func (s *Strategy) SetEvent(event DataEvent) error {
 	return nil
 }
 
-// Orders the orderbook, a slice of all known orders.
-func (s *Strategy) Orders() ([]OrderEvent, bool) {
-	if len(s.orders) == 0 {
-		return s.orders, false
+// Signals returns a slice of all from th ealgo loop created signals.
+func (s *Strategy) Signals() ([]SignalEvent, bool) {
+	if len(s.signals) == 0 {
+		return s.signals, false
 	}
 
-	return s.orders, true
+	return s.signals, true
 }
 
-// AddOrder sets the data property.
-func (s *Strategy) AddOrder(orders ...OrderEvent) error {
-	for _, order := range orders {
-		s.orders = append(s.orders, order)
+// AddSignal sets the data property.
+func (s *Strategy) AddSignal(signals ...SignalEvent) error {
+	for _, signal := range signals {
+		s.signals = append(s.signals, signal)
 	}
 	return nil
 }
@@ -182,16 +183,8 @@ func (s *Strategy) Assets() ([]*Asset, bool) {
 }
 
 // OnData handles an incoming data event. It runs the algo stack on this data.
-func (s *Strategy) OnData(event DataEvent) (orders []OrderEvent, err error) {
+func (s *Strategy) OnData(event DataEvent) (signals []SignalEvent, err error) {
 	s.SetEvent(event)
-
-	// // type switch for event type
-	// switch e := event.(type) {
-	// case *Bar:
-	// 	// fill Signal
-	// 	se.Event = Event{Timestamp: e.GetTime(), Symbol: e.GetSymbol()}
-	// 	se.Direction = "long"
-	// }
 
 	// run the algo stack of this strategy
 	ok, err := s.algos.Run(s)
@@ -202,18 +195,18 @@ func (s *Strategy) OnData(event DataEvent) (orders []OrderEvent, err error) {
 	// pass data event down to child strategies
 	if strategies, ok := s.Strategies(); ok {
 		for _, strategy := range strategies {
-			orders, err := strategy.OnData(event)
+			signals, err := strategy.OnData(event)
 			if err != nil {
 				return nil, err
 			}
-			s.AddOrder(orders...)
+			s.AddSignal(signals...)
 		}
 	}
 
-	orders, ok = s.Orders()
+	signals, ok = s.Signals()
 	if !ok {
-		return []OrderEvent{}, nil
+		return nil, nil
 	}
 
-	return orders, nil
+	return signals, nil
 }

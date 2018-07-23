@@ -2,7 +2,7 @@ package gobacktest
 
 // PortfolioHandler is the combined interface building block for a portfolio.
 type PortfolioHandler interface {
-	// OnSignaler
+	OnSignaler
 	OnFiller
 	Investor
 	Updater
@@ -100,38 +100,38 @@ func (p *Portfolio) Reset() error {
 	return nil
 }
 
-// // OnSignal handles an incomming signal event
-// func (p *Portfolio) OnSignal(signal SignalEvent, data DataHandler) (*Order, error) {
-// 	// fmt.Printf("Portfolio receives Signal: %#v \n", signal)
+// OnSignal handles an incomming signal event
+func (p *Portfolio) OnSignal(signal SignalEvent, data DataHandler) (*Order, error) {
+	// fmt.Printf("Portfolio receives Signal: %#v \n", signal)
 
-// 	// set order type
-// 	orderType := MarketOrder // default Market, should be set by risk manager
-// 	var limit float64
+	// set order type
+	orderType := MarketOrder // default Market, should be set by risk manager
+	var limit float64
 
-// 	initialOrder := &Order{
-// 		Event: Event{
-// 			timestamp: signal.Time(),
-// 			symbol:    signal.Symbol(),
-// 		},
-// 		direction: signal.Direction(),
-// 		// Qty should be set by PositionSizer
-// 		orderType:  orderType,
-// 		limitPrice: limit,
-// 	}
+	initialOrder := &Order{
+		Event: Event{
+			timestamp: signal.Time(),
+			symbol:    signal.Symbol(),
+		},
+		direction: signal.Direction(),
+		// Qty should be set by PositionSizer
+		orderType:  orderType,
+		limitPrice: limit,
+	}
 
-// 	// fetch latest known price for the symbol
-// 	latest := data.Latest(signal.Symbol())
+	// fetch latest known price for the symbol
+	latest := data.Latest(signal.Symbol())
 
-// 	sizedOrder, err := p.sizeManager.SizeOrder(initialOrder, latest, p)
-// 	if err != nil {
-// 	}
+	sizedOrder, err := p.sizeManager.SizeOrder(initialOrder, latest, p)
+	if err != nil {
+	}
 
-// 	order, err := p.riskManager.EvaluateOrder(sizedOrder, latest, p.holdings)
-// 	if err != nil {
-// 	}
+	order, err := p.riskManager.EvaluateOrder(sizedOrder, latest, p.holdings)
+	if err != nil {
+	}
 
-// 	return order, nil
-// }
+	return order, nil
+}
 
 // OnFill handles an incomming fill event
 func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (*Fill, error) {

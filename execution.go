@@ -6,7 +6,8 @@ import (
 
 // ExecutionHandler is the basic interface for executing orders
 type ExecutionHandler interface {
-	ExecuteOrder(OrderEvent, DataHandler) (*Fill, error)
+	OnData(DataEvent) (*Fill, error)
+	OnOrder(OrderEvent, DataHandler) (*Fill, error)
 }
 
 // Exchange is a basic execution handler implementation
@@ -25,8 +26,13 @@ func NewExchange() *Exchange {
 	}
 }
 
-// ExecuteOrder executes an order event
-func (e *Exchange) ExecuteOrder(order OrderEvent, data DataHandler) (*Fill, error) {
+// OnData executes any open order on new data
+func (e *Exchange) OnData(data DataEvent) (*Fill, error) {
+	return nil, nil
+}
+
+// OnOrder executes an order event
+func (e *Exchange) OnOrder(order OrderEvent, data DataHandler) (*Fill, error) {
 	// fetch latest known data event for the symbol
 	latest := data.Latest(order.Symbol())
 

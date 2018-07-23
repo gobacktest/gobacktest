@@ -172,25 +172,27 @@ func (t *Backtest) eventLoop(e EventHandler) error {
 		t.portfolio.Update(event)
 		// update statistics
 		t.statistic.Update(event, t.portfolio)
+		// check if any orders are filled before proceding
+		t.exchange.OnData(event)
 
 		// run strategy with this data event
-		orders, err := t.strategy.OnData(event)
+		signals, err := t.strategy.OnData(event)
 		if err != nil {
 			break
 		}
-		for _, order := range orders {
-			t.eventQueue = append(t.eventQueue, order)
+		for _, signal := range signals {
+			t.eventQueue = append(t.eventQueue, signal)
 		}
 
-	// case SignalEvent:
-	// 	order, err := t.portfolio.OnSignal(event, t.data)
-	// 	if err != nil {
-	// 		break
-	// 	}
-	// 	t.eventQueue = append(t.eventQueue, order)
+	case SignalEvent:
+		order, err := t.portfolio.OnSignal(event, t.data)
+		if err != nil {
+			break
+		}
+		t.eventQueue = append(t.eventQueue, order)
 
 	case OrderEvent:
-		fill, err := t.exchange.ExecuteOrder(event, t.data)
+		fill, err := t.exchange.OnOrder(event, t.data)
 		if err != nil {
 			break
 		}

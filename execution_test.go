@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func TestExecuteOrder(t *testing.T) {
+func TestOnOrder(t *testing.T) {
 	// set the example time string in format yyyy-mm-dd
 	var exampleTime, _ = time.Parse("2006-01-02", "2017-06-01")
 
@@ -19,12 +19,14 @@ func TestExecuteOrder(t *testing.T) {
 
 	// orderEventTests is a table for testing parsing bar data into a BarEvent
 	var testCases = []struct {
+		msg     string
 		order   OrderEvent  // OrderEvent input
 		data    DataHandler // DataEvent input
 		expFill FillEvent   // expected FillEvent return
 		expErr  error       // expected error output
 	}{
 		{
+			"buy order",
 			&Order{
 				Event:     Event{timestamp: exampleTime, symbol: "TEST.DE"},
 				direction: BOT, // buy or sell
@@ -48,6 +50,7 @@ func TestExecuteOrder(t *testing.T) {
 			nil,
 		},
 		{
+			"sell order",
 			&Order{
 				Event:     Event{timestamp: exampleTime, symbol: "TEST.DE"},
 				direction: SLD, // buy or sell
@@ -73,10 +76,10 @@ func TestExecuteOrder(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		fill, err := e.ExecuteOrder(tc.order, tc.data)
+		fill, err := e.OnOrder(tc.order, tc.data)
 		if !reflect.DeepEqual(fill, tc.expFill) || (reflect.TypeOf(err) != reflect.TypeOf(tc.expErr)) {
-			t.Errorf("ExecuteOrder(%v): \nexpected %+v %v, \nactual   %+v %v",
-				tc.order, tc.expFill, tc.expErr, fill, err)
+			t.Errorf("%s OnOrder(%v): \nexpected %+v %v, \nactual   %+v %v",
+				tc.msg, tc.order, tc.expFill, tc.expErr, fill, err)
 		}
 	}
 }

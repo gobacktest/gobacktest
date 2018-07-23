@@ -43,7 +43,7 @@ const (
 	EXT
 )
 
-// Order declares a basic order event
+// Order declares a basic order event.
 type Order struct {
 	Event
 	id           int
@@ -56,6 +56,16 @@ type Order struct {
 	avgFillPrice float64
 	limitPrice   float64 // limit for the order
 	stopPrice    float64
+}
+
+// ID returns the id of the Order.
+func (o Order) ID() int {
+	return o.id
+}
+
+// SetID of the Order.
+func (o *Order) SetID(id int) {
+	o.id = id
 }
 
 // Direction returns the Direction of an Order
@@ -83,6 +93,16 @@ func (o Order) Status() OrderStatus {
 	return o.status
 }
 
+// Limit returns the limit price of an Order
+func (o Order) Limit() float64 {
+	return o.limitPrice
+}
+
+// Stop returns the stop price of an Order
+func (o Order) Stop() float64 {
+	return o.stopPrice
+}
+
 // Cancel cancels an order
 func (o *Order) Cancel() {
 	o.status = OrderCancelPending
@@ -90,5 +110,5 @@ func (o *Order) Cancel() {
 
 // Update updates an order on a fill event
 func (o *Order) Update(fill FillEvent) {
-
+	// not implemented
 }

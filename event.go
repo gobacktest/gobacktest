@@ -163,12 +163,21 @@ type Quantifier interface {
 	SetQty(int64)
 }
 
+// IDer is a id interface
+type IDer interface {
+	ID() int
+	SetID(int)
+}
+
 // OrderEvent declares the order event interface.
 type OrderEvent interface {
 	EventHandler
 	Directioner
 	Quantifier
+	IDer
 	Status() OrderStatus
+	Limit() float64
+	Stop() float64
 }
 
 // FillEvent declares the fill event interface.

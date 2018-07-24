@@ -11,12 +11,12 @@ type DataHandler interface {
 	Reseter
 }
 
-// DataLoader interface definse how to load data into the data stream.
+// DataLoader defines how to load data into the data stream.
 type DataLoader interface {
 	Load([]string) error
 }
 
-// DataStreamer is the interface defining data streams functionality.
+// DataStreamer defines data stream functionality.
 type DataStreamer interface {
 	Next() (DataEvent, bool)
 	Stream() []DataEvent
@@ -25,7 +25,7 @@ type DataStreamer interface {
 	List(string) []DataEvent
 }
 
-// Data is a basic data struct.
+// Data is a basic data provider struct.
 type Data struct {
 	latest  map[string]DataEvent
 	list    map[string][]DataEvent
@@ -40,7 +40,7 @@ func (d *Data) Load(s []string) error {
 	return nil
 }
 
-// Reset implements the Reseter interface and resets the data struct to a clean state with loaded data events.
+// Reset implements Reseter to reset the data struct to a clean state with loaded data events.
 func (d *Data) Reset() error {
 	d.latest = nil
 	d.list = nil
@@ -127,4 +127,70 @@ func (d *Data) updateList(event DataEvent) {
 	}
 
 	d.list[event.Symbol()] = append(d.list[event.Symbol()], event)
+}
+
+// DataEvent declares a data event interface
+type DataEvent interface {
+	EventHandler
+	MetricHandler
+	Pricer
+}
+
+// Pricer defines the handling otf the latest Price Information
+type Pricer interface {
+	Price() float64
+}
+
+// BarEvent declares a bar event interface.
+type BarEvent interface {
+	DataEvent
+}
+
+// Bar declares a data event for an OHLCV bar.
+type Bar struct {
+	Event
+	Metric
+	Open     float64
+	High     float64
+	Low      float64
+	Close    float64
+	AdjClose float64
+	Volume   int64
+}
+
+// Price returns the close price of the bar event.
+func (b Bar) Price() float64 {
+	return b.Close
+}
+
+// TickEvent declares a bar event interface.
+type TickEvent interface {
+	DataEvent
+	Spreader
+}
+
+// Spreader declares functionality to get spre spread of a tick.
+type Spreader interface {
+	Spread() float64
+}
+
+// Tick declares a data event for a price tick.
+type Tick struct {
+	Event
+	Metric
+	Bid       float64
+	Ask       float64
+	BidVolume int64
+	AskVolume int64
+}
+
+// Price returns the middle of Bid and Ask.
+func (t Tick) Price() float64 {
+	latest := (t.Bid + t.Ask) / float64(2)
+	return latest
+}
+
+// Spread returns the difference or spread of Bid and Ask.
+func (t Tick) Spread() float64 {
+	return t.Bid - t.Ask
 }

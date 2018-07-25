@@ -3,8 +3,8 @@ package gobacktest
 // Fill declares a basic fill event
 type Fill struct {
 	Event
-	direction   OrderDirection // BOT for buy, SLD for sell, HLD for hold
-	Exchange    string         // exchange symbol
+	direction   Direction // BOT for buy, SLD for sell, HLD for hold
+	Exchange    string    // exchange symbol
 	qty         int64
 	price       float64
 	commission  float64
@@ -13,12 +13,12 @@ type Fill struct {
 }
 
 // Direction returns the direction of a Fill
-func (f Fill) Direction() OrderDirection {
+func (f Fill) Direction() Direction {
 	return f.direction
 }
 
 // SetDirection sets the Directions field of a Fill
-func (f *Fill) SetDirection(dir OrderDirection) {
+func (f *Fill) SetDirection(dir Direction) {
 	f.direction = dir
 }
 

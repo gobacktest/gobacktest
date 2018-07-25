@@ -28,28 +28,13 @@ const (
 	StopLimitOrder
 )
 
-// OrderDirection defines which direction an order goes
-type OrderDirection int
-
-// different types of order directions
-const (
-	// Buy
-	BOT OrderDirection = iota // 0
-	// Sell
-	SLD
-	// Hold
-	HLD
-	// Exit
-	EXT
-)
-
 // Order declares a basic order event.
 type Order struct {
 	Event
 	id           int
 	orderType    OrderType // market or limit
 	status       OrderStatus
-	direction    OrderDirection // buy or sell
+	direction    Direction // buy or sell
 	assetType    string
 	qty          int64 // quantity of the order
 	qtyFilled    int64
@@ -69,12 +54,12 @@ func (o *Order) SetID(id int) {
 }
 
 // Direction returns the Direction of an Order
-func (o Order) Direction() OrderDirection {
+func (o Order) Direction() Direction {
 	return o.direction
 }
 
 // SetDirection sets the Directions field of an Order
-func (o *Order) SetDirection(dir OrderDirection) {
+func (o *Order) SetDirection(dir Direction) {
 	o.direction = dir
 }
 

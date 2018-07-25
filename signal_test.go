@@ -9,7 +9,7 @@ func TestSignalSetDirection(t *testing.T) {
 	var testCases = []struct {
 		msg       string
 		signal    Signal
-		dir       OrderDirection
+		dir       Direction
 		expSignal Signal
 	}{
 		{"simple direction:",
@@ -32,7 +32,7 @@ func TestSignalGetDirection(t *testing.T) {
 	var testCases = []struct {
 		msg    string
 		signal Signal
-		expDir OrderDirection
+		expDir Direction
 	}{
 		{"simple direction:",
 			Signal{direction: BOT},

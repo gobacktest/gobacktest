@@ -9,7 +9,7 @@ func TestFillSetDirection(t *testing.T) {
 	var testCases = []struct {
 		msg     string
 		fill    Fill
-		dir     OrderDirection
+		dir     Direction
 		expFill Fill
 	}{
 		{"simple direction:",

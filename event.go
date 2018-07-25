@@ -56,8 +56,8 @@ type SignalEvent interface {
 
 // Directioner defines a direction interface
 type Directioner interface {
-	Direction() OrderDirection
-	SetDirection(OrderDirection)
+	Direction() Direction
+	SetDirection(Direction)
 }
 
 // OrderEvent declares the order event interface.

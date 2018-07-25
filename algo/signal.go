@@ -11,7 +11,7 @@ type signalAlgo struct {
 	direction string
 }
 
-// CreateSignal creates an signal with a specified direktion.
+// CreateSignal creates a signal with a specified direction.
 func CreateSignal(direction string) gbt.AlgoHandler {
 	return &signalAlgo{direction: direction}
 }
@@ -30,13 +30,15 @@ func (algo signalAlgo) Run(s gbt.StrategyHandler) (bool, error) {
 		Event: *event,
 	}
 
-	switch algo.direction {
-	case "buy":
+	switch {
+	case (algo.direction == "buy") || (algo.direction == "long") || (algo.direction == "BOT"):
 		signal.SetDirection(gbt.BOT)
-	case "sell":
+	case (algo.direction == "sell") || (algo.direction == "short") || (algo.direction == "SLD"):
 		signal.SetDirection(gbt.SLD)
-	case "exit":
+	case (algo.direction == "exit") || (algo.direction == "EXT"):
 		signal.SetDirection(gbt.EXT)
+	default:
+		signal.SetDirection(gbt.HLD)
 	}
 
 	err := s.AddSignal(signal)

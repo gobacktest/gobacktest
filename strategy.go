@@ -208,5 +208,8 @@ func (s *Strategy) OnData(event DataEvent) (signals []SignalEvent, err error) {
 		return nil, nil
 	}
 
+	// empty strategy signals collection
+	s.signals = nil
+
 	return signals, nil
 }

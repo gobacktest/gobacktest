@@ -24,17 +24,15 @@ func main() {
 	// create a new strategy with an algo stack and load into the backtest
 	strategy := gbt.NewStrategy("basic")
 	strategy.SetAlgo(
-		algo.BoolAlgo(true),
-		algo.CreateSignal("buy"),
+		algo.BoolAlgo(true),      // always return true, just a test
+		algo.CreateSignal("buy"), // always create a buy signal on a data event
 	)
 
 	// create an asset and append to strategy
 	strategy.SetChildren(gbt.NewAsset("TEST.DE"))
-	fmt.Printf("strategy: %#v\n", strategy)
 
 	// load the strategy into the backtest
 	test.SetStrategy(strategy)
-	fmt.Printf("test: %#v\n", test)
 
 	// run the backtest
 	err := test.Run()

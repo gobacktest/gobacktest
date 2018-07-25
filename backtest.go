@@ -184,21 +184,21 @@ func (t *Backtest) eventLoop(e EventHandler) error {
 			t.eventQueue = append(t.eventQueue, signal)
 		}
 
-	case SignalEvent:
+	case *Signal:
 		order, err := t.portfolio.OnSignal(event, t.data)
 		if err != nil {
 			break
 		}
 		t.eventQueue = append(t.eventQueue, order)
 
-	case OrderEvent:
+	case *Order:
 		fill, err := t.exchange.OnOrder(event, t.data)
 		if err != nil {
 			break
 		}
 		t.eventQueue = append(t.eventQueue, fill)
 
-	case FillEvent:
+	case *Fill:
 		transaction, err := t.portfolio.OnFill(event, t.data)
 		if err != nil {
 			break

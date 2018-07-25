@@ -1,17 +1,19 @@
 package main
 
 import (
-	"github.com/dirkolbrich/gobacktest"
+	"fmt"
+
+	gbt "github.com/dirkolbrich/gobacktest"
+	"github.com/dirkolbrich/gobacktest/algo"
 	"github.com/dirkolbrich/gobacktest/data"
-	"github.com/dirkolbrich/gobacktest/strategy"
 )
 
 func main() {
 	// initiate new backtester
-	test := gobacktest.New()
+	test := gbt.New()
 
 	// define and load symbols
-	symbols := []string{"TEST.DE"}
+	var symbols = []string{"TEST.DE"}
 	test.SetSymbols(symbols)
 
 	// create data provider and load data into the backtest
@@ -19,12 +21,24 @@ func main() {
 	data.Load(symbols)
 	test.SetData(data)
 
-	// create strategy provider and load into the backtest
-	strategy := &strategy.Basic{}
+	// create a new strategy with an algo stack and load into the backtest
+	strategy := gbt.NewStrategy("basic")
+	strategy.SetAlgo(
+		algo.BoolAlgo(true),      // always return true, just a test
+		algo.CreateSignal("buy"), // always create a buy signal on a data event
+	)
+
+	// create an asset and append to strategy
+	strategy.SetChildren(gbt.NewAsset("TEST.DE"))
+
+	// load the strategy into the backtest
 	test.SetStrategy(strategy)
 
 	// run the backtest
-	test.Run()
+	err := test.Run()
+	if err != nil {
+		fmt.Printf("err: %v", err)
+	}
 
 	// print the result of the test
 	test.Stats().PrintResult()

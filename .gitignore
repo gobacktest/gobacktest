@@ -1,3 +1,4 @@
 .env
 .vscode/
 debug
+debug.test

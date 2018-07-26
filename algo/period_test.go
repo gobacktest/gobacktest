@@ -10,16 +10,43 @@ import (
 	gbt "github.com/dirkolbrich/gobacktest"
 )
 
+func testHelperTimeMap(dates []string) map[string]time.Time {
+	timeMap := make(map[string]time.Time)
+	for _, d := range dates {
+		time, _ := time.Parse("2006-01-02", d)
+		timeMap[d] = time
+	}
+	return timeMap
+}
+
+func testHelperMockData(dates []string) []gbt.DataEvent {
+	mockdata := []gbt.DataEvent{}
+	for i, d := range dates {
+		time, _ := time.Parse("2006-01-02", d)
+		symbol := "Date" + strconv.Itoa(i)
+
+		event := &gbt.Event{}
+		event.SetSymbol(symbol)
+		event.SetTime(time)
+
+		bar := &gbt.Bar{
+			Event: *event,
+		}
+		mockdata = append(mockdata, bar)
+	}
+	return mockdata
+}
+
 func TestAlgoRunOnce(t *testing.T) {
 	algo := RunOnce()
 
 	ok, err := algo.Run(&gbt.Strategy{})
-	if !ok || (err != nil) {
+	if (ok == false) || (err != nil) {
 		t.Errorf("first RunOnce(): \nexpected %v %#v, \nactual   %v %#v", true, nil, ok, err)
 	}
 
 	ok, err = algo.Run(&gbt.Strategy{})
-	if ok || (err != nil) {
+	if (ok == true) || (err != nil) {
 		t.Errorf("second RunOnce(): \nexpected %v %#v, \nactual   %v %#v", false, nil, ok, err)
 	}
 }
@@ -73,18 +100,13 @@ func TestRunPeriodWithOptions(t *testing.T) {
 }
 
 func TestAlgoRunDailyCompare(t *testing.T) {
-	var dates = []string{
+	// set up mock time
+	times := testHelperTimeMap([]string{
 		"2017-12-31",
 		"2018-01-01",
 		"2018-06-30",
 		"2018-07-01",
-	}
-	// set up mock time
-	times := []time.Time{}
-	for _, d := range dates {
-		time, _ := time.Parse("2006-01-02", d)
-		times = append(times, time)
-	}
+	})
 
 	var testCases = []struct {
 		msg       string
@@ -94,15 +116,15 @@ func TestAlgoRunDailyCompare(t *testing.T) {
 		expErr    error
 	}{
 		{"test day change",
-			times[2], times[3],
+			times["2018-06-30"], times["2018-07-01"],
 			true, nil,
 		},
 		{"test same day ",
-			times[2], times[2],
+			times["2018-06-30"], times["2018-06-30"],
 			false, nil,
 		},
 		{"test year change",
-			times[0], times[1],
+			times["2017-12-31"], times["2018-01-01"],
 			true, nil,
 		},
 	}
@@ -118,27 +140,12 @@ func TestAlgoRunDailyCompare(t *testing.T) {
 }
 
 func TestAlgoRunDailyImplementation(t *testing.T) {
-	// define dates to test
-	var dates = []string{
+	// set up mock Data Events
+	mockdata := testHelperMockData([]string{
 		"2018-06-30",
 		"2018-07-01",
 		"2018-07-02",
-	}
-	// set up mock Data Events
-	mockdata := []gbt.DataEvent{}
-	for i, d := range dates {
-		time, _ := time.Parse("2006-01-02", d)
-		symbol := "Date" + strconv.Itoa(i)
-
-		event := &gbt.Event{}
-		event.SetSymbol(symbol)
-		event.SetTime(time)
-
-		bar := &gbt.Bar{
-			Event: *event,
-		}
-		mockdata = append(mockdata, bar)
-	}
+	})
 
 	// set up data handler
 	data := &gbt.Data{}
@@ -179,7 +186,8 @@ func TestAlgoRunDailyImplementation(t *testing.T) {
 }
 
 func TestAlgoRunWeeklyCompare(t *testing.T) {
-	var dates = []string{
+	// set up mock time
+	times := testHelperTimeMap([]string{
 		"2016-12-31",
 		"2017-01-01",
 		"2017-12-31",
@@ -189,13 +197,7 @@ func TestAlgoRunWeeklyCompare(t *testing.T) {
 		"2018-06-30",
 		"2018-07-01",
 		"2018-07-02",
-	}
-	// set up mock time
-	times := []time.Time{}
-	for _, d := range dates {
-		time, _ := time.Parse("2006-01-02", d)
-		times = append(times, time)
-	}
+	})
 
 	var testCases = []struct {
 		msg       string
@@ -205,23 +207,23 @@ func TestAlgoRunWeeklyCompare(t *testing.T) {
 		expErr    error
 	}{
 		{"test week change",
-			times[7], times[8],
+			times["2018-07-01"], times["2018-07-02"],
 			true, nil,
 		},
 		{"test same week on weekend",
-			times[6], times[7],
+			times["2018-06-30"], times["2018-07-01"],
 			false, nil,
 		},
 		{"test same week during week",
-			times[4], times[5],
+			times["2018-06-28"], times["2018-06-29"],
 			false, nil,
 		},
 		{"test year change, same week",
-			times[0], times[1],
+			times["2016-12-31"], times["2017-01-01"],
 			false, nil,
 		},
 		{"test year change with week change",
-			times[2], times[3],
+			times["2017-12-31"], times["2018-01-01"],
 			true, nil,
 		},
 	}
@@ -237,18 +239,13 @@ func TestAlgoRunWeeklyCompare(t *testing.T) {
 }
 
 func TestAlgoRunMonthlyCompare(t *testing.T) {
-	var dates = []string{
+	// set up mock time
+	times := testHelperTimeMap([]string{
 		"2017-12-31",
 		"2018-01-01",
 		"2018-01-02",
 		"2018-02-01",
-	}
-	// set up mock time
-	times := []time.Time{}
-	for _, d := range dates {
-		time, _ := time.Parse("2006-01-02", d)
-		times = append(times, time)
-	}
+	})
 
 	var testCases = []struct {
 		msg       string
@@ -258,15 +255,15 @@ func TestAlgoRunMonthlyCompare(t *testing.T) {
 		expErr    error
 	}{
 		{"test month change",
-			times[2], times[3],
+			times["2018-01-02"], times["2018-02-01"],
 			true, nil,
 		},
 		{"test same month ",
-			times[1], times[2],
+			times["2018-01-01"], times["2018-01-02"],
 			false, nil,
 		},
 		{"test year change",
-			times[0], times[1],
+			times["2017-12-31"], times["2018-01-01"],
 			true, nil,
 		},
 	}
@@ -282,28 +279,13 @@ func TestAlgoRunMonthlyCompare(t *testing.T) {
 }
 
 func TestAlgoRunMonthlyImplementation(t *testing.T) {
-	// define dates to test
-	var dates = []string{
+	// set up mock Data Events
+	mockdata := testHelperMockData([]string{
 		"2017-12-31",
 		"2018-01-01",
 		"2018-01-02",
 		"2018-02-01",
-	}
-	// set up mock Data Events
-	mockdata := []gbt.DataEvent{}
-	for i, d := range dates {
-		time, _ := time.Parse("2006-01-02", d)
-		symbol := "Date" + strconv.Itoa(i)
-
-		event := &gbt.Event{}
-		event.SetSymbol(symbol)
-		event.SetTime(time)
-
-		bar := &gbt.Bar{
-			Event: *event,
-		}
-		mockdata = append(mockdata, bar)
-	}
+	})
 
 	// set up data handler
 	data := &gbt.Data{}
@@ -353,17 +335,13 @@ func TestAlgoRunMonthlyImplementation(t *testing.T) {
 }
 
 func TestAlgoRunYearlyCompare(t *testing.T) {
-	var dates = []string{
+	// set up mock time
+	times := testHelperTimeMap([]string{
 		"2017-12-31",
 		"2018-01-01",
 		"2018-01-02",
-	}
-	// set up mock time
-	times := []time.Time{}
-	for _, d := range dates {
-		time, _ := time.Parse("2006-01-02", d)
-		times = append(times, time)
-	}
+		"2018-02-01",
+	})
 
 	var testCases = []struct {
 		msg       string
@@ -372,13 +350,17 @@ func TestAlgoRunYearlyCompare(t *testing.T) {
 		expOk     bool
 		expErr    error
 	}{
-		{"test year change",
-			times[0], times[1],
-			true, nil,
+		{msg: "test year change",
+			now: times["2017-12-31"], toCompare: times["2018-01-01"],
+			expOk: true, expErr: nil,
 		},
-		{"test same year ",
-			times[1], times[2],
-			false, nil,
+		{msg: "test same year, different day in month",
+			now: times["2018-01-01"], toCompare: times["2018-01-02"],
+			expOk: false, expErr: nil,
+		},
+		{msg: "test same year, different month",
+			now: times["2018-01-01"], toCompare: times["2018-02-01"],
+			expOk: false, expErr: nil,
 		},
 	}
 
@@ -389,5 +371,59 @@ func TestAlgoRunYearlyCompare(t *testing.T) {
 			t.Errorf("%v CompareDatesYearly(%v, %v): \nexpected %v %+v, \nactual   %v %+v",
 				tc.msg, tc.now, tc.toCompare, tc.expOk, tc.expErr, ok, err)
 		}
+	}
+}
+
+func TestAlgoRunYearlyImplementation(t *testing.T) {
+	// set up mock Data Events
+	mockdata := testHelperMockData([]string{
+		"2017-12-31",
+		"2018-01-01",
+		"2018-01-02",
+		"2018-02-01",
+	})
+
+	// set up data handler
+	data := &gbt.Data{}
+	data.SetStream(mockdata)
+	event, _ := data.Next()
+
+	// set up strategy
+	strategy := &gbt.Strategy{}
+	strategy.SetData(data)
+	strategy.SetEvent(event)
+
+	// create Algo
+	algo := RunYearly()
+
+	// first data, no data in history
+	ok, err := algo.Run(strategy)
+	if (ok == true) || (err != nil) {
+		t.Errorf("first data, no data in history: \nexpected %v %#v, \nactual   %v %#v", false, nil, ok, err)
+	}
+
+	// second data, one more data in history with year change
+	// pull next event
+	event, _ = data.Next()
+	strategy.SetEvent(event)
+	ok, err = algo.Run(strategy)
+	if (ok == false) || (err != nil) {
+		t.Errorf("second data, year and month change: \nexpected %v %#v, \nactual   %v %#v", true, nil, ok, err)
+	}
+
+	// third data, one more data in history without day change
+	// pull next event
+	event, _ = data.Next()
+	strategy.SetEvent(event)
+	ok, err = algo.Run(strategy)
+	if (ok == true) || (err != nil) {
+		t.Errorf("third data, no year change, no month change: \nexpected %v %#v, \nactual   %v %#v", false, nil, ok, err)
+	}
+
+	event, _ = data.Next()
+	strategy.SetEvent(event)
+	ok, err = algo.Run(strategy)
+	if (ok == true) || (err != nil) {
+		t.Errorf("third data, no year but month change: \nexpected %v %#v, \nactual   %v %#v", false, nil, ok, err)
 	}
 }

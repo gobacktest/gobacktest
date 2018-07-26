@@ -226,7 +226,7 @@ type runYearly struct {
 func RunYearly(opt ...string) gbt.AlgoHandler {
 	rp := runPeriodWithOptions(opt...)
 
-	runYearly := runMonthly{runPeriod: rp}
+	runYearly := runYearly{runPeriod: rp}
 	runYearly.runPeriod.PeriodRunner = runYearly
 	return &runYearly
 }

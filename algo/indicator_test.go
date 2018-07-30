@@ -2,64 +2,77 @@ package algo
 
 import (
 	"fmt"
-	"strconv"
+	"reflect"
 	"testing"
-	"time"
 
 	gbt "github.com/dirkolbrich/gobacktest"
 )
 
 func TestSMAIntegration(t *testing.T) {
-	// define dates
-	var dates = []string{
+	// set up mock Data Events
+	mockdata := testHelperMockData([]string{
 		"2018-07-01",
 		"2018-07-02",
 		"2018-07-03",
 		"2018-07-04",
 		"2018-07-05",
-		"2018-07-06",
-		"2018-07-07",
-		"2018-07-08",
-		"2018-07-09",
-		"2018-07-10",
+	})
+
+	// set close price from 1 to n on mockdata
+	for i, data := range mockdata {
+		bar := data.(*gbt.Bar)
+		bar.Close = float64(i + 1)
+		mockdata[i] = bar
 	}
-	// set up mock Data Events
-	mockdata := []gbt.DataEvent{}
-	for i, d := range dates {
-		time, _ := time.Parse("2006-01-02", d)
-		symbol := "Date" + strconv.Itoa(i)
 
-		event := &gbt.Event{}
-		event.SetSymbol(symbol)
-		event.SetTime(time)
+	var testCases = []struct {
+		msg       string
+		mockdata  []gbt.DataEvent
+		period    int
+		runBefore int
+		expOk     bool
+		expErr    error
+	}{
+		{msg: "test too few data points",
+			mockdata: mockdata[:1],
+			period:   5,
+			expOk:    false,
+			expErr:   fmt.Errorf("invalid value length for indicator sma"),
+		},
+		{msg: "test normal run",
+			mockdata:  mockdata[:3],
+			period:    3,
+			runBefore: 2,
+			expOk:     true,
+			expErr:    nil,
+		},
+	}
 
-		bar := &gbt.Bar{
-			Event: *event,
-			Close: float64(i),
+	for _, tc := range testCases {
+		// set up data handler
+		data := &gbt.Data{}
+		data.SetStream(tc.mockdata)
+		event, _ := data.Next()
+
+		// set up strategy
+		strategy := &gbt.Strategy{}
+		strategy.SetData(data)
+		strategy.SetEvent(event)
+
+		// run the backtest n times to  pull data from stream and fill data.list
+		for i := 0; i < tc.runBefore; i++ {
+			data.Next()
 		}
-		mockdata = append(mockdata, bar)
-	}
 
-	// set up data handler
-	data := &gbt.Data{}
-	data.SetStream(mockdata)
-	event, _ := data.Next()
+		// create Algo
+		algo := SMA(tc.period)
 
-	// set up strategy
-	strategy := &gbt.Strategy{}
-	strategy.SetData(data)
-	strategy.SetEvent(event)
+		ok, err := algo.Run(strategy)
+		if (ok != tc.expOk) || !reflect.DeepEqual(err, tc.expErr) {
+			t.Errorf("%v: SMA(%v): \nexpected %v %#v, \nactual   %v %#v",
+				tc.msg, tc.period, tc.expOk, tc.expErr, ok, err)
+		}
 
-	// create Algo
-	algo := NewSMA(5)
-
-	// first run, no data in history, sma can not be calculated
-	ok, err := algo.Run(strategy)
-	if ok || (err == nil) {
-		t.Errorf("first run, no data in history: \nexpected %v %#v, \nactual   %v %#v",
-			false, fmt.Errorf("invalid value length for indicator sma"),
-			ok, err,
-		)
 	}
 
 }

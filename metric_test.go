@@ -16,6 +16,14 @@ func TestMetricAdd(t *testing.T) {
 		expErr error
 	}{
 		{
+			msg:    "nil map:",
+			metric: Metric{},
+			key:    "test",
+			value:  123.45,
+			expM:   map[string]float64{"test": 123.45},
+			expErr: nil,
+		},
+		{
 			msg:    "empty key:",
 			metric: Metric{},
 			key:    "",

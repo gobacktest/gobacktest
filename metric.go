@@ -15,6 +15,10 @@ type Metric map[string]float64
 
 // Add ads a value to the metrics map
 func (m Metric) Add(key string, value float64) error {
+	if m == nil {
+		m = make(map[string]float64)
+	}
+
 	if key == "" {
 		return errors.New("invalid key given")
 	}

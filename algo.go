@@ -5,6 +5,7 @@ type AlgoHandler interface {
 	Run(StrategyHandler) (bool, error)
 	Always() bool
 	SetAlways()
+	Value() float64
 }
 
 // Algo is a base algo structure, implements AlgoHandler
@@ -26,6 +27,11 @@ func (a Algo) Always() bool {
 // SetAlways set the runAlways property.
 func (a *Algo) SetAlways() {
 	a.runAlways = true
+}
+
+// Value returns the value of this Algo.
+func (a *Algo) Value() float64 {
+	return 0
 }
 
 // AlgoStack represents a single stack of algos.

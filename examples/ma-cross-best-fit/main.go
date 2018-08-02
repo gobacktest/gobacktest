@@ -19,8 +19,8 @@ type Result struct {
 
 func main() {
 	// create intervals for the short and long range
-	shortRange := linspace(3, 5, 3)
-	longRange := linspace(6, 10, 3)
+	shortRange := linspace(5, 50, 10)
+	longRange := linspace(150, 250, 10)
 	// create a slice for different test results
 	results := []Result{}
 	for _, short := range shortRange {
@@ -33,11 +33,11 @@ func main() {
 	test := gobacktest.New()
 
 	// define and load symbols
-	symbols := []string{"TEST.DE"}
+	symbols := []string{"SZG.DE"}
 	test.SetSymbols(symbols)
 
 	// create data provider and load data into the backtest
-	data := &data.BarEventFromCSVFile{FileDir: "../testdata/test/"}
+	data := &data.BarEventFromCSVFile{FileDir: "../testdata/bar/"}
 	data.Load(symbols)
 	test.SetData(data)
 
@@ -45,7 +45,7 @@ func main() {
 	// iterate over every field in the matrix
 	for i := range results {
 		// create strategy provider and load into the backtest
-		strategy := &strategy.MovingAverageCross{ShortWindow: results[i].smaShort, LongWindow: results[i].smaLong}
+		strategy := strategy.MovingAverageCross(results[i].smaShort, results[i].smaLong)
 		test.SetStrategy(strategy)
 
 		// run the backtest

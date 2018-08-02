@@ -40,8 +40,16 @@ func main() {
 
     test.SetPortfolio(portfolio)
 
-    // create a strategy provider and load it into the backtest
-    strategy := &strategy.Basic{}
+    // create a new strategy with an algo stack
+    strategy := gbt.NewStrategy("basic")
+    strategy.SetAlgo(
+        algo.CreateSignal("buy"), // always create a buy signal on a data event
+    )
+
+    // create an asset and append to strategy
+    strategy.SetChildren(gbt.NewAsset("TEST.DE"))
+
+    // load the strategy into the backtest
     test.SetStrategy(strategy)
 
     // create an execution provider and load it into the backtest
@@ -62,11 +70,7 @@ func main() {
 
 ## Dependencies
 
-The internal calculations use the [github.com/shopspring/decimal](https://github.com/shopspring/decimal) package for arbitrary-precision fixed-point decimals.
-
-Make sure to install it into your `$GOPATH` with
-
-    go get github.com/shopspring/decimal
+None so far.
 
 ## Basic components
 

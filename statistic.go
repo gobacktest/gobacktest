@@ -126,6 +126,34 @@ func (s *Statistic) Reset() error {
 	return nil
 }
 
+// String returns the backtest result as a string, implementing the fmt.Stringer interface.
+func (s Statistic) String() string {
+	first, _ := s.firstEquityPoint()
+	start := first.timestamp
+	last, _ := s.lastEquityPoint()
+	end := last.timestamp
+
+	totalReturn, _ := s.TotalEquityReturn()
+	sharp := s.SharpRatio(0)
+	sortino := s.SortinoRatio(0)
+	maxDrawdown := s.MaxDrawdown()
+
+	result := `Statistics
+---------------
+Start           ` + fmt.Sprintf("%v", start.Format("2006-01-02")) + `
+End             ` + fmt.Sprintf("%v", end.Format("2006-01-02")) + `
+
+Transactions    ` + fmt.Sprintf("%v", len(s.Transactions())) + `
+
+Total Return    ` + fmt.Sprintf("%.2f%%", totalReturn*100) + `
+Sharp Ratio     ` + fmt.Sprintf("%.2f%%", sharp*100) + `
+Sortino Ratio   ` + fmt.Sprintf("%.2f%%", sortino*100) + `
+Max Drawdown    ` + fmt.Sprintf("%.2f%%", maxDrawdown*100) + `
+`
+
+	return fmt.Sprint(result)
+}
+
 // PrintResult prints the backtest statistics to the screen
 func (s Statistic) PrintResult() {
 	fmt.Println("Printing backtest results:")

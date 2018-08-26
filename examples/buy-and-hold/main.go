@@ -42,4 +42,5 @@ func main() {
 
 	// print the result of the test
 	test.Stats().PrintResult()
+	fmt.Print(test.Stats())
 }

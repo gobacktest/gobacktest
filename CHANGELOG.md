@@ -4,33 +4,25 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.3.0] - 2018-08-02
+
 ### Added
 
-- Tree structure for strategies and assets
-- Algos and AlgoStack for simple algo chaining
+- tree structure for strategies and assets
+- algos and AlgoStack for simple algo chaining
 - basic time period algos
 - ta - technical analysis calculation functions
-- Metrics for data events
-- internal Orderbook to track opne orders
+- metrics for data events
+- internal orderbook to track open orders
 
 ### Changed
 
-- Package structure
+- package structure
 - rename DataEventHandler interface to DataEvent
-
-### Deprecated
-
-- for soon-to-be removed features
 
 ### Removed
 
 - shopspring/decimal dependency
-
-### Fixed
-
-- for any bug fixes
-
-### Security
 
 ## [0.2.4] - 2018-06-13
 
@@ -83,4 +75,4 @@ First relaese with basic functionality of the event loop.
 
 ### Fixed - for any bug fixes
 
-### Security
+### Security - for security related bug fixes

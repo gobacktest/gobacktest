@@ -1,15 +1,15 @@
 package gobacktest
 
 // DP sets the the precision of rounded floating numbers
-// used after calculations to format
+// used after calculations to format.
 const DP = 4 // DP
 
-// Reseter provides a resting interface.
+// Reseter provides a reseting interface.
 type Reseter interface {
 	Reset() error
 }
 
-// Backtest is the main struct which holds all elements.
+// Backtest is the main struct which holds all elements of a test.
 type Backtest struct {
 	symbols    []string
 	data       DataHandler
@@ -123,7 +123,7 @@ func (t *Backtest) Run() error {
 	return nil
 }
 
-// setup runs at the beginning of the backtest to perfom preparing operations.
+// setup runs at the beginning of the backtest to perfom preparation operations.
 func (t *Backtest) setup() error {
 	// before first run, set portfolio cash
 	t.portfolio.SetCash(t.portfolio.InitialCash())
@@ -172,7 +172,7 @@ func (t *Backtest) eventLoop(e EventHandler) error {
 		t.portfolio.Update(event)
 		// update statistics
 		t.statistic.Update(event, t.portfolio)
-		// check if any orders are filled before proceding
+		// check if any orders are filled before proceeding
 		t.exchange.OnData(event)
 
 		// run strategy with this data event

@@ -1,6 +1,6 @@
 package gobacktest
 
-// OrderStatus defines an order status
+// OrderStatus defines an order status.
 type OrderStatus int
 
 // different types of order status
@@ -15,7 +15,7 @@ const (
 	OrderInvalid
 )
 
-// OrderType defines which type an order is
+// OrderType defines the type of an order.
 type OrderType int
 
 // different types of orders
@@ -53,47 +53,47 @@ func (o *Order) SetID(id int) {
 	o.id = id
 }
 
-// Direction returns the Direction of an Order
+// Direction returns the direction of an Order.
 func (o Order) Direction() Direction {
 	return o.direction
 }
 
-// SetDirection sets the Directions field of an Order
+// SetDirection sets the direction of an Order.
 func (o *Order) SetDirection(dir Direction) {
 	o.direction = dir
 }
 
-// Qty returns the Qty field of an Order
+// Qty returns the quantity of an Order.
 func (o Order) Qty() int64 {
 	return o.qty
 }
 
-// SetQty sets the Qty field of an Order
+// SetQty sets the quantity of an Order.
 func (o *Order) SetQty(i int64) {
 	o.qty = i
 }
 
-// Status returns the status of an Order
+// Status returns the status of an Order.
 func (o Order) Status() OrderStatus {
 	return o.status
 }
 
-// Limit returns the limit price of an Order
+// Limit returns the limit price of an Order.
 func (o Order) Limit() float64 {
 	return o.limitPrice
 }
 
-// Stop returns the stop price of an Order
+// Stop returns the stop price of an Order.
 func (o Order) Stop() float64 {
 	return o.stopPrice
 }
 
-// Cancel cancels an order
+// Cancel an order.
 func (o *Order) Cancel() {
 	o.status = OrderCancelPending
 }
 
-// Update updates an order on a fill event
+// Update an order on a fill event.
 func (o *Order) Update(fill FillEvent) {
 	// not implemented
 }

@@ -129,14 +129,14 @@ func (d *Data) updateList(event DataEvent) {
 	d.list[event.Symbol()] = append(d.list[event.Symbol()], event)
 }
 
-// DataEvent declares a data event interface
+// DataEvent declares a data event interface.
 type DataEvent interface {
 	EventHandler
 	MetricHandler
 	Pricer
 }
 
-// Pricer defines the handling otf the latest Price Information
+// Pricer defines the handling of the latest Price information
 type Pricer interface {
 	Price() float64
 }
@@ -169,7 +169,7 @@ type TickEvent interface {
 	Spreader
 }
 
-// Spreader declares functionality to get spre spread of a tick.
+// Spreader declares functionality to get the spread of a tick.
 type Spreader interface {
 	Spread() float64
 }
@@ -184,7 +184,7 @@ type Tick struct {
 	AskVolume int64
 }
 
-// Price returns the middle of Bid and Ask.
+// Price returns the mid point of Bid and Ask.
 func (t Tick) Price() float64 {
 	latest := (t.Bid + t.Ask) / float64(2)
 	return latest

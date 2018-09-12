@@ -60,12 +60,12 @@ func (n *Node) SetWeight(w float64) {
 	n.weight = w
 }
 
-// Tolerance spcifies the possible tollerance from the weight.
+// Tolerance specifies the possible tolerance from the weight.
 func (n Node) Tolerance() float64 {
 	return n.tolerance
 }
 
-// SetTolerance of the Node
+// SetTolerance of the Node.
 func (n *Node) SetTolerance(t float64) {
 	n.tolerance = t
 }

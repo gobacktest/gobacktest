@@ -11,29 +11,29 @@ type PortfolioHandler interface {
 	Reseter
 }
 
-// OnSignaler is an interface for the OnSignal method
+// OnSignaler is an interface defines the handling of an incoming Signal.
 type OnSignaler interface {
 	OnSignal(SignalEvent, DataHandler) (*Order, error)
 }
 
-// OnFiller is an interface for the OnFill method
+// OnFiller is an interface defines the handling of an incoming Fill.
 type OnFiller interface {
 	OnFill(FillEvent, DataHandler) (*Fill, error)
 }
 
-// Investor is an interface to check if a portfolio has a position of a symbol
+// Investor is an interface to check if a portfolio has a position in a symbol.
 type Investor interface {
 	IsInvested(string) (Position, bool)
 	IsLong(string) (Position, bool)
 	IsShort(string) (Position, bool)
 }
 
-// Updater handles the updating of the portfolio on data events
+// Updater handles the updating of the portfolio on data events.
 type Updater interface {
 	Update(DataEvent)
 }
 
-// Casher handles basic portolio info
+// Casher handles basic portfolio info.
 type Casher interface {
 	InitialCash() float64
 	SetInitialCash(float64)
@@ -41,12 +41,12 @@ type Casher interface {
 	SetCash(float64)
 }
 
-// Valuer returns the values of the portfolio
+// Valuer returns the value of the portfolio.
 type Valuer interface {
 	Value() float64
 }
 
-// Booker defines methods for handling the order book of the portfolio
+// Booker defines methods for handling the order book of the portfolio.
 type Booker interface {
 	OrderBook() ([]OrderEvent, bool)
 	OrdersBySymbol(symbol string) ([]OrderEvent, bool)
@@ -72,7 +72,7 @@ func NewPortfolio() *Portfolio {
 	}
 }
 
-// SizeManager return the size manager of the portfolio.
+// SizeManager returns the size manager of the portfolio.
 func (p Portfolio) SizeManager() SizeHandler {
 	return p.sizeManager
 }
@@ -100,7 +100,7 @@ func (p *Portfolio) Reset() error {
 	return nil
 }
 
-// OnSignal handles an incomming signal event
+// OnSignal handles an incomming signal event.
 func (p *Portfolio) OnSignal(signal SignalEvent, data DataHandler) (*Order, error) {
 	// fmt.Printf("Portfolio receives Signal: %#v \n", signal)
 
@@ -133,7 +133,7 @@ func (p *Portfolio) OnSignal(signal SignalEvent, data DataHandler) (*Order, erro
 	return order, nil
 }
 
-// OnFill handles an incomming fill event
+// OnFill handles an incomming fill event.
 func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (*Fill, error) {
 	// Check for nil map, else initialise the map
 	if p.holdings == nil {
@@ -167,7 +167,7 @@ func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (*Fill, error) {
 	return f, nil
 }
 
-// IsInvested checks if the portfolio has an open position on the given symbol
+// IsInvested checks if the portfolio has an open position on the given symbol.
 func (p Portfolio) IsInvested(symbol string) (pos Position, ok bool) {
 	pos, ok = p.holdings[symbol]
 	if ok && (pos.qty != 0) {
@@ -176,7 +176,7 @@ func (p Portfolio) IsInvested(symbol string) (pos Position, ok bool) {
 	return pos, false
 }
 
-// IsLong checks if the portfolio has an open long position on the given symbol
+// IsLong checks if the portfolio has an open long position on the given symbol.
 func (p Portfolio) IsLong(symbol string) (pos Position, ok bool) {
 	pos, ok = p.holdings[symbol]
 	if ok && (pos.qty > 0) {
@@ -185,7 +185,7 @@ func (p Portfolio) IsLong(symbol string) (pos Position, ok bool) {
 	return pos, false
 }
 
-// IsShort checks if the portfolio has an open short position on the given symbol
+// IsShort checks if the portfolio has an open short position on the given symbol.
 func (p Portfolio) IsShort(symbol string) (pos Position, ok bool) {
 	pos, ok = p.holdings[symbol]
 	if ok && (pos.qty < 0) {
@@ -194,7 +194,7 @@ func (p Portfolio) IsShort(symbol string) (pos Position, ok bool) {
 	return pos, false
 }
 
-// Update updates the holding on a data event
+// Update the holdings of the portfolio on a data event.
 func (p *Portfolio) Update(d DataEvent) {
 	if pos, ok := p.IsInvested(d.Symbol()); ok {
 		pos.UpdateValue(d)
@@ -202,27 +202,27 @@ func (p *Portfolio) Update(d DataEvent) {
 	}
 }
 
-// SetInitialCash sets the initial cash value of the portfolio
+// SetInitialCash sets the initial cash value of the portfolio.
 func (p *Portfolio) SetInitialCash(initial float64) {
 	p.initialCash = initial
 }
 
-// InitialCash returns the initial cash value of the portfolio
+// InitialCash returns the initial cash value of the portfolio.
 func (p Portfolio) InitialCash() float64 {
 	return p.initialCash
 }
 
-// SetCash sets the current cash value of the portfolio
+// SetCash sets the current cash value of the portfolio.
 func (p *Portfolio) SetCash(cash float64) {
 	p.cash = cash
 }
 
-// Cash returns the current cash value of the portfolio
+// Cash returns the current cash value of the portfolio.
 func (p Portfolio) Cash() float64 {
 	return p.cash
 }
 
-// Value return the current total value of the portfolio
+// Value return the current total value of the portfolio.
 func (p Portfolio) Value() float64 {
 	var holdingValue float64
 	for _, pos := range p.holdings {
@@ -234,12 +234,12 @@ func (p Portfolio) Value() float64 {
 	return value
 }
 
-// Holdings returns the holdings of the portfolio
+// Holdings returns the holdings of the portfolio.
 func (p Portfolio) Holdings() map[string]Position {
 	return p.holdings
 }
 
-// OrderBook returns the order book of the portfolio
+// OrderBook returns the order book of the portfolio.
 func (p Portfolio) OrderBook() ([]OrderEvent, bool) {
 	if len(p.orderBook) == 0 {
 		return p.orderBook, false
@@ -248,7 +248,7 @@ func (p Portfolio) OrderBook() ([]OrderEvent, bool) {
 	return p.orderBook, true
 }
 
-// OrdersBySymbol returns the order of a specific symbol from the order book.
+// OrdersBySymbol returns the order for a specific symbol from the order book.
 func (p Portfolio) OrdersBySymbol(symbol string) ([]OrderEvent, bool) {
 	var orders = []OrderEvent{}
 

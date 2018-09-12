@@ -1,6 +1,6 @@
 package gobacktest
 
-// Direction defines which direction a signal indicates
+// Direction defines which direction a signal indicates.
 type Direction int
 
 // different types of order directions
@@ -15,18 +15,18 @@ const (
 	EXT
 )
 
-// Signal declares a basic signal event
+// Signal declares a basic signal event.
 type Signal struct {
 	Event
 	direction Direction // long, short, exit or hold
 }
 
-// Direction returns the Direction of a Signal
+// Direction returns the direction of a Signal.
 func (s Signal) Direction() Direction {
 	return s.direction
 }
 
-// SetDirection sets the Directions field of a Signal
+// SetDirection sets the directions of a Signal.
 func (s *Signal) SetDirection(dir Direction) {
 	s.direction = dir
 }

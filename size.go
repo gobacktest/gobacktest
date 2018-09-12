@@ -5,18 +5,18 @@ import (
 	"math"
 )
 
-// SizeHandler is the basic interface for setting the size of an order
+// SizeHandler is a basic interface for setting the size of an order.
 type SizeHandler interface {
 	SizeOrder(OrderEvent, DataEvent, PortfolioHandler) (*Order, error)
 }
 
-// Size is a basic size handler implementation
+// Size is a basic size handler implementation.
 type Size struct {
 	DefaultSize  int64
 	DefaultValue float64
 }
 
-// SizeOrder adjusts the size of an order
+// SizeOrder adjusts the size of an order.
 func (s *Size) SizeOrder(order OrderEvent, data DataEvent, pf PortfolioHandler) (*Order, error) {
 	// assert interface to concrete Type
 	o := order.(*Order)

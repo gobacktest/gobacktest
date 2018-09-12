@@ -1,16 +1,12 @@
 package gobacktest
 
-import (
-// "fmt"
-)
-
-// ExecutionHandler is the basic interface for executing orders
+// ExecutionHandler is a basic interface for executing orders.
 type ExecutionHandler interface {
 	OnData(DataEvent) (*Fill, error)
 	OnOrder(OrderEvent, DataHandler) (*Fill, error)
 }
 
-// Exchange is a basic execution handler implementation
+// Exchange is a basic execution handler implementation.
 type Exchange struct {
 	Symbol      string
 	Commission  CommissionHandler
@@ -26,12 +22,12 @@ func NewExchange() *Exchange {
 	}
 }
 
-// OnData executes any open order on new data
+// OnData executes any open order on new data.
 func (e *Exchange) OnData(data DataEvent) (*Fill, error) {
 	return nil, nil
 }
 
-// OnOrder executes an order event
+// OnOrder executes an incoming order event at the exchange.
 func (e *Exchange) OnOrder(order OrderEvent, data DataHandler) (*Fill, error) {
 	// fetch latest known data event for the symbol
 	latest := data.Latest(order.Symbol())
@@ -64,7 +60,7 @@ func (e *Exchange) OnOrder(order OrderEvent, data DataHandler) (*Fill, error) {
 	return f, nil
 }
 
-// calculateCost() calculates the total cost for a stock trade
+// calculateCost() calculates the total cost for a stock trade.
 func (e *Exchange) calculateCost(commission, fee float64) float64 {
 	return commission + fee
 }

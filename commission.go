@@ -1,22 +1,18 @@
 package gobacktest
 
-import (
-// "fmt"
-)
-
-// CommissionHandler is the basic interface for executing orders
+// CommissionHandler is a basic interface for handling commissions on a trade order.
 type CommissionHandler interface {
 	Calculate(qty, price float64) (float64, error)
 }
 
-// FixedCommission is a commission handler implementation which returns a fixed price commission
+// FixedCommission is a commission handler implementation which returns a fixed price commission.
 type FixedCommission struct {
 	Commission float64
 }
 
-// Calculate calculates the commission of the trade
+// Calculate the commission of the trade with a fixed commission.
 func (c *FixedCommission) Calculate(qty, price float64) (float64, error) {
-	// no trade value, no commision
+	// no trade value, no commission
 	if qty == 0 || price == 0 {
 		return 0, nil
 	}
@@ -24,15 +20,15 @@ func (c *FixedCommission) Calculate(qty, price float64) (float64, error) {
 }
 
 // TresholdFixedCommission is a commission handler implementation which returns a fixed price commission
-// if the value of the trade is above a set treshold
+// if the value of the trade is above a set treshold.
 type TresholdFixedCommission struct {
 	Commission float64
 	MinValue   float64
 }
 
-// Calculate calculates the commission of the trade
+// Calculate the commission of the trade if a treshold is reached.
 func (c *TresholdFixedCommission) Calculate(qty, price float64) (float64, error) {
-	// no trade value, no commision
+	// no trade value, no commission
 	if qty == 0 || price == 0 {
 		return 0, nil
 	}
@@ -45,14 +41,14 @@ func (c *TresholdFixedCommission) Calculate(qty, price float64) (float64, error)
 }
 
 // PercentageCommission is a commission handler implementation which returns a percentage price commission
-// calculated of the value of the trade
+// calculated of the value of the trade.
 type PercentageCommission struct {
 	Commission float64
 }
 
-// Calculate calculates the commission of the trade
+// Calculate the commission of the trade for a percentage commission.
 func (c *PercentageCommission) Calculate(qty, price float64) (float64, error) {
-	// no trade value, no commision
+	// no trade value, no commission
 	if qty == 0 || price == 0 {
 		return 0, nil
 	}
@@ -63,16 +59,16 @@ func (c *PercentageCommission) Calculate(qty, price float64) (float64, error) {
 }
 
 // ValueCommission is a commission handler implementation which returns a percentage price commission
-// calculated of the value of the trade, if the value of the trade is within a given commission span
+// calculated of the value of the trade, if the value of the trade is within a given commission span.
 type ValueCommission struct {
 	Commission    float64
 	MinCommission float64
 	MaxCommission float64
 }
 
-// Calculate calculates the commission of the trade
+// Calculate the commission of the trade for a value commission.
 func (c *ValueCommission) Calculate(qty, price float64) (float64, error) {
-	// no trade value, no commision
+	// no trade value, no commission
 	if qty == 0 || price == 0 {
 		return 0, nil
 	}

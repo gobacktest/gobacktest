@@ -1,6 +1,6 @@
 package gobacktest
 
-// AlgoHandler defines the base algorythm functionality.
+// AlgoHandler defines the base algorithm functionality.
 type AlgoHandler interface {
 	Run(StrategyHandler) (bool, error)
 	Always() bool
@@ -8,13 +8,13 @@ type AlgoHandler interface {
 	Value() float64
 }
 
-// Algo is a base algo structure, implements AlgoHandler
+// Algo is a base algo structure, implementing AlgoHandler.
 type Algo struct {
 	// determines if the algo runs always, even if a preceding algo fails
 	runAlways bool
 }
 
-// Run implements the Algo interface.
+// Run is a blind placeholder to implements the Algo interface.
 func (a Algo) Run(_ StrategyHandler) (bool, error) {
 	return true, nil
 }
@@ -50,7 +50,7 @@ func (as AlgoStack) Run(s StrategyHandler) (bool, error) {
 	return true, nil
 }
 
-// RunAlways set the runAlways property on the AlgoHandler
+// RunAlways set the runAlways property on the AlgoHandler.
 func RunAlways(a AlgoHandler) AlgoHandler {
 	a.SetAlways()
 	return a

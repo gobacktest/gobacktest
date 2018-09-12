@@ -101,7 +101,7 @@ func (s *Strategy) SetEvent(event DataEvent) error {
 	return nil
 }
 
-// Signals returns a slice of all from th ealgo loop created signals.
+// Signals returns all from th algo loop created signals.
 func (s *Strategy) Signals() ([]SignalEvent, bool) {
 	if len(s.signals) == 0 {
 		return s.signals, false
@@ -118,7 +118,7 @@ func (s *Strategy) AddSignal(signals ...SignalEvent) error {
 	return nil
 }
 
-// SetAlgo sets the algo stack for the Strategy
+// SetAlgo sets the algo stack for the Strategy.
 func (s *Strategy) SetAlgo(algos ...AlgoHandler) *Strategy {
 	for _, algo := range algos {
 		s.algos.stack = append(s.algos.stack, algo)
@@ -154,7 +154,7 @@ func (s *Strategy) Strategies() ([]StrategyHandler, bool) {
 	return strategies, true
 }
 
-// Assets return all children which are a strategy.
+// Assets return all children which are aa asset.
 func (s *Strategy) Assets() ([]*Asset, bool) {
 	var assets []*Asset
 

@@ -3,10 +3,9 @@ package gobacktest
 import (
 	"math"
 	"time"
-	// "github.com/shopspring/decimal"
 )
 
-// Position represents the holdings position
+// Position represents a holdings position.
 type Position struct {
 	timestamp   time.Time
 	symbol      string
@@ -35,7 +34,7 @@ type Position struct {
 	totalProfitLoss  float64
 }
 
-// Create a new position based on a fill event
+// Create a new position based on a fill event.
 func (p *Position) Create(fill FillEvent) {
 	p.timestamp = fill.Time()
 	p.symbol = fill.Symbol()
@@ -43,14 +42,14 @@ func (p *Position) Create(fill FillEvent) {
 	p.update(fill)
 }
 
-// Update a position on a new fill event
+// Update a position on a new fill event.
 func (p *Position) Update(fill FillEvent) {
 	p.timestamp = fill.Time()
 
 	p.update(fill)
 }
 
-// UpdateValue updates the current market value of a position
+// UpdateValue updates the current market value of a position.
 func (p *Position) UpdateValue(data DataEvent) {
 	p.timestamp = data.Time()
 
@@ -58,7 +57,7 @@ func (p *Position) UpdateValue(data DataEvent) {
 	p.updateValue(latest)
 }
 
-// internal function to update a position on a new fill event
+// internal function to update a position on a new fill event.
 func (p *Position) update(fill FillEvent) {
 	// convert fill to internally used decimal numbers
 	fillQty := float64(fill.Qty())
@@ -170,7 +169,7 @@ func (p *Position) update(fill FillEvent) {
 	p.updateValue(fill.Price())
 }
 
-// internal function to updates the current market value and profit/loss of a position
+// internal function to updates the current market value and profit/loss of a position.
 func (p *Position) updateValue(l float64) {
 	// convert to internally used decimal numbers
 	latest := l

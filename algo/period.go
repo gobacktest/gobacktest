@@ -41,9 +41,9 @@ type runPeriod struct {
 	runEndOfPeriod bool
 }
 
-// // OnFirstDate sets if RunPeriod runs on the first date it encounters.OnFirstDate
-// // Default is true. If set to false, it will ignore intermediate dates of a period and runs,
-// // if a period change happend, e.g. change of month
+// // OnFirstDate sets if RunPeriod runs on the first date it encounters.
+// // Default is true. If set to false, it will ignore intermediate dates of a period and runs
+// // if a period change happened, e.g. change of month.
 // func (rp *runPeriod) OnFirstDate(b bool) bt.AlgoHandler {
 // 	rp.runOnFirstDate = b
 // 	return rp
@@ -54,13 +54,13 @@ type runPeriod struct {
 // 	return rp
 // }
 
-// // OnEndOfPeriod sets if RunPeriod runs on the end of e.g. a week or a month
+// // OnEndOfPeriod sets if RunPeriod runs on the end of e.g. a week or a month.
 // func (rp *runPeriod) OnEndOfPeriod(b bool) bt.AlgoHandler {
 // 	rp.runEndOfPeriod = b
 // 	return rp
 // }
 
-// Run runs the algo. It retrieves the current date and the date before.
+// Run the algo. It retrieves the current date and the date before.
 // Then calls the specific implementations to compare these two dates.
 func (rp *runPeriod) Run(s gbt.StrategyHandler) (bool, error) {
 	now := rp.getNow(s)

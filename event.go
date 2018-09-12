@@ -4,19 +4,19 @@ import (
 	"time"
 )
 
-// EventHandler declares the basic event interface
+// EventHandler declares the basic event interface.
 type EventHandler interface {
 	Timer
 	Symboler
 }
 
-// Timer declares the timer interface
+// Timer declares the timer interface.
 type Timer interface {
 	Time() time.Time
 	SetTime(time.Time)
 }
 
-// Symboler declares the symboler interface
+// Symboler declares the symboler interface.
 type Symboler interface {
 	Symbol() string
 	SetSymbol(string)
@@ -28,22 +28,22 @@ type Event struct {
 	symbol    string
 }
 
-// Time returns the timestamp of an event
+// Time returns the timestamp of an event.
 func (e Event) Time() time.Time {
 	return e.timestamp
 }
 
-// SetTime returns the timestamp of an event
+// SetTime sets the timestamp of an event.
 func (e *Event) SetTime(t time.Time) {
 	e.timestamp = t
 }
 
-// Symbol returns the symbol string of the event
+// Symbol returns the symbol string of the event.
 func (e Event) Symbol() string {
 	return e.symbol
 }
 
-// SetSymbol returns the symbol string of the event
+// SetSymbol sets the symbol string of the event.
 func (e *Event) SetSymbol(s string) {
 	e.symbol = s
 }
@@ -54,7 +54,7 @@ type SignalEvent interface {
 	Directioner
 }
 
-// Directioner defines a direction interface
+// Directioner defines a direction interface.
 type Directioner interface {
 	Direction() Direction
 	SetDirection(Direction)

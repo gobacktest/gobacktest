@@ -9,7 +9,7 @@ import (
 	"gonum.org/v1/gonum/stat"
 )
 
-// StatisticHandler is a basic statistic interface
+// StatisticHandler defines a basic statistic interface.
 type StatisticHandler interface {
 	EventTracker
 	TransactionTracker
@@ -19,29 +19,29 @@ type StatisticHandler interface {
 	Resulter
 }
 
-// EventTracker is responsible for all event tracking during a backtest
+// EventTracker is responsible for all event tracking during a backtest.
 type EventTracker interface {
 	TrackEvent(EventHandler)
 	Events() []EventHandler
 }
 
-// TransactionTracker is responsible for all transaction tracking during a backtest
+// TransactionTracker is responsible for all transaction tracking during a backtest.
 type TransactionTracker interface {
 	TrackTransaction(FillEvent)
 	Transactions() []FillEvent
 }
 
-// StatisticPrinter handles printing of the statistics to screen
+// StatisticPrinter handles printing of the statistics to screen.
 type StatisticPrinter interface {
 	PrintResult()
 }
 
-// StatisticUpdater handles the updateing of the statistics
+// StatisticUpdater handles the updateing of the statistics.
 type StatisticUpdater interface {
 	Update(DataEvent, PortfolioHandler)
 }
 
-// Resulter bundles all methods which return the results of the backtest
+// Resulter bundles all methods which return the results of the backtest.
 type Resulter interface {
 	TotalEquityReturn() (float64, error)
 	MaxDrawdown() float64
@@ -51,7 +51,7 @@ type Resulter interface {
 	SortinoRatio(float64) float64
 }
 
-// Statistic is a basic test statistic, which holds simple lists of historic events
+// Statistic is a basic test statistic, which holds simple lists of historic events.
 type Statistic struct {
 	eventHistory       []EventHandler
 	transactionHistory []FillEvent
@@ -96,27 +96,27 @@ func (s *Statistic) Update(d DataEvent, p PortfolioHandler) {
 	s.equity = append(s.equity, e)
 }
 
-// TrackEvent tracks an event
+// TrackEvent tracks an event.
 func (s *Statistic) TrackEvent(e EventHandler) {
 	s.eventHistory = append(s.eventHistory, e)
 }
 
-// Events returns the complete events history
+// Events returns the complete events history.
 func (s Statistic) Events() []EventHandler {
 	return s.eventHistory
 }
 
-// TrackTransaction tracks a transaction aka a fill event
+// TrackTransaction tracks a transaction aka a fill event.
 func (s *Statistic) TrackTransaction(f FillEvent) {
 	s.transactionHistory = append(s.transactionHistory, f)
 }
 
-// Transactions returns the complete events history
+// Transactions returns the complete trandaction history.
 func (s Statistic) Transactions() []FillEvent {
 	return s.transactionHistory
 }
 
-// Reset the statistic to a clean state
+// Reset the statistic to a clean state.
 func (s *Statistic) Reset() error {
 	s.eventHistory = nil
 	s.transactionHistory = nil
@@ -154,7 +154,7 @@ Max Drawdown    ` + fmt.Sprintf("%.2f%%", maxDrawdown*100) + `
 	return fmt.Sprint(result)
 }
 
-// PrintResult prints the backtest statistics to the screen
+// PrintResult prints the backtest statistics to the screen.
 func (s Statistic) PrintResult() {
 	fmt.Println("Printing backtest results:")
 	fmt.Printf("Counted %d total events.\n", len(s.Events()))
@@ -165,7 +165,7 @@ func (s Statistic) PrintResult() {
 	}
 }
 
-// TotalEquityReturn calculates the the total return on the first and last equity point
+// TotalEquityReturn calculates the the total return on the first and last equity point.
 func (s Statistic) TotalEquityReturn() (r float64, err error) {
 	firstEquityPoint, ok := s.firstEquityPoint()
 	if !ok {

@@ -1,12 +1,12 @@
 package gobacktest
 
-// Asset is a data building block for the tree structure, eg. Stock, Option, Cash etc.
-// It implements the NodeHandler interface via the promoted Node field.
+// Asset is a building block for the tree structure, to represent a tradable asset,
+// eg. Stock, Option, Cash etc. It implements the NodeHandler interface via the promoted Node field.
 type Asset struct {
 	Node
 }
 
-// NewAsset return a new strategy node ready to use.
+// NewAsset returns a new strategy node ready to use.
 func NewAsset(name string) *Asset {
 	var asset = &Asset{}
 	asset.SetName(name)
@@ -14,7 +14,7 @@ func NewAsset(name string) *Asset {
 	return asset
 }
 
-// Children returns an empty slice and false, an Asset is not allowed to have children.
+// Children returns an empty slice and false, as an Asset is not allowed to have children.
 func (a Asset) Children() ([]NodeHandler, bool) {
 	return []NodeHandler{}, false
 }

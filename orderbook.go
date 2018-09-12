@@ -40,7 +40,7 @@ func (ob *OrderBook) Remove(id int) error {
 	return fmt.Errorf("order with id %v not found", id)
 }
 
-// Orders returns all Orders from the order book
+// Orders returns all Orders from the order book.
 func (ob OrderBook) Orders() ([]OrderEvent, bool) {
 	if len(ob.orders) == 0 {
 		return ob.orders, false
@@ -123,7 +123,7 @@ func (ob OrderBook) OrdersAskBySymbol(symbol string) ([]OrderEvent, bool) {
 	return orders, ok
 }
 
-// OrdersOpen returns all orders which are open from the order book.
+// OrdersOpen returns all open orders from the order book.
 func (ob OrderBook) OrdersOpen() ([]OrderEvent, bool) {
 	var fn = func(order OrderEvent) bool {
 		if (order.Status() != OrderNew) || (order.Status() != OrderSubmitted) || (order.Status() != OrderPartiallyFilled) {
@@ -136,7 +136,7 @@ func (ob OrderBook) OrdersOpen() ([]OrderEvent, bool) {
 	return orders, ok
 }
 
-// OrdersCanceled returns all orders which are canceled from the order book.
+// OrdersCanceled returns all canceled orders from the order book.
 func (ob OrderBook) OrdersCanceled() ([]OrderEvent, bool) {
 	var fn = func(order OrderEvent) bool {
 		if (order.Status() == OrderCanceled) || (order.Status() == OrderCancelPending) {

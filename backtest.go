@@ -1,33 +1,36 @@
 package gobacktest
 
 // DP sets the the precision of rounded floating numbers
-// used after calculations to format.
+// used after calculations to format the result.
 const DP = 4 // DP
 
-// Reseter provides a reseting interface.
+// Reseter defines a reseting interface.
 type Reseter interface {
 	Reset() error
 }
 
 // Backtest is the main struct which holds all elements of a test.
 type Backtest struct {
-	symbols    []string
-	data       DataHandler
-	strategy   StrategyHandler
-	portfolio  PortfolioHandler
-	exchange   ExecutionHandler
-	statistic  StatisticHandler
-	eventQueue []EventHandler
+	symbols   []string
+	events    EventHandler
+	data      DataHandler
+	strategy  StrategyHandler
+	portfolio PortfolioHandler
+	orderbook OrderBookHandler
+	exchange  ExecutionHandler
+	statistic StatisticHandler
 }
 
-// New creates a default backtest with sensible defaults ready for use.
+// New creates a backtest with sensible defaults ready for use.
 func New() *Backtest {
 	return &Backtest{
+		events: EventStore{},
 		portfolio: &Portfolio{
 			initialCash: 100000,
 			sizeManager: &Size{DefaultSize: 100, DefaultValue: 1000},
 			riskManager: &Risk{},
 		},
+		orderbook: &OrderBook{},
 		exchange: &Exchange{
 			Symbol:      "TEST",
 			Commission:  &FixedCommission{Commission: 0},
@@ -69,15 +72,15 @@ func (t *Backtest) SetStatistic(statistic StatisticHandler) {
 
 // Reset the backtest into a clean state with loaded data.
 func (t *Backtest) Reset() error {
-	t.eventQueue = nil
+	t.events.Reset()
 	t.data.Reset()
 	t.portfolio.Reset()
 	t.statistic.Reset()
 	return nil
 }
 
-// Stats returns the statistic handler of the backtest.
-func (t *Backtest) Stats() StatisticHandler {
+// Statistics returns the statistic handler of the backtest.
+func (t Backtest) Statistics() StatisticHandler {
 	return t.statistic
 }
 
@@ -90,17 +93,17 @@ func (t *Backtest) Run() error {
 	}
 
 	// poll event queue
-	for event, ok := t.nextEvent(); true; event, ok = t.nextEvent() {
+	for event, ok := t.events.NextFromQueue(); true; event, ok = t.events.NextFromQueue() {
 		// no event in the queue
 		if !ok {
 			// poll data stream
-			data, ok := t.data.Next()
+			data, ok := t.data.NextFromStream()
 			// no more data, exit event loop
 			if !ok {
 				break
 			}
 			// found data event, add to event stream
-			t.eventQueue = append(t.eventQueue, data)
+			t.events.AppendToQueue(data)
 			// start new event cycle
 			continue
 		}
@@ -149,57 +152,43 @@ func (t *Backtest) teardown() error {
 	return nil
 }
 
-// nextEvent gets the next event from the events queue.
-func (t *Backtest) nextEvent() (e EventHandler, ok bool) {
-	// if event queue empty return false
-	if len(t.eventQueue) == 0 {
-		return e, false
-	}
-
-	// return first element from the event queue
-	e = t.eventQueue[0]
-	t.eventQueue = t.eventQueue[1:]
-
-	return e, true
-}
-
 // eventLoop directs the different events to their handler.
-func (t *Backtest) eventLoop(e EventHandler) error {
+func (t Backtest) eventLoop(e Event) error {
 	// type check for event type
 	switch event := e.(type) {
 	case DataEvent:
 		// update portfolio to the last known price data
-		t.portfolio.Update(event)
+		t.portfolio.Update(event.Data)
 		// update statistics
-		t.statistic.Update(event, t.portfolio)
+		t.statistic.Update(event.Data, t.portfolio)
 		// check if any orders are filled before proceeding
-		t.exchange.OnData(event)
+		t.exchange.OnData(event.Data)
 
 		// run strategy with this data event
-		signals, err := t.strategy.OnData(event)
+		signals, err := t.strategy.OnData(event.Data)
 		if err != nil {
 			break
 		}
 		for _, signal := range signals {
-			t.eventQueue = append(t.eventQueue, signal)
+			t.events.AppendToQueue(signal)
 		}
 
-	case *Signal:
-		order, err := t.portfolio.OnSignal(event, t.data)
+	case SignalEvent:
+		order, err := t.portfolio.OnSignal(event.Signal, t.data)
 		if err != nil {
 			break
 		}
-		t.eventQueue = append(t.eventQueue, order)
+		t.events.AppendToQueue(order)
 
-	case *Order:
-		fill, err := t.exchange.OnOrder(event, t.data)
+	case OrderEvent:
+		fill, err := t.exchange.OnOrder(event.Order, t.data)
 		if err != nil {
 			break
 		}
-		t.eventQueue = append(t.eventQueue, fill)
+		t.events.AppendToQueue(fill)
 
-	case *Fill:
-		transaction, err := t.portfolio.OnFill(event, t.data)
+	case FillEvent:
+		transaction, err := t.portfolio.OnFill(event.Fill, t.data)
 		if err != nil {
 			break
 		}

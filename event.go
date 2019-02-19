@@ -1,97 +1,99 @@
 package gobacktest
 
-import (
-	"time"
-)
+import "time"
+
+// Event defines the basic event interface.
+type Event interface {
+	Time() time.Time
+	Symbol() string
+}
+
+// DataEvent represent the different types of data.
+type DataEvent struct {
+	Data Data
+}
+
+// Time returns the timestamp of the data event.
+func (d DataEvent) Time() (t time.Time) {
+	switch data := d.Data.(type) {
+	case Bar:
+		return data.Time
+	case Tick:
+		return data.Time
+	}
+
+	return t
+}
+
+// Symbol returns the symbol of the data event.
+func (d DataEvent) Symbol() string {
+	return d.Data.Symbol()
+}
+
+// SignalEvent represents the different Signals.
+type SignalEvent struct {
+	Signal Signal
+}
+
+// OrderEvent represents the different Order types.
+type OrderEvent struct {
+	Order Order
+}
+
+// FillEvent prepresent a filled order
+type FillEvent struct {
+	Fill Fill
+}
 
 // EventHandler declares the basic event interface.
 type EventHandler interface {
-	Timer
-	Symboler
+	Reseter
+	AppendToQueue(Event)
+	NextFromQueue() (Event, bool)
+	History() ([]Event, bool)
 }
 
-// Timer declares the timer interface.
-type Timer interface {
-	Time() time.Time
-	SetTime(time.Time)
+// EventStore is a basic implementation of an event storage system.
+type EventStore struct {
+	queue   []Event
+	history []Event
 }
 
-// Symboler declares the symboler interface.
-type Symboler interface {
-	Symbol() string
-	SetSymbol(string)
+// AppendToQueue appends the event to the end of the queue.
+func (es EventStore) AppendToQueue(e Event) {
+	es.queue = append(es.queue, e)
 }
 
-// Event is the implementation of the basic event interface.
-type Event struct {
-	timestamp time.Time
-	symbol    string
+// NextFromQueue pulls the first event from the queue.
+func (es EventStore) NextFromQueue() (e Event, ok bool) {
+	// if event queue empty return false
+	if len(es.queue) == 0 {
+		return e, false
+	}
+
+	// return first element from the event queue
+	e = es.queue[0]
+	es.queue = es.queue[1:]
+
+	// append this event to the history
+	es.history = append(es.history, e)
+
+	return e, true
 }
 
-// Time returns the timestamp of an event.
-func (e Event) Time() time.Time {
-	return e.timestamp
+// History returns a slice of all historic events.
+func (es EventStore) History() (e []Event, ok bool) {
+	if len(es.history) == 0 {
+		return es.history, false
+	}
+
+	return es.history, true
 }
 
-// SetTime sets the timestamp of an event.
-func (e *Event) SetTime(t time.Time) {
-	e.timestamp = t
-}
+// Reset implements the Reseter interface and brings the EventHandler into a clean state.
+func (es EventStore) Reset() error {
+	es.queue = nil
+	es.history = nil
 
-// Symbol returns the symbol string of the event.
-func (e Event) Symbol() string {
-	return e.symbol
-}
-
-// SetSymbol sets the symbol string of the event.
-func (e *Event) SetSymbol(s string) {
-	e.symbol = s
-}
-
-// SignalEvent declares the signal event interface.
-type SignalEvent interface {
-	EventHandler
-	Directioner
-}
-
-// Directioner defines a direction interface.
-type Directioner interface {
-	Direction() Direction
-	SetDirection(Direction)
-}
-
-// OrderEvent declares the order event interface.
-type OrderEvent interface {
-	EventHandler
-	Directioner
-	Quantifier
-	IDer
-	Status() OrderStatus
-	Limit() float64
-	Stop() float64
-}
-
-// Quantifier defines a qty interface.
-type Quantifier interface {
-	Qty() int64
-	SetQty(int64)
-}
-
-// IDer declares setting and retrieving of an Id.
-type IDer interface {
-	ID() int
-	SetID(int)
-}
-
-// FillEvent declares fill event functionality.
-type FillEvent interface {
-	EventHandler
-	Directioner
-	Quantifier
-	Price() float64
-	Commission() float64
-	ExchangeFee() float64
-	Cost() float64
-	Value() float64
-	NetValue() float64
+	return nil
 }

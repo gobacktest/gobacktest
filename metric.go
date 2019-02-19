@@ -4,11 +4,10 @@ import (
 	"errors"
 )
 
-// MetricHandler defines the handling of metrics to a data event.
-type MetricHandler interface {
-	Add(string, float64) error
-	Get(string) (float64, bool)
-}
+var (
+	// ErrInvalidKey describes an error for an invalid key parameter.
+	ErrInvalidKey = errors.New("invalid key")
+)
 
 // Metric holds metric propertys to a data point.
 type Metric map[string]float64
@@ -20,7 +19,7 @@ func (m Metric) Add(key string, value float64) error {
 	}
 
 	if key == "" {
-		return errors.New("invalid key given")
+		return ErrInvalidKey
 	}
 
 	m[key] = value

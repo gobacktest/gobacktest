@@ -6,13 +6,13 @@ type StrategyHandler interface {
 	SetData(d DataHandler) error
 	Portfolio() (PortfolioHandler, bool)
 	SetPortfolio(p PortfolioHandler) error
-	Event() (DataEvent, bool)
-	SetEvent(DataEvent) error
-	Signals() ([]SignalEvent, bool)
-	AddSignal(...SignalEvent) error
+	Event() (Data, bool)
+	SetEvent(Data) error
+	Signals() ([]Signal, bool)
+	AddSignal(...Signal) error
 	Strategies() ([]StrategyHandler, bool)
 	Assets() ([]*Asset, bool)
-	OnData(DataEvent) ([]SignalEvent, error)
+	OnData(Data) ([]Signal, error)
 }
 
 // Strategy implements NodeHandler via Node, used as a strategy building block.
@@ -87,7 +87,7 @@ func (s *Strategy) SetPortfolio(portfolio PortfolioHandler) error {
 }
 
 // Event returns the underlying data property.
-func (s *Strategy) Event() (DataEvent, bool) {
+func (s *Strategy) Event() (Data, bool) {
 	if s.event == nil {
 		return nil, false
 	}
@@ -102,7 +102,7 @@ func (s *Strategy) SetEvent(event DataEvent) error {
 }
 
 // Signals returns all from th algo loop created signals.
-func (s *Strategy) Signals() ([]SignalEvent, bool) {
+func (s *Strategy) Signals() ([]Signal, bool) {
 	if len(s.signals) == 0 {
 		return s.signals, false
 	}
@@ -111,7 +111,7 @@ func (s *Strategy) Signals() ([]SignalEvent, bool) {
 }
 
 // AddSignal sets the data property.
-func (s *Strategy) AddSignal(signals ...SignalEvent) error {
+func (s *Strategy) AddSignal(signals ...Signal) error {
 	for _, signal := range signals {
 		s.signals = append(s.signals, signal)
 	}
@@ -154,19 +154,19 @@ func (s *Strategy) Strategies() ([]StrategyHandler, bool) {
 	return strategies, true
 }
 
-// Assets return all children which are aa asset.
-func (s *Strategy) Assets() ([]*Asset, bool) {
+// Assets return all assets of this strategy.
+func (s Strategy) Assets() ([]*Asset, bool) {
 	var assets []*Asset
 
 	// get all children
 	children, ok := s.Children()
 
-	// no children means no sub strategies
+	// no children means no sub strategies, only direct assets
 	if !ok {
 		return assets, false
 	}
 
-	// check each child if it is a strategy
+	// check each child if it is an asset
 	for _, child := range children {
 		switch c := child.(type) {
 		case *Asset:
@@ -183,8 +183,8 @@ func (s *Strategy) Assets() ([]*Asset, bool) {
 }
 
 // OnData handles an incoming data event. It runs the algo stack on this data.
-func (s *Strategy) OnData(event DataEvent) (signals []SignalEvent, err error) {
-	s.SetEvent(event)
+func (s *Strategy) OnData(data Data) (signals []Signal, err error) {
+	s.SetEvent(data)
 
 	// run the algo stack of this strategy
 	ok, err := s.algos.Run(s)
@@ -192,10 +192,10 @@ func (s *Strategy) OnData(event DataEvent) (signals []SignalEvent, err error) {
 		return nil, err
 	}
 
-	// pass data event down to child strategies
+	// pass the data event down to the child strategies
 	if strategies, ok := s.Strategies(); ok {
 		for _, strategy := range strategies {
-			signals, err := strategy.OnData(event)
+			signals, err := strategy.OnData(data)
 			if err != nil {
 				return nil, err
 			}
@@ -208,7 +208,7 @@ func (s *Strategy) OnData(event DataEvent) (signals []SignalEvent, err error) {
 		return nil, nil
 	}
 
-	// empty strategy signals collection
+	// flush the strategy signals collection to empty
 	s.signals = nil
 
 	return signals, nil

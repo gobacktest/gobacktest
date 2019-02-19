@@ -1,7 +1,7 @@
 package gobacktest
 
 import (
-	"sort"
+	"time"
 )
 
 // DataHandler is the combined data interface.
@@ -18,30 +18,30 @@ type DataLoader interface {
 
 // DataStreamer defines data stream functionality.
 type DataStreamer interface {
-	Next() (DataEvent, bool)
-	Stream() []DataEvent
-	History() []DataEvent
+	NextFromStream() (Data, bool)
+	Stream() []Data
+	History() []Data
 	Latest(string) DataEvent
 	List(string) []DataEvent
 }
 
-// Data is a basic data provider struct.
-type Data struct {
-	latest  map[string]DataEvent
-	list    map[string][]DataEvent
-	stream  []DataEvent
-	history []DataEvent
+// DataStore is a basic data provider struct.
+type DataStore struct {
+	latest  map[string]Data
+	list    map[string][]Data
+	stream  []Data
+	history []Data
 }
 
 // Load data events into a stream.
 // This method satisfies the DataLoader interface, but should be overwritten
 // by the specific data loading implementation.
-func (d *Data) Load(s []string) error {
+func (d *DataStore) Load(s []string) error {
 	return nil
 }
 
 // Reset implements Reseter to reset the data struct to a clean state with loaded data events.
-func (d *Data) Reset() error {
+func (d *DataStore) Reset() error {
 	d.latest = nil
 	d.list = nil
 	d.stream = d.history
@@ -50,18 +50,18 @@ func (d *Data) Reset() error {
 }
 
 // Stream returns the data stream.
-func (d *Data) Stream() []DataEvent {
+func (d *DataStore) Stream() []Data {
 	return d.stream
 }
 
 // SetStream sets the data stream.
-func (d *Data) SetStream(stream []DataEvent) {
+func (d *DataStore) SetStream(stream []Data) {
 	d.stream = stream
 }
 
-// Next returns the first element of the data stream,
+// NextFromStream returns the first element of the data stream,
 // deletes it from the data stream and appends it to the historic data stream.
-func (d *Data) Next() (dh DataEvent, ok bool) {
+func (d *DataStore) NextFromStream() (dh Data, ok bool) {
 	// check for element in datastream
 	if len(d.stream) == 0 {
 		return dh, false
@@ -80,59 +80,42 @@ func (d *Data) Next() (dh DataEvent, ok bool) {
 }
 
 // History returns the historic data stream.
-func (d *Data) History() []DataEvent {
+func (d *DataStore) History() []Data {
 	return d.history
 }
 
 // Latest returns the last known data event for a symbol.
-func (d *Data) Latest(symbol string) DataEvent {
+func (d *DataStore) Latest(symbol string) Data {
 	return d.latest[symbol]
 }
 
 // List returns the data event list for a symbol.
-func (d *Data) List(symbol string) []DataEvent {
+func (d *DataStore) List(symbol string) []Data {
 	return d.list[symbol]
 }
 
-// SortStream sorts the data stream in ascending order.
-func (d *Data) SortStream() {
-	sort.Slice(d.stream, func(i, j int) bool {
-		b1 := d.stream[i]
-		b2 := d.stream[j]
-
-		// if date is equal sort by symbol
-		if b1.Time().Equal(b2.Time()) {
-			return b1.Symbol() < b2.Symbol()
-		}
-		// else sort by date
-		return b1.Time().Before(b2.Time())
-	})
-}
-
 // updateLatest puts the last current data event to the current list.
-func (d *Data) updateLatest(event DataEvent) {
+func (d *DataStore) updateLatest(data Data) {
 	// check for nil map, else initialise the map
 	if d.latest == nil {
-		d.latest = make(map[string]DataEvent)
+		d.latest = make(map[string]Data)
 	}
 
-	d.latest[event.Symbol()] = event
+	d.latest[data.Symbol()] = data
 }
 
 // updateList appends a data event to the data list for the corresponding symbol.
-func (d *Data) updateList(event DataEvent) {
+func (d *DataStore) updateList(data Data) {
 	// Check for nil map, else initialise the map
 	if d.list == nil {
-		d.list = make(map[string][]DataEvent)
+		d.list = make(map[string][]Data)
 	}
 
-	d.list[event.Symbol()] = append(d.list[event.Symbol()], event)
+	d.list[data.Symbol()] = append(d.list[data.Symbol()], data)
 }
 
-// DataEvent declares a data event interface.
-type DataEvent interface {
-	EventHandler
-	MetricHandler
+// Data defines the basic interface for all types of data events.
+type Data interface {
 	Pricer
 }
 
@@ -141,15 +124,16 @@ type Pricer interface {
 	Price() float64
 }
 
-// BarEvent declares a bar event interface.
-type BarEvent interface {
-	DataEvent
+// BarData defines a bar event interface.
+type BarData interface {
+	Data
 }
 
 // Bar declares a data event for an OHLCV bar.
 type Bar struct {
-	Event
 	Metric
+	Time     time.Time
+	Symbol   string
 	Open     float64
 	High     float64
 	Low      float64
@@ -163,9 +147,8 @@ func (b Bar) Price() float64 {
 	return b.Close
 }
 
-// TickEvent declares a bar event interface.
-type TickEvent interface {
-	DataEvent
+// TickData defines a tick event interface.
+type TickData interface {
 	Spreader
 }
 
@@ -176,21 +159,22 @@ type Spreader interface {
 
 // Tick declares a data event for a price tick.
 type Tick struct {
-	Event
 	Metric
+	Time      time.Time
+	Symbol    string
 	Bid       float64
 	Ask       float64
 	BidVolume int64
 	AskVolume int64
 }
 
-// Price returns the mid point of Bid and Ask.
+// Price returns the mid point of Bid and Ask prices.
 func (t Tick) Price() float64 {
 	latest := (t.Bid + t.Ask) / float64(2)
 	return latest
 }
 
-// Spread returns the difference or spread of Bid and Ask.
+// Spread returns the difference or spread of Bid and Ask prices.
 func (t Tick) Spread() float64 {
 	return t.Bid - t.Ask
 }

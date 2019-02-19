@@ -2,8 +2,8 @@ package gobacktest
 
 // ExecutionHandler is a basic interface for executing orders.
 type ExecutionHandler interface {
-	OnData(DataEvent) (*Fill, error)
-	OnOrder(OrderEvent, DataHandler) (*Fill, error)
+	OnData(Data) (*Fill, error)
+	OnOrder(Order, DataHandler) (*Fill, error)
 }
 
 // Exchange is a basic execution handler implementation.
@@ -23,12 +23,12 @@ func NewExchange() *Exchange {
 }
 
 // OnData executes any open order on new data.
-func (e *Exchange) OnData(data DataEvent) (*Fill, error) {
+func (e *Exchange) OnData(data Data) (*Fill, error) {
 	return nil, nil
 }
 
 // OnOrder executes an incoming order event at the exchange.
-func (e *Exchange) OnOrder(order OrderEvent, data DataHandler) (*Fill, error) {
+func (e *Exchange) OnOrder(order Order, data DataHandler) (*Fill, error) {
 	// fetch latest known data event for the symbol
 	latest := data.Latest(order.Symbol())
 

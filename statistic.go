@@ -21,14 +21,14 @@ type StatisticHandler interface {
 
 // EventTracker is responsible for all event tracking during a backtest.
 type EventTracker interface {
-	TrackEvent(EventHandler)
-	Events() []EventHandler
+	TrackEvent(Event)
+	Events() []Event
 }
 
 // TransactionTracker is responsible for all transaction tracking during a backtest.
 type TransactionTracker interface {
-	TrackTransaction(FillEvent)
-	Transactions() []FillEvent
+	TrackTransaction(Fill)
+	Transactions() []Fill
 }
 
 // StatisticPrinter handles printing of the statistics to screen.
@@ -38,7 +38,7 @@ type StatisticPrinter interface {
 
 // StatisticUpdater handles the updateing of the statistics.
 type StatisticUpdater interface {
-	Update(DataEvent, PortfolioHandler)
+	Update(Data, PortfolioHandler)
 }
 
 // Resulter bundles all methods which return the results of the backtest.
@@ -53,7 +53,7 @@ type Resulter interface {
 
 // Statistic is a basic test statistic, which holds simple lists of historic events.
 type Statistic struct {
-	eventHistory       []EventHandler
+	eventHistory       []Event
 	transactionHistory []FillEvent
 	equity             []equityPoint
 	high               equityPoint
@@ -68,7 +68,7 @@ type equityPoint struct {
 }
 
 // Update the complete statistics to a given data event.
-func (s *Statistic) Update(d DataEvent, p PortfolioHandler) {
+func (s *Statistic) Update(d Data, p PortfolioHandler) {
 	// create new equity point based on current data timestamp and portfolio value
 	e := equityPoint{}
 	e.timestamp = d.Time()
@@ -97,22 +97,22 @@ func (s *Statistic) Update(d DataEvent, p PortfolioHandler) {
 }
 
 // TrackEvent tracks an event.
-func (s *Statistic) TrackEvent(e EventHandler) {
+func (s *Statistic) TrackEvent(e Event) {
 	s.eventHistory = append(s.eventHistory, e)
 }
 
 // Events returns the complete events history.
-func (s Statistic) Events() []EventHandler {
+func (s Statistic) Events() []Event {
 	return s.eventHistory
 }
 
 // TrackTransaction tracks a transaction aka a fill event.
-func (s *Statistic) TrackTransaction(f FillEvent) {
+func (s *Statistic) TrackTransaction(f Fill) {
 	s.transactionHistory = append(s.transactionHistory, f)
 }
 
 // Transactions returns the complete trandaction history.
-func (s Statistic) Transactions() []FillEvent {
+func (s Statistic) Transactions() []Fill {
 	return s.transactionHistory
 }
 

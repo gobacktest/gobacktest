@@ -13,12 +13,12 @@ type PortfolioHandler interface {
 
 // OnSignaler is an interface defines the handling of an incoming Signal.
 type OnSignaler interface {
-	OnSignal(SignalEvent, DataHandler) (*Order, error)
+	OnSignal(Signal, DataHandler) (*Order, error)
 }
 
 // OnFiller is an interface defines the handling of an incoming Fill.
 type OnFiller interface {
-	OnFill(FillEvent, DataHandler) (*Fill, error)
+	OnFill(Fill, DataHandler) (*Fill, error)
 }
 
 // Investor is an interface to check if a portfolio has a position in a symbol.
@@ -30,7 +30,7 @@ type Investor interface {
 
 // Updater handles the updating of the portfolio on data events.
 type Updater interface {
-	Update(DataEvent)
+	Update(Data)
 }
 
 // Casher handles basic portfolio info.
@@ -48,8 +48,8 @@ type Valuer interface {
 
 // Booker defines methods for handling the order book of the portfolio.
 type Booker interface {
-	OrderBook() ([]OrderEvent, bool)
-	OrdersBySymbol(symbol string) ([]OrderEvent, bool)
+	OrderBook() ([]Order, bool)
+	OrdersBySymbol(symbol string) ([]Order, bool)
 }
 
 // Portfolio represent a simple portfolio struct.
@@ -57,7 +57,7 @@ type Portfolio struct {
 	initialCash  float64
 	cash         float64
 	holdings     map[string]Position
-	orderBook    []OrderEvent
+	orderBook    OrderBookHandler
 	transactions []FillEvent
 	sizeManager  SizeHandler
 	riskManager  RiskHandler
@@ -101,7 +101,7 @@ func (p *Portfolio) Reset() error {
 }
 
 // OnSignal handles an incomming signal event.
-func (p *Portfolio) OnSignal(signal SignalEvent, data DataHandler) (*Order, error) {
+func (p *Portfolio) OnSignal(signal Signal, data DataHandler) (*Order, error) {
 	// fmt.Printf("Portfolio receives Signal: %#v \n", signal)
 
 	// set order type
@@ -134,7 +134,7 @@ func (p *Portfolio) OnSignal(signal SignalEvent, data DataHandler) (*Order, erro
 }
 
 // OnFill handles an incomming fill event.
-func (p *Portfolio) OnFill(fill FillEvent, data DataHandler) (*Fill, error) {
+func (p *Portfolio) OnFill(fill Fill, data DataHandler) (*Fill, error) {
 	// Check for nil map, else initialise the map
 	if p.holdings == nil {
 		p.holdings = make(map[string]Position)
@@ -195,7 +195,7 @@ func (p Portfolio) IsShort(symbol string) (pos Position, ok bool) {
 }
 
 // Update the holdings of the portfolio on a data event.
-func (p *Portfolio) Update(d DataEvent) {
+func (p *Portfolio) Update(d Data) {
 	if pos, ok := p.IsInvested(d.Symbol()); ok {
 		pos.UpdateValue(d)
 		p.holdings[d.Symbol()] = pos

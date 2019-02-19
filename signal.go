@@ -1,32 +1,46 @@
 package gobacktest
 
-// Direction defines which direction a signal indicates.
-type Direction int
+// SignalDirection defines which direction a signal indicates.
+type SignalDirection int
 
 // different types of order directions
 const (
 	// Buy
-	BOT Direction = iota // 0
+	BuySignal SignalDirection = iota // 0
 	// Sell
-	SLD
+	SellSignal
 	// Hold
-	HLD
+	HoldSignal
 	// Exit
-	EXT
+	ExitSignal
 )
+
+func (sd SignalDirection) String() string {
+	switch sd {
+	case BuySignal:
+		return "BOT, buy direction"
+	case SellSignal:
+		return "SLD, sell direction"
+	case HoldSignal:
+		return "HLD, hold direction"
+	case ExitSignal:
+		return "EXT, exit direction"
+	}
+
+	return ""
+}
 
 // Signal declares a basic signal event.
 type Signal struct {
-	Event
-	direction Direction // long, short, exit or hold
+	direction SignalDirection // long, short, exit or hold
 }
 
 // Direction returns the direction of a Signal.
-func (s Signal) Direction() Direction {
+func (s Signal) Direction() SignalDirection {
 	return s.direction
 }
 
 // SetDirection sets the directions of a Signal.
-func (s *Signal) SetDirection(dir Direction) {
+func (s *Signal) SetDirection(dir SignalDirection) {
 	s.direction = dir
 }

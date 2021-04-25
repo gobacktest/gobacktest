@@ -1,3 +1,8 @@
 module github.com/dirkolbrich/gobacktest
 
-require github.com/shopspring/decimal v0.0.0-20180607144847-19e3cb6c2930
+go 1.14
+
+require (
+	github.com/shopspring/decimal v1.2.0
+	gonum.org/v1/gonum v0.9.1
+)

@@ -4,13 +4,13 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/dirkolbrich/gobacktest?style=flat-square)](https://goreportcard.com/report/github.com/dirkolbrich/gobacktest)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](/LICENSE.md)
 
-_**Heads up:** This is a framework in development, with only basic functionality._
+_**Heads up:** This project is dead. It fought well, but died on the battlefield of abandoned open source projects. It was a good project. It will be remembered for decades to come._
 
 ---
 
 # gobacktest - Fundamental stock analysis backtesting
 
-An event-driven backtesting framework to test stock trading strategies based on fundamental analysis. Preferably this package will be the core of a backend service exposed via a REST API.
+An event-driven backtesting framework to test stock trading strategies based on fundamental analysis. Preferably this package will be the core of a backend service exposed via a REST API. Currently it has only core functionality.
 
 ## Usage
 
